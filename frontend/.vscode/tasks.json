@@ -1,0 +1,30 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "npm",
+			"script": "build",
+			"problemMatcher": [],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"label": "npm: build",
+			"detail": "webpack"
+		},
+		{
+			"type": "npm",
+			"script": "start",
+			"problemMatcher": [],
+			"group": "build",
+			"label": "npm: build and launch webserver",
+			"detail": "webpack dev server"
+		},
+		{
+			"type": "typescript",
+			"tsconfig": "tsconfig.json",
+			"group": "build",
+			"label": "tsc: build"
+		}
+	]
+}
