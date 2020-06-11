@@ -1,0 +1,6 @@
+Diary
+Simon Hua (z5116534)
+
+Week 1
+
+Group formed. Joined Github classroom and Jira groups. Collaborated with the rest of the group to write up a draft for the user stories. Created the git repo and uploaded a very basic frontend (incl. VSCode, npm, Typescript, and Webpack configurations) as well as a basic Django REST backend.
