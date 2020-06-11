@@ -27748,6 +27748,7 @@ $().ready(function () {
         method: "GET",
         success: function (data) {
             console.log(data);
+            console.log(data.name);
         },
         error: function () {
             console.log("Error!");
@@ -27778,8 +27779,8 @@ $().ready(function () {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\Users\simhua\Downloads\Capstone\frontend\node_modules\webpack-dev-server\client\index.js?http://localhost:8080 */"../node_modules/webpack-dev-server/client/index.js?http://localhost:8080");
-module.exports = __webpack_require__(/*! C:\Users\simhua\Downloads\Capstone\frontend\src\js\main.ts */"./js/main.ts");
+__webpack_require__(/*! C:\Users\Simon\Documents\Files\capstone-project-chillax\frontend\node_modules\webpack-dev-server\client\index.js?http://localhost:8080 */"../node_modules/webpack-dev-server/client/index.js?http://localhost:8080");
+module.exports = __webpack_require__(/*! C:\Users\Simon\Documents\Files\capstone-project-chillax\frontend\src\js\main.ts */"./js/main.ts");
 
 
 /***/ })

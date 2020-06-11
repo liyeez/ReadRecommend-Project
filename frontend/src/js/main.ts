@@ -7,6 +7,7 @@ $().ready(function () {
         method: "GET",
         success: function (data) {
             console.log(data);
+            console.log(data.name);
         },
         error: function () {
             console.log("Error!");

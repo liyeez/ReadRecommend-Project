@@ -5,11 +5,12 @@ from rest_framework.response import Response
 @api_view(["GET"])
 def hello_world(request):
     if request.method == "GET":
-        return Response("Hello World")
+        # return Response("Hello World")
+        return Response({"name": "test"})
+
 
 @api_view(["GET"])
 def hello_name_get(request, name: str):
-    test = request.POST
     if request.method == "GET":
         return Response(f"Hello {name}")
 
