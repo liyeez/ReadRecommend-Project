@@ -6,7 +6,7 @@ module.exports = {
     context: path.join(__dirname, "src"),
     mode: "development",
     devtool: "source-map",
-    entry: path.join(__dirname, "src", "js", "main.ts"),
+    entry: path.join(__dirname, "src", "js", "main.tsx"),
 
     // Build settings
     target: "web",
