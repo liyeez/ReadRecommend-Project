@@ -12,15 +12,20 @@
   "dependencies": {
     "@material-ui/core": "^4.10.2",
     "@material-ui/icons": "^4.9.1",
-    "@types/bootstrap": "^4.5.0",
     "@types/jquery": "^3.3.38",
-    "bootstrap": "^4.5.0",
+    "@types/react": "^16.9.36",
+    "@types/react-dom": "^16.9.8",
     "jquery": "^3.5.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1"
   },
   "devDependencies": {
+    "@types/material-ui": "^0.21.7",
+    "@typescript-eslint/eslint-plugin": "^3.3.0",
+    "@typescript-eslint/parser": "^3.3.0",
     "copy-webpack-plugin": "^6.0.1",
+    "eslint": "^7.2.0",
+    "eslint-plugin-react-hooks": "^4.0.4",
     "ts-loader": "^7.0.5",
     "typescript": "^3.9.3",
     "webpack": "^4.43.0",

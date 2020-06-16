@@ -18,33 +18,32 @@ import SearchIcon from '@material-ui/icons/Search';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
-import "bootstrap";
 
 $().ready(function () {
-    $.ajax({
-        url: "http://localhost:8000/api/hello_world",
-        method: "GET",
-        success: function (data) {
-            console.log(data);
-            console.log(data.name);
-        },
-        error: function () {
-            console.log("Error!");
-        }
-    });
-    $.ajax({
-        url: "http://localhost:8000/api/hello_name_post",
-        method: "POST",
-        data: {
-            name: "test name"
-        },
-        success: function (data) {
-            console.log(data);
-        },
-        error: function () {
-            console.log("Error!");
-        }
-    });
+  $.ajax({
+    url: "http://localhost:8000/api/hello_world",
+    method: "GET",
+    success: function (data) {
+      console.log(data);
+      console.log(data.name);
+    },
+    error: function () {
+      console.log("Error!");
+    }
+  });
+  $.ajax({
+    url: "http://localhost:8000/api/hello_name_post",
+    method: "POST",
+    data: {
+      name: "test name"
+    },
+    success: function (data) {
+      console.log(data);
+    },
+    error: function () {
+      console.log("Error!");
+    }
+  });
 });
 
 function Copyright() {
@@ -105,92 +104,93 @@ function Main() {
   const classes = useStyles();
   return (
     <React.Fragment>
-        <CssBaseline />
-        <AppBar position="relative">
-          <Toolbar>
-            <Typography variant="h6" color="inherit" noWrap>
-              <CollectionsBookmarkIcon/>
-            </Typography>
-          </Toolbar>
-        </AppBar>
-        <main>
-          {/* Hero unit */}
-          <div className={classes.heroContent}>
-            <Container maxWidth="sm">
-              <Typography component="h1" variant="h2" align="center" color="textPrimary" gutterBottom>
-                ReadRecommend
+      <CssBaseline />
+      <AppBar position="relative">
+        <Toolbar>
+          <Typography variant="h6" color="inherit" noWrap>
+            <CollectionsBookmarkIcon />
+          </Typography>
+        </Toolbar>
+      </AppBar>
+      <main>
+        {/* Hero unit */}
+        <div className={classes.heroContent}>
+          <Container maxWidth="sm">
+            <Typography component="h1" variant="h2" align="center" color="textPrimary" gutterBottom>
+              ReadRecommend
               </Typography>
-              <Typography variant="h5" align="center" color="textSecondary" paragraph>
-                A seamless platform for book lovers to explore personalized book recommendations.
+            <Typography variant="h5" align="center" color="textSecondary" paragraph>
+              A seamless platform for book lovers to explore personalized book recommendations.
               </Typography>
-              <div className={classes.heroButtons}>
-                <Grid container spacing={2} justify="center">
-                  <Grid item>
-                    <Button variant="contained" color="primary">
-                      Sign up for free!
+            <div className={classes.heroButtons}>
+              <Grid container spacing={2} justify="center">
+                <Grid item>
+                  <Button variant="contained" color="primary">
+                    Sign up for free!
                     </Button>
-                  </Grid>
-                  <Grid item>
-                    <Paper component="form" className={classes.root}>
-                      <InputBase
-                        className={classes.input}
-                        placeholder="Find a Book"
-                        inputProps={{ 'aria-label': 'search ReadRecommend' }}
-                      />
-                      <IconButton type="submit" className={classes.iconButton} aria-label="search">
-                        <SearchIcon />
-                      </IconButton>
-                    </Paper>
-                  </Grid>
                 </Grid>
-              </div>
-            </Container>
-          </div>
-          <Container className={classes.cardGrid} maxWidth="md">
-            {/* End hero unit */}
-            <Grid container spacing={4}>
-              {cards.map((card) => (
-                <Grid item key={card} xs={12} sm={6} md={4}>
-                  <Card className={classes.card}>
-                    <CardMedia
-                      className={classes.cardMedia}
-                      image="https://source.unsplash.com/random?book"
-                      title="Image title"
+                <Grid item>
+                  <Paper component="form" className={classes.root}>
+                    <InputBase
+                      className={classes.input}
+                      placeholder="Find a Book"
+                      inputProps={{ 'aria-label': 'search ReadRecommend' }}
                     />
-                    <CardContent className={classes.cardContent}>
-                      <Typography gutterBottom variant="h5" component="h2">
-                        Book Title
-                      </Typography>
-                      <Typography>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam molestie pellentesque tortor in rhoncus.
-                      </Typography>
-                    </CardContent>
-                    <CardActions>
-                      <Button size="small" color="primary">
-                        View
-                      </Button>
-                    </CardActions>
-                  </Card>
+                    <IconButton type="submit" className={classes.iconButton} aria-label="search">
+                      <SearchIcon />
+                    </IconButton>
+                  </Paper>
                 </Grid>
-              ))}
-            </Grid>
+              </Grid>
+            </div>
           </Container>
-        </main>
-        {/* Footer */}
-        <footer className={classes.footer}>
-          <Typography variant="h6" align="center" gutterBottom>
-            ReadRecommend
+        </div>
+        <Container className={classes.cardGrid} maxWidth="md">
+          {/* End hero unit */}
+          <Grid container spacing={4}>
+            {cards.map((card) => (
+              <Grid item key={card} xs={12} sm={6} md={4}>
+                <Card className={classes.card}>
+                  <CardMedia
+                    className={classes.cardMedia}
+                    image="https://source.unsplash.com/random?book"
+                    title="Image title"
+                  />
+                  <CardContent className={classes.cardContent}>
+                    <Typography gutterBottom variant="h5" component="h2">
+                      Book Title
+                      </Typography>
+                    <Typography>
+                      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam molestie pellentesque tortor in rhoncus.
+                      </Typography>
+                  </CardContent>
+                  <CardActions>
+                    <Button size="small" color="primary">
+                      View
+                      </Button>
+                  </CardActions>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        </Container>
+      </main>
+      {/* Footer */}
+      <footer className={classes.footer}>
+        <Typography variant="h6" align="center" gutterBottom>
+          ReadRecommend
           </Typography>
-          <Typography variant="subtitle1" align="center" color="textSecondary" component="p">
-            Books!
+        <Typography variant="subtitle1" align="center" color="textSecondary" component="p">
+          Books!
           </Typography>
-          <Copyright />
-        </footer>
-        {/* End footer */}
-      </React.Fragment>
+        <Copyright />
+      </footer>
+      {/* End footer */}
+    </React.Fragment>
   );
 }
 
-ReactDOM.render((
-  <Main> </Main>
-), document.getElementById('main'));
+ReactDOM.render(
+  <Main />,
+  document.getElementById("main")
+);

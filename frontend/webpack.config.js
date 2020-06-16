@@ -43,18 +43,18 @@ module.exports = {
 
     // Copy in css files so npm keeps them up to date for us
     // path.join doesnt seem to work too well so use relative paths here
-    plugins: [
-        new CopyPlugin({
-            patterns: [
-                {
-                    // Bootstrap
-                    from: "../node_modules/bootstrap/dist/css/bootstrap.min*",
-                    to: "../css/[name].[ext]"
-                }
-            ],
-            options: {
-                concurrency: 100,
-            }
-        }),
-    ]
+    // plugins: [
+    //     new CopyPlugin({
+    //         patterns: [
+    //             {
+    //                 Bootstrap - not used anymore
+    //                 from: "../node_modules/bootstrap/dist/css/bootstrap.min*",
+    //                 to: "../css/[name].[ext]"
+    //             }
+    //         ],
+    //         options: {
+    //             concurrency: 100,
+    //         }
+    //     }),
+    // ]
 };
