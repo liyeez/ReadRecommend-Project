@@ -118,16 +118,16 @@ function Main() {
                     <Container maxWidth="sm">
                         <Typography component="h1" variant="h2" align="center" color="textPrimary" gutterBottom>
                             ReadRecommend
-      </Typography>
+                        </Typography>
                         <Typography variant="h5" align="center" color="textSecondary" paragraph>
                             A seamless platform for book lovers to explore personalized book recommendations.
-      </Typography>
+                        </Typography>
                         <div className={classes.heroButtons}>
                             <Grid container spacing={2} justify="center">
                                 <Grid item>
                                     <Button variant="contained" color="primary">
                                         Sign up for free!
-      </Button>
+                                    </Button>
                                 </Grid>
                                 <Grid item>
                                     <Paper component="form" className={classes.root}>
@@ -159,15 +159,15 @@ function Main() {
                                     <CardContent className={classes.cardContent}>
                                         <Typography gutterBottom variant="h5" component="h2">
                                             Book Title
-        </Typography>
+                                        </Typography>
                                         <Typography>
                                             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam molestie pellentesque tortor in rhoncus.
-        </Typography>
+                                        </Typography>
                                     </CardContent>
                                     <CardActions>
                                         <Button size="small" color="primary">
                                             View
-        </Button>
+                                        </Button>
                                     </CardActions>
                                 </Card>
                             </Grid>
@@ -179,10 +179,10 @@ function Main() {
             <footer className={classes.footer}>
                 <Typography variant="h6" align="center" gutterBottom>
                     ReadRecommend
-        </Typography>
+                </Typography>
                 <Typography variant="subtitle1" align="center" color="textSecondary" component="p">
                     Books!
-        </Typography>
+                </Typography>
                 <Copyright />
             </footer>
             {/* End footer */}
