@@ -22,3 +22,9 @@ def hello_name_post(request):
             return Response(f"Hello {name}")
         except:
             return Response(f"Error: Invalid request format")
+
+@api_view(["GET"])
+def signup(request):
+    if request.method == "GET":
+        # return Response("Hello World")
+        return Response({"name": "test"})

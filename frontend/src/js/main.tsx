@@ -1,6 +1,8 @@
 import $ = require('jquery');
-import React from 'react';
+import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
+import { Link as RouterLink, Redirect} from 'react-router-dom';
+import { BrowserRouter, Route, Switch, useRouteMatch, useParams } from 'react-router-dom';
 import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
@@ -13,11 +15,13 @@ import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import InputBase from '@material-ui/core/InputBase';
+import Link from '@material-ui/core/Link';
 import Paper from '@material-ui/core/Paper';
 import SearchIcon from '@material-ui/icons/Search';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
+import { SignUp } from "./SignUp";
 
 $().ready(function () {
     $.ajax({
@@ -44,6 +48,16 @@ $().ready(function () {
             console.log("Error!");
         }
     });
+    $.ajax({
+        url: "http://localhost:8000/api/signup",
+        method: "GET",
+        success: function() {
+            console.log("Sign up")
+        },
+        error: function() {
+            console.log("Error!");
+        }
+    })
 });
 
 function Copyright() {
@@ -100,7 +114,16 @@ const useStyles = makeStyles((theme) => ({
 
 const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
+// component={RouterLink} to="/api/signup"
+
 function Main() {
+    function getSignUp() {
+        // render() {
+        //     return (<Redirect to="/api/signup"/>);
+        // }
+        console.log("Please work");
+    }
+
     const classes = useStyles();
     return (
         <React.Fragment>
@@ -125,7 +148,12 @@ function Main() {
                         <div className={classes.heroButtons}>
                             <Grid container spacing={2} justify="center">
                                 <Grid item>
-                                    <Button variant="contained" color="primary">
+                                    <Button
+                                        component={ RouterLink } to="/api/signup"
+                                        type="submit"
+                                        variant="contained"
+                                        color="primary"
+                                    >
                                         Sign up for free!
                                     </Button>
                                 </Grid>
@@ -191,6 +219,17 @@ function Main() {
 }
 
 ReactDOM.render(
-    <Main />,
-    document.getElementById("main")
+    <Main />, document.getElementById("main")
+)
+
+ReactDOM.render((
+    <BrowserRouter>
+        <Switch>
+            <Route path="/">
+                <Main />
+            </Route>
+            <Route path="/api/signup" component={SignUp}>
+            </Route>
+        </Switch>
+    </BrowserRouter>),document.getElementById("main")
 );
