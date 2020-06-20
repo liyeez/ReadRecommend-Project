@@ -77411,6 +77411,80 @@ module.exports.formatError = function(err) {
 
 /***/ }),
 
+/***/ "./js/Footer.tsx":
+/*!***********************!*\
+  !*** ./js/Footer.tsx ***!
+  \***********************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+// Footer.tsx
+// Implements the footer sitewide
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const react_1 = __importDefault(__webpack_require__(/*! react */ "../node_modules/react/index.js"));
+const Typography_1 = __importDefault(__webpack_require__(/*! @material-ui/core/Typography */ "../node_modules/@material-ui/core/esm/Typography/index.js"));
+const styles_1 = __webpack_require__(/*! @material-ui/core/styles */ "../node_modules/@material-ui/core/esm/styles/index.js");
+const Style = styles_1.makeStyles((theme) => ({
+    footer: {
+        backgroundColor: theme.palette.background.paper,
+        padding: theme.spacing(6),
+    }
+}));
+function Footer() {
+    const classes = Style();
+    return (react_1.default.createElement("footer", { className: classes.footer },
+        react_1.default.createElement(Typography_1.default, { variant: "h6", align: "center", gutterBottom: true }, "ReadRecommend"),
+        react_1.default.createElement(Typography_1.default, { variant: "subtitle1", align: "center", color: "textSecondary", component: "p" }, "Books!"),
+        react_1.default.createElement(Copyright, null)));
+}
+exports.default = Footer;
+function Copyright() {
+    return (react_1.default.createElement(Typography_1.default, { variant: "body2", color: "textSecondary", align: "center" },
+        "Copyright © ",
+        new Date().getFullYear(),
+        "."));
+}
+
+
+/***/ }),
+
+/***/ "./js/Header.tsx":
+/*!***********************!*\
+  !*** ./js/Header.tsx ***!
+  \***********************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+// Header.tsx
+// Implements the header sitewide
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const react_1 = __importDefault(__webpack_require__(/*! react */ "../node_modules/react/index.js"));
+// Material UI
+const AppBar_1 = __importDefault(__webpack_require__(/*! @material-ui/core/AppBar */ "../node_modules/@material-ui/core/esm/AppBar/index.js"));
+const CollectionsBookmark_1 = __importDefault(__webpack_require__(/*! @material-ui/icons/CollectionsBookmark */ "../node_modules/@material-ui/icons/CollectionsBookmark.js"));
+const Toolbar_1 = __importDefault(__webpack_require__(/*! @material-ui/core/Toolbar */ "../node_modules/@material-ui/core/esm/Toolbar/index.js"));
+const Typography_1 = __importDefault(__webpack_require__(/*! @material-ui/core/Typography */ "../node_modules/@material-ui/core/esm/Typography/index.js"));
+function Header() {
+    return (react_1.default.createElement(AppBar_1.default, { position: "relative" },
+        react_1.default.createElement(Toolbar_1.default, null,
+            react_1.default.createElement(Typography_1.default, { variant: "h6", color: "inherit", noWrap: true },
+                react_1.default.createElement(CollectionsBookmark_1.default, null)))));
+}
+exports.default = Header;
+
+
+/***/ }),
+
 /***/ "./js/SignUp.tsx":
 /*!***********************!*\
   !*** ./js/SignUp.tsx ***!
@@ -77420,58 +77494,78 @@ module.exports.formatError = function(err) {
 
 "use strict";
 
+// SignUp.tsx
+// Signup page
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SignUp = void 0;
-var react_1 = __importDefault(__webpack_require__(/*! react */ "../node_modules/react/index.js"));
-var react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "../node_modules/react-router-dom/esm/react-router-dom.js");
-var Button_1 = __importDefault(__webpack_require__(/*! @material-ui/core/Button */ "../node_modules/@material-ui/core/esm/Button/index.js"));
-var Container_1 = __importDefault(__webpack_require__(/*! @material-ui/core/Container */ "../node_modules/@material-ui/core/esm/Container/index.js"));
-var CssBaseline_1 = __importDefault(__webpack_require__(/*! @material-ui/core/CssBaseline */ "../node_modules/@material-ui/core/esm/CssBaseline/index.js"));
-var Grid_1 = __importDefault(__webpack_require__(/*! @material-ui/core/Grid */ "../node_modules/@material-ui/core/esm/Grid/index.js"));
-var Link_1 = __importDefault(__webpack_require__(/*! @material-ui/core/Link */ "../node_modules/@material-ui/core/esm/Link/index.js"));
-var TextField_1 = __importDefault(__webpack_require__(/*! @material-ui/core/TextField */ "../node_modules/@material-ui/core/esm/TextField/index.js"));
-var Typography_1 = __importDefault(__webpack_require__(/*! @material-ui/core/Typography */ "../node_modules/@material-ui/core/esm/Typography/index.js"));
-var styles_1 = __webpack_require__(/*! @material-ui/core/styles */ "../node_modules/@material-ui/core/esm/styles/index.js");
-var useStyles = styles_1.makeStyles(function (theme) { return ({
+const react_1 = __importDefault(__webpack_require__(/*! react */ "../node_modules/react/index.js"));
+const Router = __importStar(__webpack_require__(/*! react-router-dom */ "../node_modules/react-router-dom/esm/react-router-dom.js"));
+const Button_1 = __importDefault(__webpack_require__(/*! @material-ui/core/Button */ "../node_modules/@material-ui/core/esm/Button/index.js"));
+const Container_1 = __importDefault(__webpack_require__(/*! @material-ui/core/Container */ "../node_modules/@material-ui/core/esm/Container/index.js"));
+const CssBaseline_1 = __importDefault(__webpack_require__(/*! @material-ui/core/CssBaseline */ "../node_modules/@material-ui/core/esm/CssBaseline/index.js"));
+const Grid_1 = __importDefault(__webpack_require__(/*! @material-ui/core/Grid */ "../node_modules/@material-ui/core/esm/Grid/index.js"));
+const Link_1 = __importDefault(__webpack_require__(/*! @material-ui/core/Link */ "../node_modules/@material-ui/core/esm/Link/index.js"));
+const TextField_1 = __importDefault(__webpack_require__(/*! @material-ui/core/TextField */ "../node_modules/@material-ui/core/esm/TextField/index.js"));
+const Typography_1 = __importDefault(__webpack_require__(/*! @material-ui/core/Typography */ "../node_modules/@material-ui/core/esm/Typography/index.js"));
+const styles_1 = __webpack_require__(/*! @material-ui/core/styles */ "../node_modules/@material-ui/core/esm/styles/index.js");
+const Style = styles_1.makeStyles((theme) => ({
     paper: {
         marginTop: theme.spacing(8),
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
     },
     form: {
-        width: '100%',
+        width: "100%",
         marginTop: theme.spacing(3),
     },
     submit: {
         margin: theme.spacing(3, 0, 2),
     },
     root: {
-        width: '100%',
-        '& > * + *': {
+        width: "100%",
+        "& > * + *": {
             marginTop: theme.spacing(2),
         },
     },
-}); });
-exports.SignUp = function () {
+}));
+function SignUp() {
     // const [signUpForm, setSignUpForm] = useState({
-    //     signUpError: '',
-    //     signUpFirstName: '',
-    //     signUpLastName: '',
-    //     signUpEmail: '',
-    //     signUpPassword: ''
+    //     signUpError: "",
+    //     signUpFirstName: "",
+    //     signUpLastName: "",
+    //     signUpEmail: "",
+    //     signUpPassword: ""
     // });
     function onTextboxChange() {
         console.log("onTextboxChange");
     }
     function onSignUp() {
-        react_1.default.createElement(react_router_dom_1.Redirect, { to: "/" });
+        react_1.default.createElement(Router.Redirect, { to: "/" });
         console.log("onSignUp");
     }
-    var classes = useStyles();
+    const classes = Style();
     return (react_1.default.createElement("div", null,
         react_1.default.createElement(Container_1.default, { component: "main", maxWidth: "xs" },
             react_1.default.createElement(CssBaseline_1.default, null),
@@ -77487,11 +77581,69 @@ exports.SignUp = function () {
                             react_1.default.createElement(TextField_1.default, { name: "signUpEmail", variant: "outlined", required: true, fullWidth: true, label: "Email", value: "{signUpForm.signUpEmail}", onChange: onTextboxChange })),
                         react_1.default.createElement(Grid_1.default, { item: true, xs: 12 },
                             react_1.default.createElement(TextField_1.default, { name: "signUpPassword", variant: "outlined", required: true, fullWidth: true, type: "password", label: "Password", value: "{signUpForm.signUpPassword}", onChange: onTextboxChange }))),
-                    react_1.default.createElement(Button_1.default, { type: "submit", fullWidth: true, variant: "contained", color: "primary", className: classes.submit, onClick: onSignUp }, "Sign Up"),
+                    react_1.default.createElement(Button_1.default, { component: Router.Link, to: "/", type: "submit", fullWidth: true, variant: "contained", color: "primary", className: classes.submit, onClick: onSignUp }, "Sign Up"),
                     react_1.default.createElement(Grid_1.default, { container: true, justify: "flex-end" },
                         react_1.default.createElement(Grid_1.default, { item: true },
                             react_1.default.createElement(Link_1.default, { href: "/signin", variant: "body2" }, "Already have an account? Sign in."))))))));
+}
+exports.default = SignUp;
+
+
+/***/ }),
+
+/***/ "./js/index.tsx":
+/*!**********************!*\
+  !*** ./js/index.tsx ***!
+  \**********************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+// index.tsx
+// Main entrypoint for app
+// Handles routing for the different pages
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const react_1 = __importDefault(__webpack_require__(/*! react */ "../node_modules/react/index.js"));
+const react_dom_1 = __importDefault(__webpack_require__(/*! react-dom */ "../node_modules/react-dom/index.js"));
+const Router = __importStar(__webpack_require__(/*! react-router-dom */ "../node_modules/react-router-dom/esm/react-router-dom.js"));
+// Page imports
+const Header_1 = __importDefault(__webpack_require__(/*! ./Header */ "./js/Header.tsx"));
+const Footer_1 = __importDefault(__webpack_require__(/*! ./Footer */ "./js/Footer.tsx"));
+const main_1 = __importDefault(__webpack_require__(/*! ./main */ "./js/main.tsx"));
+const SignUp_1 = __importDefault(__webpack_require__(/*! ./SignUp */ "./js/SignUp.tsx"));
+const routing = react_1.default.createElement(Router.BrowserRouter, null,
+    react_1.default.createElement(Header_1.default, null),
+    react_1.default.createElement("div", null,
+        react_1.default.createElement(Router.Switch, null,
+            react_1.default.createElement(Router.Route, { path: "/signup" },
+                react_1.default.createElement(SignUp_1.default, null)),
+            react_1.default.createElement(Router.Route, { path: "/" },
+                react_1.default.createElement(main_1.default, null)))),
+    react_1.default.createElement(Footer_1.default, null));
+react_dom_1.default.render(routing, document.getElementById("main"));
 
 
 /***/ }),
@@ -77505,33 +77657,85 @@ exports.SignUp = function () {
 
 "use strict";
 
+// Main.tsx
+// Main page
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var $ = __webpack_require__(/*! jquery */ "../node_modules/jquery/dist/jquery.js");
-var react_1 = __importDefault(__webpack_require__(/*! react */ "../node_modules/react/index.js"));
-var react_dom_1 = __importDefault(__webpack_require__(/*! react-dom */ "../node_modules/react-dom/index.js"));
-var react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "../node_modules/react-router-dom/esm/react-router-dom.js");
-var react_router_dom_2 = __webpack_require__(/*! react-router-dom */ "../node_modules/react-router-dom/esm/react-router-dom.js");
-var AppBar_1 = __importDefault(__webpack_require__(/*! @material-ui/core/AppBar */ "../node_modules/@material-ui/core/esm/AppBar/index.js"));
-var Button_1 = __importDefault(__webpack_require__(/*! @material-ui/core/Button */ "../node_modules/@material-ui/core/esm/Button/index.js"));
-var Card_1 = __importDefault(__webpack_require__(/*! @material-ui/core/Card */ "../node_modules/@material-ui/core/esm/Card/index.js"));
-var CardActions_1 = __importDefault(__webpack_require__(/*! @material-ui/core/CardActions */ "../node_modules/@material-ui/core/esm/CardActions/index.js"));
-var CardContent_1 = __importDefault(__webpack_require__(/*! @material-ui/core/CardContent */ "../node_modules/@material-ui/core/esm/CardContent/index.js"));
-var CardMedia_1 = __importDefault(__webpack_require__(/*! @material-ui/core/CardMedia */ "../node_modules/@material-ui/core/esm/CardMedia/index.js"));
-var CssBaseline_1 = __importDefault(__webpack_require__(/*! @material-ui/core/CssBaseline */ "../node_modules/@material-ui/core/esm/CssBaseline/index.js"));
-var CollectionsBookmark_1 = __importDefault(__webpack_require__(/*! @material-ui/icons/CollectionsBookmark */ "../node_modules/@material-ui/icons/CollectionsBookmark.js"));
-var Container_1 = __importDefault(__webpack_require__(/*! @material-ui/core/Container */ "../node_modules/@material-ui/core/esm/Container/index.js"));
-var Grid_1 = __importDefault(__webpack_require__(/*! @material-ui/core/Grid */ "../node_modules/@material-ui/core/esm/Grid/index.js"));
-var IconButton_1 = __importDefault(__webpack_require__(/*! @material-ui/core/IconButton */ "../node_modules/@material-ui/core/esm/IconButton/index.js"));
-var InputBase_1 = __importDefault(__webpack_require__(/*! @material-ui/core/InputBase */ "../node_modules/@material-ui/core/esm/InputBase/index.js"));
-var Paper_1 = __importDefault(__webpack_require__(/*! @material-ui/core/Paper */ "../node_modules/@material-ui/core/esm/Paper/index.js"));
-var Search_1 = __importDefault(__webpack_require__(/*! @material-ui/icons/Search */ "../node_modules/@material-ui/icons/Search.js"));
-var Toolbar_1 = __importDefault(__webpack_require__(/*! @material-ui/core/Toolbar */ "../node_modules/@material-ui/core/esm/Toolbar/index.js"));
-var Typography_1 = __importDefault(__webpack_require__(/*! @material-ui/core/Typography */ "../node_modules/@material-ui/core/esm/Typography/index.js"));
-var styles_1 = __webpack_require__(/*! @material-ui/core/styles */ "../node_modules/@material-ui/core/esm/styles/index.js");
-var SignUp_1 = __webpack_require__(/*! ./SignUp */ "./js/SignUp.tsx");
+const $ = __webpack_require__(/*! jquery */ "../node_modules/jquery/dist/jquery.js");
+const react_1 = __importDefault(__webpack_require__(/*! react */ "../node_modules/react/index.js"));
+const Router = __importStar(__webpack_require__(/*! react-router-dom */ "../node_modules/react-router-dom/esm/react-router-dom.js"));
+const Button_1 = __importDefault(__webpack_require__(/*! @material-ui/core/Button */ "../node_modules/@material-ui/core/esm/Button/index.js"));
+const Card_1 = __importDefault(__webpack_require__(/*! @material-ui/core/Card */ "../node_modules/@material-ui/core/esm/Card/index.js"));
+const CardActions_1 = __importDefault(__webpack_require__(/*! @material-ui/core/CardActions */ "../node_modules/@material-ui/core/esm/CardActions/index.js"));
+const CardContent_1 = __importDefault(__webpack_require__(/*! @material-ui/core/CardContent */ "../node_modules/@material-ui/core/esm/CardContent/index.js"));
+const CardMedia_1 = __importDefault(__webpack_require__(/*! @material-ui/core/CardMedia */ "../node_modules/@material-ui/core/esm/CardMedia/index.js"));
+const CssBaseline_1 = __importDefault(__webpack_require__(/*! @material-ui/core/CssBaseline */ "../node_modules/@material-ui/core/esm/CssBaseline/index.js"));
+const Container_1 = __importDefault(__webpack_require__(/*! @material-ui/core/Container */ "../node_modules/@material-ui/core/esm/Container/index.js"));
+const Grid_1 = __importDefault(__webpack_require__(/*! @material-ui/core/Grid */ "../node_modules/@material-ui/core/esm/Grid/index.js"));
+const IconButton_1 = __importDefault(__webpack_require__(/*! @material-ui/core/IconButton */ "../node_modules/@material-ui/core/esm/IconButton/index.js"));
+const InputBase_1 = __importDefault(__webpack_require__(/*! @material-ui/core/InputBase */ "../node_modules/@material-ui/core/esm/InputBase/index.js"));
+const Paper_1 = __importDefault(__webpack_require__(/*! @material-ui/core/Paper */ "../node_modules/@material-ui/core/esm/Paper/index.js"));
+const Search_1 = __importDefault(__webpack_require__(/*! @material-ui/icons/Search */ "../node_modules/@material-ui/icons/Search.js"));
+const Typography_1 = __importDefault(__webpack_require__(/*! @material-ui/core/Typography */ "../node_modules/@material-ui/core/esm/Typography/index.js"));
+const styles_1 = __webpack_require__(/*! @material-ui/core/styles */ "../node_modules/@material-ui/core/esm/styles/index.js");
+const Style = styles_1.makeStyles((theme) => ({
+    heroContent: {
+        backgroundColor: theme.palette.background.paper,
+        padding: theme.spacing(8, 0, 6),
+    },
+    heroButtons: {
+        marginTop: theme.spacing(4),
+    },
+    input: {
+        marginLeft: theme.spacing(1),
+        flex: 1,
+    },
+    iconButton: {
+        padding: 10,
+    },
+    cardGrid: {
+        paddingTop: theme.spacing(8),
+        paddingBottom: theme.spacing(8),
+    },
+    card: {
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+    },
+    cardMedia: {
+        paddingTop: '56.25%',
+    },
+    cardContent: {
+        flexGrow: 1,
+    },
+    root: {
+        padding: '2px 4px',
+        display: 'flex',
+        alignItems: 'center',
+        width: 400,
+    },
+}));
 $().ready(function () {
     $.ajax({
         url: "http://localhost:8000/api/hello_world",
@@ -77568,54 +77772,7 @@ $().ready(function () {
         }
     });
 });
-function Copyright() {
-    return (react_1.default.createElement(Typography_1.default, { variant: "body2", color: "textSecondary", align: "center" },
-        'Copyright © ',
-        new Date().getFullYear(),
-        '.'));
-}
-var useStyles = styles_1.makeStyles(function (theme) { return ({
-    heroContent: {
-        backgroundColor: theme.palette.background.paper,
-        padding: theme.spacing(8, 0, 6),
-    },
-    heroButtons: {
-        marginTop: theme.spacing(4),
-    },
-    input: {
-        marginLeft: theme.spacing(1),
-        flex: 1,
-    },
-    iconButton: {
-        padding: 10,
-    },
-    cardGrid: {
-        paddingTop: theme.spacing(8),
-        paddingBottom: theme.spacing(8),
-    },
-    card: {
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-    },
-    cardMedia: {
-        paddingTop: '56.25%',
-    },
-    cardContent: {
-        flexGrow: 1,
-    },
-    footer: {
-        backgroundColor: theme.palette.background.paper,
-        padding: theme.spacing(6),
-    },
-    root: {
-        padding: '2px 4px',
-        display: 'flex',
-        alignItems: 'center',
-        width: 400,
-    },
-}); });
-var cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 // component={RouterLink} to="/api/signup"
 function Main() {
     function getSignUp() {
@@ -77624,13 +77781,9 @@ function Main() {
         // }
         console.log("Please work");
     }
-    var classes = useStyles();
+    const classes = Style();
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(CssBaseline_1.default, null),
-        react_1.default.createElement(AppBar_1.default, { position: "relative" },
-            react_1.default.createElement(Toolbar_1.default, null,
-                react_1.default.createElement(Typography_1.default, { variant: "h6", color: "inherit", noWrap: true },
-                    react_1.default.createElement(CollectionsBookmark_1.default, null)))),
         react_1.default.createElement("main", null,
             react_1.default.createElement("div", { className: classes.heroContent },
                 react_1.default.createElement(Container_1.default, { maxWidth: "sm" },
@@ -77639,48 +77792,39 @@ function Main() {
                     react_1.default.createElement("div", { className: classes.heroButtons },
                         react_1.default.createElement(Grid_1.default, { container: true, spacing: 2, justify: "center" },
                             react_1.default.createElement(Grid_1.default, { item: true },
-                                react_1.default.createElement(Button_1.default, { component: react_router_dom_1.Link, to: "/api/signup", type: "submit", variant: "contained", color: "primary" }, "Sign up for free!")),
+                                react_1.default.createElement(Button_1.default, { component: Router.Link, to: "/signup", type: "submit", variant: "contained", color: "primary" }, "Sign up for free!")),
                             react_1.default.createElement(Grid_1.default, { item: true },
                                 react_1.default.createElement(Paper_1.default, { component: "form", className: classes.root },
                                     react_1.default.createElement(InputBase_1.default, { className: classes.input, placeholder: "Find a Book", inputProps: { 'aria-label': 'search ReadRecommend' } }),
                                     react_1.default.createElement(IconButton_1.default, { type: "submit", className: classes.iconButton, "aria-label": "search" },
                                         react_1.default.createElement(Search_1.default, null)))))))),
             react_1.default.createElement(Container_1.default, { className: classes.cardGrid, maxWidth: "md" },
-                react_1.default.createElement(Grid_1.default, { container: true, spacing: 4 }, cards.map(function (card) { return (react_1.default.createElement(Grid_1.default, { item: true, key: card, xs: 12, sm: 6, md: 4 },
+                react_1.default.createElement(Grid_1.default, { container: true, spacing: 4 }, cards.map((card) => (react_1.default.createElement(Grid_1.default, { item: true, key: card, xs: 12, sm: 6, md: 4 },
                     react_1.default.createElement(Card_1.default, { className: classes.card },
                         react_1.default.createElement(CardMedia_1.default, { className: classes.cardMedia, image: "https://source.unsplash.com/random?book", title: "Image title" }),
                         react_1.default.createElement(CardContent_1.default, { className: classes.cardContent },
                             react_1.default.createElement(Typography_1.default, { gutterBottom: true, variant: "h5", component: "h2" }, "Book Title"),
                             react_1.default.createElement(Typography_1.default, null, "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam molestie pellentesque tortor in rhoncus.")),
                         react_1.default.createElement(CardActions_1.default, null,
-                            react_1.default.createElement(Button_1.default, { size: "small", color: "primary" }, "View"))))); })))),
-        react_1.default.createElement("footer", { className: classes.footer },
-            react_1.default.createElement(Typography_1.default, { variant: "h6", align: "center", gutterBottom: true }, "ReadRecommend"),
-            react_1.default.createElement(Typography_1.default, { variant: "subtitle1", align: "center", color: "textSecondary", component: "p" }, "Books!"),
-            react_1.default.createElement(Copyright, null))));
+                            react_1.default.createElement(Button_1.default, { size: "small", color: "primary" }, "View")))))))))));
 }
-react_dom_1.default.render(react_1.default.createElement(Main, null), document.getElementById("main"));
-react_dom_1.default.render((react_1.default.createElement(react_router_dom_2.BrowserRouter, null,
-    react_1.default.createElement(react_router_dom_2.Switch, null,
-        react_1.default.createElement(react_router_dom_2.Route, { path: "/" },
-            react_1.default.createElement(Main, null)),
-        react_1.default.createElement(react_router_dom_2.Route, { path: "/api/signup", component: SignUp_1.SignUp })))), document.getElementById("main"));
+exports.default = Main;
 
 
 /***/ }),
 
 /***/ 0:
-/*!*******************************************************************************************!*\
-  !*** multi ../node_modules/webpack-dev-server/client?http://localhost:8080 ./js/main.tsx ***!
-  \*******************************************************************************************/
+/*!********************************************************************************************!*\
+  !*** multi ../node_modules/webpack-dev-server/client?http://localhost:8080 ./js/index.tsx ***!
+  \********************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\Users\Monica Ng\gitty\capstone-project-chillax\frontend\node_modules\webpack-dev-server\client\index.js?http://localhost:8080 */"../node_modules/webpack-dev-server/client/index.js?http://localhost:8080");
-module.exports = __webpack_require__(/*! C:\Users\Monica Ng\gitty\capstone-project-chillax\frontend\src\js\main.tsx */"./js/main.tsx");
+__webpack_require__(/*! C:\Users\Simon\Documents\Files\Programming\Capstone\frontend\node_modules\webpack-dev-server\client\index.js?http://localhost:8080 */"../node_modules/webpack-dev-server/client/index.js?http://localhost:8080");
+module.exports = __webpack_require__(/*! C:\Users\Simon\Documents\Files\Programming\Capstone\frontend\src\js\index.tsx */"./js/index.tsx");
 
 
 /***/ })
 
 /******/ });
-//# sourceMappingURL=main.js.map
+//# sourceMappingURL=index.js.map

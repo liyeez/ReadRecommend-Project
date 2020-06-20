@@ -1,12 +1,15 @@
 {
     "compilerOptions": {
-        "target": "es5",
+        "target": "es6",
         "module": "commonjs",
         "sourceMap": true,
         "listFiles": true,
         "allowJs": true,
         "jsx": "react",
-        "esModuleInterop": true
+        "esModuleInterop": true,
+        "noImplicitAny": true,
+        "noImplicitThis": true,
+        "strictNullChecks": true
     },
     "include": ["src/js/*"],
     "exclude": ["node_modules"]

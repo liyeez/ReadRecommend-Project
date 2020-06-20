@@ -1,44 +1,51 @@
-import React, { useState } from "react";
-import { Link as RouterLink, Redirect } from 'react-router-dom';
-import Alert from '@material-ui/lab/Alert';
-import Button from '@material-ui/core/Button';
-import Container from '@material-ui/core/Container';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Grid from '@material-ui/core/Grid';
-import Link from '@material-ui/core/Link';
-import TextField from '@material-ui/core/TextField';
-import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
+// SignUp.tsx
+// Signup page
 
-const useStyles = makeStyles((theme) => ({
+import React from "react";
+import * as Router from "react-router-dom";
+
+// Material UI
+import Alert from "@material-ui/lab/Alert";
+import Button from "@material-ui/core/Button";
+import Container from "@material-ui/core/Container";
+import CssBaseline from "@material-ui/core/CssBaseline";
+import Grid from "@material-ui/core/Grid";
+import Link from "@material-ui/core/Link";
+import TextField from "@material-ui/core/TextField";
+import Typography from "@material-ui/core/Typography";
+
+import { makeStyles } from "@material-ui/core/styles";
+
+
+const Style = makeStyles((theme) => ({
     paper: {
         marginTop: theme.spacing(8),
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
     },
     form: {
-        width: '100%', // Fix IE 11 issue.
+        width: "100%", // Fix IE 11 issue.
         marginTop: theme.spacing(3),
     },
     submit: {
         margin: theme.spacing(3, 0, 2),
     },
     root: {
-        width: '100%',
-        '& > * + *': {
+        width: "100%",
+        "& > * + *": {
             marginTop: theme.spacing(2),
         },
     },
 }));
 
-export const SignUp: React.FC = () => {
+export default function SignUp(): JSX.Element {
     // const [signUpForm, setSignUpForm] = useState({
-    //     signUpError: '',
-    //     signUpFirstName: '',
-    //     signUpLastName: '',
-    //     signUpEmail: '',
-    //     signUpPassword: ''
+    //     signUpError: "",
+    //     signUpFirstName: "",
+    //     signUpLastName: "",
+    //     signUpEmail: "",
+    //     signUpPassword: ""
     // });
 
     function onTextboxChange() {
@@ -46,11 +53,11 @@ export const SignUp: React.FC = () => {
     }
 
     function onSignUp() {
-        <Redirect to="/"/>
+        <Router.Redirect to="/"/>
         console.log("onSignUp");
     }
 
-    const classes = useStyles();
+    const classes = Style();
     return(
         <div>
             <Container component="main" maxWidth="xs">
@@ -108,7 +115,7 @@ export const SignUp: React.FC = () => {
                         </Grid>
                     </Grid>
                     <Button
-                        component={ RouterLink } to="/"
+                        component={ Router.Link } to="/"
                         type="submit"
                         fullWidth
                         variant="contained"
@@ -130,5 +137,4 @@ export const SignUp: React.FC = () => {
             </Container>
         </div>
     );
-
 }

@@ -1,16 +1,16 @@
+// Main.tsx
+// Main page
+
 import $ = require('jquery');
-import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
-import { Link as RouterLink, Redirect} from 'react-router-dom';
-import { BrowserRouter, Route, Switch, useRouteMatch, useParams } from 'react-router-dom';
-import AppBar from '@material-ui/core/AppBar';
+import React from 'react';
+import * as Router from 'react-router-dom';
+
 import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import CollectionsBookmarkIcon from '@material-ui/icons/CollectionsBookmark';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
@@ -20,57 +20,11 @@ import Paper from '@material-ui/core/Paper';
 import SearchIcon from '@material-ui/icons/Search';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
-import { SignUp } from "./SignUp";
 
-$().ready(function () {
-    $.ajax({
-        url: "http://localhost:8000/api/hello_world",
-        method: "GET",
-        success: function (data) {
-            console.log(data);
-            console.log(data.name);
-        },
-        error: function () {
-            console.log("Error!");
-        }
-    });
-    $.ajax({
-        url: "http://localhost:8000/api/hello_name_post",
-        method: "POST",
-        data: {
-            name: "test name"
-        },
-        success: function (data) {
-            console.log(data);
-        },
-        error: function () {
-            console.log("Error!");
-        }
-    });
-    $.ajax({
-        url: "http://localhost:8000/api/signup",
-        method: "GET",
-        success: function() {
-            console.log("Sign up")
-        },
-        error: function() {
-            console.log("Error!");
-        }
-    })
-});
+import { makeStyles } from "@material-ui/core/styles";
 
-function Copyright() {
-    return (
-        <Typography variant="body2" color="textSecondary" align="center">
-            {'Copyright © '}
-            {new Date().getFullYear()}
-            {'.'}
-        </Typography>
-    );
-}
 
-const useStyles = makeStyles((theme) => ({
+const Style = makeStyles((theme) => ({
     heroContent: {
         backgroundColor: theme.palette.background.paper,
         padding: theme.spacing(8, 0, 6),
@@ -100,10 +54,6 @@ const useStyles = makeStyles((theme) => ({
     cardContent: {
         flexGrow: 1,
     },
-    footer: {
-        backgroundColor: theme.palette.background.paper,
-        padding: theme.spacing(6),
-    },
     root: {
         padding: '2px 4px',
         display: 'flex',
@@ -112,29 +62,58 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
+$().ready(function () {
+    $.ajax({
+        url: "http://localhost:8000/api/hello_world",
+        method: "GET",
+        success: function (data) {
+            console.log(data);
+            console.log(data.name);
+        },
+        error: function () {
+            console.log("Error!");
+        }
+    });
+    $.ajax({
+        url: "http://localhost:8000/api/hello_name_post",
+        method: "POST",
+        data: {
+            name: "test name"
+        },
+        success: function (data) {
+            console.log(data);
+        },
+        error: function () {
+            console.log("Error!");
+        }
+    });
+    $.ajax({
+        url: "http://localhost:8000/api/signup",
+        method: "GET",
+        success: function () {
+            console.log("Sign up")
+        },
+        error: function () {
+            console.log("Error!");
+        }
+    })
+});
+
 const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 // component={RouterLink} to="/api/signup"
 
-function Main() {
+export default function Main(): JSX.Element {
     function getSignUp() {
         // render() {
         //     return (<Redirect to="/api/signup"/>);
         // }
         console.log("Please work");
     }
-
-    const classes = useStyles();
+    const classes = Style();
     return (
         <React.Fragment>
             <CssBaseline />
-            <AppBar position="relative">
-                <Toolbar>
-                    <Typography variant="h6" color="inherit" noWrap>
-                        <CollectionsBookmarkIcon />
-                    </Typography>
-                </Toolbar>
-            </AppBar>
             <main>
                 {/* Hero unit */}
                 <div className={classes.heroContent}>
@@ -149,7 +128,7 @@ function Main() {
                             <Grid container spacing={2} justify="center">
                                 <Grid item>
                                     <Button
-                                        component={ RouterLink } to="/api/signup"
+                                        component={Router.Link} to="/signup"
                                         type="submit"
                                         variant="contained"
                                         color="primary"
@@ -203,33 +182,6 @@ function Main() {
                     </Grid>
                 </Container>
             </main>
-            {/* Footer */}
-            <footer className={classes.footer}>
-                <Typography variant="h6" align="center" gutterBottom>
-                    ReadRecommend
-                </Typography>
-                <Typography variant="subtitle1" align="center" color="textSecondary" component="p">
-                    Books!
-                </Typography>
-                <Copyright />
-            </footer>
-            {/* End footer */}
         </React.Fragment>
     );
 }
-
-ReactDOM.render(
-    <Main />, document.getElementById("main")
-)
-
-ReactDOM.render((
-    <BrowserRouter>
-        <Switch>
-            <Route path="/">
-                <Main />
-            </Route>
-            <Route path="/api/signup" component={SignUp}>
-            </Route>
-        </Switch>
-    </BrowserRouter>),document.getElementById("main")
-);

@@ -6,12 +6,14 @@ module.exports = {
     context: path.join(__dirname, "src"),
     mode: "development",
     devtool: "source-map",
-    entry: path.join(__dirname, "src", "js", "main.tsx"),
 
     // Build settings
     target: "web",
+    entry: {
+        index: path.join(__dirname, "src", "js", "index.tsx"),
+    },
     output: {
-        filename: "main.js",
+        filename: "[name].js",
         path: path.join(__dirname, "src", "js"),
     },
     module: {
@@ -38,7 +40,9 @@ module.exports = {
         publicPath: "/js/",
         watchContentBase: true,
         // Needed for VSCode debugging
-        writeToDisk: true
+        writeToDisk: true,
+        // Needed for React DOM Routing
+        historyApiFallback: true
     },
 
     // Copy in css files so npm keeps them up to date for us

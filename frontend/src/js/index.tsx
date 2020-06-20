@@ -1,0 +1,32 @@
+// index.tsx
+// Main entrypoint for app
+// Handles routing for the different pages
+
+import React from "react";
+import ReactDOM from 'react-dom';
+import * as Router from "react-router-dom";
+
+// Page imports
+import Header from "./Header"
+import Footer from "./Footer"
+import Main from "./main";
+import SignUp from "./SignUp"
+
+const routing: JSX.Element =
+    <Router.BrowserRouter>
+        <Header />
+        <div>
+            {/* Matches URL to first in the list and places the result in the div*/}
+            <Router.Switch>
+                <Router.Route path="/signup">
+                    <SignUp />
+                </Router.Route>
+                <Router.Route path="/">
+                    <Main />
+                </Router.Route>
+            </Router.Switch>
+        </div>
+        <Footer />
+    </Router.BrowserRouter>;
+
+ReactDOM.render(routing, document.getElementById("main"));
