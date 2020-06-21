@@ -1,7 +1,7 @@
 // SignUp.tsx
 // Signup page
 
-import React from "react";
+import React, {ChangeEvent, useState} from "react";
 import * as Router from "react-router-dom";
 
 // Material UI
@@ -39,22 +39,40 @@ const Style = makeStyles((theme) => ({
     },
 }));
 
-export default function SignUp(): JSX.Element {
-    // const [signUpForm, setSignUpForm] = useState({
-    //     signUpError: "",
-    //     signUpFirstName: "",
-    //     signUpLastName: "",
-    //     signUpEmail: "",
-    //     signUpPassword: ""
-    // });
+interface Props {
 
-    function onTextboxChange() {
-        console.log("onTextboxChange");
+}
+
+interface SignUpForm {
+    signUpError: string;
+    signUpFirstName: string;
+    signUpLastName: string;
+    signUpEmail: string;
+    signUpPassword: string;
+}
+
+const SignUp: React.FC<Props> = ({}) => {
+    const [signUpForm, setSignUpForm] = useState<SignUpForm>({
+        signUpError: '',
+        signUpFirstName: '',
+        signUpLastName: '',
+        signUpEmail: '',
+        signUpPassword: ''
+    });
+
+    // Detects value typed into input and loads it on the screen
+    const onTextboxChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setSignUpForm(prevSignUpForm => {
+          return {
+            ...prevSignUpForm,
+            [name]: value
+          };
+        });
     }
 
     function onSignUp() {
         <Router.Redirect to="/"/>
-        console.log("onSignUp");
     }
 
     const classes = Style();
@@ -74,7 +92,7 @@ export default function SignUp(): JSX.Element {
                                 required
                                 fullWidth
                                 label="First Name"
-                                value="{signUpForm.signUpFirstName}"
+                                value={signUpForm.signUpFirstName}
                                 onChange={onTextboxChange}
                                 autoFocus
                             />
@@ -86,7 +104,7 @@ export default function SignUp(): JSX.Element {
                                 required
                                 fullWidth
                                 label="Last Name"
-                                value="{signUpForm.signUpLastName}"
+                                value={signUpForm.signUpLastName}
                                 onChange={onTextboxChange}
                             />
                         </Grid>
@@ -97,7 +115,7 @@ export default function SignUp(): JSX.Element {
                                 required
                                 fullWidth
                                 label="Email"
-                                value="{signUpForm.signUpEmail}"
+                                value={signUpForm.signUpEmail}
                                 onChange={onTextboxChange}
                             />
                         </Grid>
@@ -109,7 +127,7 @@ export default function SignUp(): JSX.Element {
                                 fullWidth
                                 type="password"
                                 label="Password"
-                                value="{signUpForm.signUpPassword}"
+                                value={signUpForm.signUpPassword}
                                 onChange={onTextboxChange}
                             />
                         </Grid>
@@ -138,3 +156,5 @@ export default function SignUp(): JSX.Element {
         </div>
     );
 }
+
+export default SignUp;

@@ -77464,13 +77464,34 @@ function Copyright() {
 
 // Header.tsx
 // Implements the header sitewide
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const react_1 = __importDefault(__webpack_require__(/*! react */ "../node_modules/react/index.js"));
+const Router = __importStar(__webpack_require__(/*! react-router-dom */ "../node_modules/react-router-dom/esm/react-router-dom.js"));
 // Material UI
 const AppBar_1 = __importDefault(__webpack_require__(/*! @material-ui/core/AppBar */ "../node_modules/@material-ui/core/esm/AppBar/index.js"));
+const Button_1 = __importDefault(__webpack_require__(/*! @material-ui/core/Button */ "../node_modules/@material-ui/core/esm/Button/index.js"));
 const CollectionsBookmark_1 = __importDefault(__webpack_require__(/*! @material-ui/icons/CollectionsBookmark */ "../node_modules/@material-ui/icons/CollectionsBookmark.js"));
 const Toolbar_1 = __importDefault(__webpack_require__(/*! @material-ui/core/Toolbar */ "../node_modules/@material-ui/core/esm/Toolbar/index.js"));
 const Typography_1 = __importDefault(__webpack_require__(/*! @material-ui/core/Typography */ "../node_modules/@material-ui/core/esm/Typography/index.js"));
@@ -77478,9 +77499,108 @@ function Header() {
     return (react_1.default.createElement(AppBar_1.default, { position: "relative" },
         react_1.default.createElement(Toolbar_1.default, null,
             react_1.default.createElement(Typography_1.default, { variant: "h6", color: "inherit", noWrap: true },
-                react_1.default.createElement(CollectionsBookmark_1.default, null)))));
+                react_1.default.createElement(CollectionsBookmark_1.default, null)),
+            react_1.default.createElement(Button_1.default, { component: Router.Link, to: "/signin", color: "inherit" }, "Login"))));
 }
 exports.default = Header;
+
+
+/***/ }),
+
+/***/ "./js/SignIn.tsx":
+/*!***********************!*\
+  !*** ./js/SignIn.tsx ***!
+  \***********************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+// SignIn.tsx
+// Signin page
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const react_1 = __importStar(__webpack_require__(/*! react */ "../node_modules/react/index.js"));
+const Router = __importStar(__webpack_require__(/*! react-router-dom */ "../node_modules/react-router-dom/esm/react-router-dom.js"));
+// Material UI
+const Button_1 = __importDefault(__webpack_require__(/*! @material-ui/core/Button */ "../node_modules/@material-ui/core/esm/Button/index.js"));
+const Container_1 = __importDefault(__webpack_require__(/*! @material-ui/core/Container */ "../node_modules/@material-ui/core/esm/Container/index.js"));
+const CssBaseline_1 = __importDefault(__webpack_require__(/*! @material-ui/core/CssBaseline */ "../node_modules/@material-ui/core/esm/CssBaseline/index.js"));
+const Grid_1 = __importDefault(__webpack_require__(/*! @material-ui/core/Grid */ "../node_modules/@material-ui/core/esm/Grid/index.js"));
+const Link_1 = __importDefault(__webpack_require__(/*! @material-ui/core/Link */ "../node_modules/@material-ui/core/esm/Link/index.js"));
+const TextField_1 = __importDefault(__webpack_require__(/*! @material-ui/core/TextField */ "../node_modules/@material-ui/core/esm/TextField/index.js"));
+const Typography_1 = __importDefault(__webpack_require__(/*! @material-ui/core/Typography */ "../node_modules/@material-ui/core/esm/Typography/index.js"));
+const styles_1 = __webpack_require__(/*! @material-ui/core/styles */ "../node_modules/@material-ui/core/esm/styles/index.js");
+const Style = styles_1.makeStyles((theme) => ({
+    paper: {
+        marginTop: theme.spacing(8),
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+    },
+    form: {
+        width: '100%',
+        marginTop: theme.spacing(1),
+    },
+    submit: {
+        color: "white",
+        margin: theme.spacing(3, 0, 2),
+    },
+}));
+const SignIn = ({}) => {
+    //HI
+    const [signInForm, setSignInForm] = react_1.useState({
+        token: '',
+        signInError: '',
+        signInEmail: '',
+        signInPassword: ''
+    });
+    // Detects value typed into input and loads it on the screen
+    const onTextboxChange = (e) => {
+        const { name, value } = e.target;
+        setSignInForm(prevSignInForm => {
+            return Object.assign(Object.assign({}, prevSignInForm), { [name]: value });
+        });
+    };
+    function onSignIn() {
+        react_1.default.createElement(Router.Redirect, { to: "/" });
+    }
+    const classes = Style();
+    return (react_1.default.createElement("div", null,
+        react_1.default.createElement(Container_1.default, { component: "main", maxWidth: "xs" },
+            react_1.default.createElement(CssBaseline_1.default, null),
+            react_1.default.createElement("div", { className: classes.paper },
+                react_1.default.createElement(Typography_1.default, { component: "h1", variant: "h5" }, " Sign In"),
+                react_1.default.createElement("form", { className: classes.form, noValidate: true },
+                    react_1.default.createElement(TextField_1.default, { variant: "outlined", margin: "normal", required: true, fullWidth: true, name: "signInEmail", type: "email", label: "Email", value: signInForm.signInEmail, onChange: onTextboxChange, autoFocus: true }),
+                    react_1.default.createElement(TextField_1.default, { variant: "outlined", margin: "normal", required: true, fullWidth: true, name: "signInPassword", type: "password", label: "Password", value: signInForm.signInPassword, onChange: onTextboxChange }),
+                    react_1.default.createElement(Button_1.default, { component: Router.Link, to: "/", type: "submit", fullWidth: true, variant: "contained", color: "primary", className: classes.submit, onClick: onSignIn }, "Sign In"),
+                    react_1.default.createElement(Grid_1.default, { container: true, justify: "flex-end" },
+                        react_1.default.createElement(Grid_1.default, { item: true },
+                            react_1.default.createElement(Link_1.default, { href: "/signup", variant: "body2" }, "Don't have an account? Sign Up"))))))));
+};
+exports.default = SignIn;
 
 
 /***/ }),
@@ -77519,7 +77639,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const react_1 = __importDefault(__webpack_require__(/*! react */ "../node_modules/react/index.js"));
+const react_1 = __importStar(__webpack_require__(/*! react */ "../node_modules/react/index.js"));
 const Router = __importStar(__webpack_require__(/*! react-router-dom */ "../node_modules/react-router-dom/esm/react-router-dom.js"));
 const Button_1 = __importDefault(__webpack_require__(/*! @material-ui/core/Button */ "../node_modules/@material-ui/core/esm/Button/index.js"));
 const Container_1 = __importDefault(__webpack_require__(/*! @material-ui/core/Container */ "../node_modules/@material-ui/core/esm/Container/index.js"));
@@ -77550,20 +77670,23 @@ const Style = styles_1.makeStyles((theme) => ({
         },
     },
 }));
-function SignUp() {
-    // const [signUpForm, setSignUpForm] = useState({
-    //     signUpError: "",
-    //     signUpFirstName: "",
-    //     signUpLastName: "",
-    //     signUpEmail: "",
-    //     signUpPassword: ""
-    // });
-    function onTextboxChange() {
-        console.log("onTextboxChange");
-    }
+const SignUp = ({}) => {
+    const [signUpForm, setSignUpForm] = react_1.useState({
+        signUpError: '',
+        signUpFirstName: '',
+        signUpLastName: '',
+        signUpEmail: '',
+        signUpPassword: ''
+    });
+    // Detects value typed into input and loads it on the screen
+    const onTextboxChange = (e) => {
+        const { name, value } = e.target;
+        setSignUpForm(prevSignUpForm => {
+            return Object.assign(Object.assign({}, prevSignUpForm), { [name]: value });
+        });
+    };
     function onSignUp() {
         react_1.default.createElement(Router.Redirect, { to: "/" });
-        console.log("onSignUp");
     }
     const classes = Style();
     return (react_1.default.createElement("div", null,
@@ -77574,18 +77697,18 @@ function SignUp() {
                 react_1.default.createElement("form", { className: classes.form, noValidate: true },
                     react_1.default.createElement(Grid_1.default, { container: true, spacing: 2 },
                         react_1.default.createElement(Grid_1.default, { item: true, xs: 12, sm: 6 },
-                            react_1.default.createElement(TextField_1.default, { name: "signUpFirstName", variant: "outlined", required: true, fullWidth: true, label: "First Name", value: "{signUpForm.signUpFirstName}", onChange: onTextboxChange, autoFocus: true })),
+                            react_1.default.createElement(TextField_1.default, { name: "signUpFirstName", variant: "outlined", required: true, fullWidth: true, label: "First Name", value: signUpForm.signUpFirstName, onChange: onTextboxChange, autoFocus: true })),
                         react_1.default.createElement(Grid_1.default, { item: true, xs: 12, sm: 6 },
-                            react_1.default.createElement(TextField_1.default, { name: "signUpLastName", variant: "outlined", required: true, fullWidth: true, label: "Last Name", value: "{signUpForm.signUpLastName}", onChange: onTextboxChange })),
+                            react_1.default.createElement(TextField_1.default, { name: "signUpLastName", variant: "outlined", required: true, fullWidth: true, label: "Last Name", value: signUpForm.signUpLastName, onChange: onTextboxChange })),
                         react_1.default.createElement(Grid_1.default, { item: true, xs: 12 },
-                            react_1.default.createElement(TextField_1.default, { name: "signUpEmail", variant: "outlined", required: true, fullWidth: true, label: "Email", value: "{signUpForm.signUpEmail}", onChange: onTextboxChange })),
+                            react_1.default.createElement(TextField_1.default, { name: "signUpEmail", variant: "outlined", required: true, fullWidth: true, label: "Email", value: signUpForm.signUpEmail, onChange: onTextboxChange })),
                         react_1.default.createElement(Grid_1.default, { item: true, xs: 12 },
-                            react_1.default.createElement(TextField_1.default, { name: "signUpPassword", variant: "outlined", required: true, fullWidth: true, type: "password", label: "Password", value: "{signUpForm.signUpPassword}", onChange: onTextboxChange }))),
+                            react_1.default.createElement(TextField_1.default, { name: "signUpPassword", variant: "outlined", required: true, fullWidth: true, type: "password", label: "Password", value: signUpForm.signUpPassword, onChange: onTextboxChange }))),
                     react_1.default.createElement(Button_1.default, { component: Router.Link, to: "/", type: "submit", fullWidth: true, variant: "contained", color: "primary", className: classes.submit, onClick: onSignUp }, "Sign Up"),
                     react_1.default.createElement(Grid_1.default, { container: true, justify: "flex-end" },
                         react_1.default.createElement(Grid_1.default, { item: true },
                             react_1.default.createElement(Link_1.default, { href: "/signin", variant: "body2" }, "Already have an account? Sign in."))))))));
-}
+};
 exports.default = SignUp;
 
 
@@ -77634,12 +77757,15 @@ const Header_1 = __importDefault(__webpack_require__(/*! ./Header */ "./js/Heade
 const Footer_1 = __importDefault(__webpack_require__(/*! ./Footer */ "./js/Footer.tsx"));
 const main_1 = __importDefault(__webpack_require__(/*! ./main */ "./js/main.tsx"));
 const SignUp_1 = __importDefault(__webpack_require__(/*! ./SignUp */ "./js/SignUp.tsx"));
+const SignIn_1 = __importDefault(__webpack_require__(/*! ./SignIn */ "./js/SignIn.tsx"));
 const routing = react_1.default.createElement(Router.BrowserRouter, null,
     react_1.default.createElement(Header_1.default, null),
     react_1.default.createElement("div", null,
         react_1.default.createElement(Router.Switch, null,
             react_1.default.createElement(Router.Route, { path: "/signup" },
                 react_1.default.createElement(SignUp_1.default, null)),
+            react_1.default.createElement(Router.Route, { path: "/signin" },
+                react_1.default.createElement(SignIn_1.default, null)),
             react_1.default.createElement(Router.Route, { path: "/" },
                 react_1.default.createElement(main_1.default, null)))),
     react_1.default.createElement(Footer_1.default, null));
@@ -77773,14 +77899,7 @@ $().ready(function () {
     });
 });
 const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-// component={RouterLink} to="/api/signup"
 function Main() {
-    function getSignUp() {
-        // render() {
-        //     return (<Redirect to="/api/signup"/>);
-        // }
-        console.log("Please work");
-    }
     const classes = Style();
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(CssBaseline_1.default, null),
@@ -77820,8 +77939,8 @@ exports.default = Main;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\Users\Simon\Documents\Files\Programming\Capstone\frontend\node_modules\webpack-dev-server\client\index.js?http://localhost:8080 */"../node_modules/webpack-dev-server/client/index.js?http://localhost:8080");
-module.exports = __webpack_require__(/*! C:\Users\Simon\Documents\Files\Programming\Capstone\frontend\src\js\index.tsx */"./js/index.tsx");
+__webpack_require__(/*! C:\Users\Monica Ng\gitty\capstone-project-chillax\frontend\node_modules\webpack-dev-server\client\index.js?http://localhost:8080 */"../node_modules/webpack-dev-server/client/index.js?http://localhost:8080");
+module.exports = __webpack_require__(/*! C:\Users\Monica Ng\gitty\capstone-project-chillax\frontend\src\js\index.tsx */"./js/index.tsx");
 
 
 /***/ })

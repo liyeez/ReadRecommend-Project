@@ -101,15 +101,7 @@ $().ready(function () {
 
 const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
-// component={RouterLink} to="/api/signup"
-
 export default function Main(): JSX.Element {
-    function getSignUp() {
-        // render() {
-        //     return (<Redirect to="/api/signup"/>);
-        // }
-        console.log("Please work");
-    }
     const classes = Style();
     return (
         <React.Fragment>

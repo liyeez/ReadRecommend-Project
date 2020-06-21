@@ -7,10 +7,11 @@ import ReactDOM from 'react-dom';
 import * as Router from "react-router-dom";
 
 // Page imports
-import Header from "./Header"
-import Footer from "./Footer"
+import Header from "./Header";
+import Footer from "./Footer";
 import Main from "./main";
-import SignUp from "./SignUp"
+import SignUp from "./SignUp";
+import SignIn from "./SignIn";
 
 const routing: JSX.Element =
     <Router.BrowserRouter>
@@ -20,6 +21,9 @@ const routing: JSX.Element =
             <Router.Switch>
                 <Router.Route path="/signup">
                     <SignUp />
+                </Router.Route>
+                <Router.Route path="/signin">
+                    <SignIn />
                 </Router.Route>
                 <Router.Route path="/">
                     <Main />
