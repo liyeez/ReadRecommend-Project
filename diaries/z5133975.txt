@@ -2,3 +2,5 @@ Week 1: Group formed. Jira and github accounts created. Team members discussed t
 
 Week 2: Simone made progress on setting basic webpage and its server. We are to use Oracle free VM with django framework. All team members are encouraged to pick up skills.
         All user stories discussed and set in stone for sprint that is starting next week.
+        
+Week 3: As the proposal is submitted, the sprint has officially started on thursday lab and user stories are allocated. I am responsible for display top 10 recently added books, viewing book details when a book is clicked, viewing titles in other users' collection. 
