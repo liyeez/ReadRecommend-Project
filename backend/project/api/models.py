@@ -2,22 +2,20 @@ from django.db import models
 from django.utils import timezone
 import datetime
 
-
-class Question(models.Model):
-    question_text = models.CharField(max_length=200)
-    pub_date = models.DateTimeField('date published')
-
-    def __str__(self):
-        return self.question_text
-
-    def was_published_recently(self):
-        return self.pub_date >= timezone.now() - datetime.timedelta(days=1)
+'''
+class UserManager(models.Manager):
+    def create_user(self, email, first_name, last_name, password):
+        user = self.create(email=email, first_name=first_name,
+                           last_name=last_name, password=password)
+        return user
 
 
-class Choice(models.Model):
-    question = models.ForeignKey(Question, on_delete=models.CASCADE)
-    choice_text = models.CharField(max_length=200)
-    votes = models.IntegerField(default=0)
+class User(models.Model):
+    email = models.EmailField(max_length=128, unique=True)
+    first_name = models.CharField(max_length=24)
+    last_name = models.CharField(max_length=24)
+    password = models.CharField(max_length=64)
 
     def __str__(self):
-        return self.choice_text
+        return self.email + ' ' + self.first_name + ' ' + self.last_name
+'''

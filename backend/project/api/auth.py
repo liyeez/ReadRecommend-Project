@@ -11,6 +11,7 @@ from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
 from django.contrib.auth.forms import UserCreationForm
 
+
 @api_view(["POST"])
 def signup(request):
     """
@@ -35,12 +36,13 @@ def signup(request):
         password = request.POST["password"]
     except:
         return Response({"status": "error", "message": "Invalid request"}, status=status.HTTP_400_BAD_REQUEST)
-    
+
     if email == "" or first_name == "" or last_name == "" or password == "":
         return Response({"status": "error", "message": "Fields cannot be blank"}, status=status.HTTP_400_BAD_REQUEST)
 
     # Create the user object and set the data fields
-    user = User.objects.create_user(email, first_name=first_name, last_name=last_name, email=email)
+    user = User.objects.create_user(
+        email, first_name=first_name, last_name=last_name, email=email)
     user.set_password(password)
     user.save()
 
