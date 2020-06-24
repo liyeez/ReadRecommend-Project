@@ -50,7 +50,7 @@ export default function Header(): JSX.Element {
             <AppBar position="relative" className={classes.appBar}>
                 <Toolbar>
                     <Typography variant="h6" color="inherit" noWrap>
-                        <CollectionsBookmarkIcon />
+                        <Button component={Router.Link} to="/" color="inherit" startIcon={<CollectionsBookmarkIcon />}/>
                     </Typography>
                     <Button component={Router.Link} to="/signin" color="inherit">Login</Button>
                 </Toolbar>

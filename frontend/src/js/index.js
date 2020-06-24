@@ -79267,7 +79267,7 @@ function Header() {
         react_1.default.createElement(AppBar_1.default, { position: "relative", className: classes.appBar },
             react_1.default.createElement(Toolbar_1.default, null,
                 react_1.default.createElement(Typography_1.default, { variant: "h6", color: "inherit", noWrap: true },
-                    react_1.default.createElement(CollectionsBookmark_1.default, null)),
+                    react_1.default.createElement(Button_1.default, { component: Router.Link, to: "/", color: "inherit", startIcon: react_1.default.createElement(CollectionsBookmark_1.default, null) })),
                 react_1.default.createElement(Button_1.default, { component: Router.Link, to: "/signin", color: "inherit" }, "Login"))),
         react_1.default.createElement(Drawer_1.default, { className: classes.drawer, variant: "permanent", classes: {
                 paper: classes.drawerPaper,
