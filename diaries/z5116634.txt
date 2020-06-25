@@ -8,3 +8,7 @@ Group formed. Joined Github classroom and Jira groups. Collaborated with the res
 Week 2
 
 Worked on Technical Specifications in the Project Proposal with John. Got a basic frontend working with Monica. Expanded and clarified documentation. Added linting configurations.
+
+Week 3
+
+Finished Proposal. Worked with Monica on getting signin/signup working. Fully implemented with hashing/salting, token auth, etc. Worked with Stephanie to get the frontend communicating with the api correctly. Created API specification documentation.

@@ -52,7 +52,7 @@ export default function Header(): JSX.Element {
                     <Typography variant="h6" color="inherit" noWrap>
                         <Button component={Router.Link} to="/" color="inherit" startIcon={<CollectionsBookmarkIcon />}/>
                     </Typography>
-                    <Button component={Router.Link} to="/signin" color="inherit">Login</Button>
+                    <Button component={Router.Link} to="/auth/signin" color="inherit">Login</Button>
                 </Toolbar>
             </AppBar>
             <Drawer

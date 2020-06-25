@@ -62,42 +62,42 @@ const Style = makeStyles((theme) => ({
     },
 }));
 
-$().ready(function () {
-    $.ajax({
-        url: "http://localhost:8000/api/hello_world",
-        method: "GET",
-        success: function (data) {
-            console.log(data);
-            console.log(data.name);
-        },
-        error: function () {
-            console.log("Error!");
-        }
-    });
-    $.ajax({
-        url: "http://localhost:8000/api/hello_name_post",
-        method: "POST",
-        data: {
-            name: "test name"
-        },
-        success: function (data) {
-            console.log(data);
-        },
-        error: function () {
-            console.log("Error!");
-        }
-    });
-    $.ajax({
-        url: "http://localhost:8000/api/signup",
-        method: "GET",
-        success: function () {
-            console.log("Sign up")
-        },
-        error: function () {
-            console.log("Error!");
-        }
-    })
-});
+// $().ready(function () {
+//     $.ajax({
+//         url: "http://localhost:8000/api/hello_world",
+//         method: "GET",
+//         success: function (data) {
+//             console.log(data);
+//             console.log(data.name);
+//         },
+//         error: function () {
+//             console.log("Error!");
+//         }
+//     });
+//     $.ajax({
+//         url: "http://localhost:8000/api/hello_name_post",
+//         method: "POST",
+//         data: {
+//             name: "test name"
+//         },
+//         success: function (data) {
+//             console.log(data);
+//         },
+//         error: function () {
+//             console.log("Error!");
+//         }
+//     });
+//     $.ajax({
+//         url: "http://localhost:8000/api/signup",
+//         method: "GET",
+//         success: function () {
+//             console.log("Sign up")
+//         },
+//         error: function () {
+//             console.log("Error!");
+//         }
+//     })
+// });
 
 const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
@@ -120,7 +120,7 @@ export default function Main(): JSX.Element {
                             <Grid container spacing={2} justify="center">
                                 <Grid item>
                                     <Button
-                                        component={Router.Link} to="/signup"
+                                        component={Router.Link} to="/auth/signup"
                                         type="submit"
                                         variant="contained"
                                         color="primary"
