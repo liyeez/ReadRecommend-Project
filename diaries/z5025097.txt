@@ -1,0 +1,17 @@
+COMP3900 Diary
+Monica Ng (z5025097)
+
+Week 1
+
+Group formed. Join Github classroom and Jira. Decided on what software project to implement.
+
+Week 2
+
+Discussed user stories and created draft of the project proposal. Worked on User Stories and Storyboards for the project proposal.
+Familiarised myself with React and Typescript. Created basic front end for home/landing page.
+
+Week 3
+
+Finalised project proposal. Created basic front end for sign up and sign in pages.
+
+Week 4

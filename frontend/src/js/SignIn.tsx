@@ -4,6 +4,7 @@
 import React, {ChangeEvent, useState} from "react";
 import * as Router from "react-router-dom";
 import * as $ from "jquery";
+import Cookies from "universal-cookie";
 
 // Material UI
 import Button from '@material-ui/core/Button';
@@ -79,6 +80,11 @@ const SignIn: React.FC<Props> = ({}) => {
                 console.log("Error!");
             }
         });
+
+        const cookies = new Cookies();
+        cookies.set('myCat', 'Pacman', { path: '/'});
+        console.log(cookies.get('myCat'));
+
     }
 
     const classes = Style();

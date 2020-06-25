@@ -21,7 +21,8 @@
     "jquery": "^3.5.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-router-dom": "^5.2.0"
+    "react-router-dom": "^5.2.0",
+    "universal-cookie": "^4.0.3"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^3.3.0",
