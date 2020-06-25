@@ -79329,6 +79329,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const react_1 = __importStar(__webpack_require__(/*! react */ "../node_modules/react/index.js"));
 const Router = __importStar(__webpack_require__(/*! react-router-dom */ "../node_modules/react-router-dom/esm/react-router-dom.js"));
+const $ = __importStar(__webpack_require__(/*! jquery */ "../node_modules/jquery/dist/jquery.js"));
 // Material UI
 const Button_1 = __importDefault(__webpack_require__(/*! @material-ui/core/Button */ "../node_modules/@material-ui/core/esm/Button/index.js"));
 const Container_1 = __importDefault(__webpack_require__(/*! @material-ui/core/Container */ "../node_modules/@material-ui/core/esm/Container/index.js"));
@@ -79370,7 +79371,20 @@ const SignIn = ({}) => {
         });
     };
     function onSignIn() {
-        react_1.default.createElement(Router.Redirect, { to: "/" });
+        $.ajax({
+            url: "http://localhost:8000/api/auth/signin",
+            method: "POST",
+            data: {
+                email: signInForm.signInEmail,
+                password: signInForm.signInPassword
+            },
+            success: function (data) {
+                console.log(data);
+            },
+            error: function () {
+                console.log("Error!");
+            }
+        });
     }
     const classes = Style();
     return (react_1.default.createElement("div", null,
@@ -79427,6 +79441,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const react_1 = __importStar(__webpack_require__(/*! react */ "../node_modules/react/index.js"));
 const Router = __importStar(__webpack_require__(/*! react-router-dom */ "../node_modules/react-router-dom/esm/react-router-dom.js"));
+const $ = __importStar(__webpack_require__(/*! jquery */ "../node_modules/jquery/dist/jquery.js"));
 const Button_1 = __importDefault(__webpack_require__(/*! @material-ui/core/Button */ "../node_modules/@material-ui/core/esm/Button/index.js"));
 const Container_1 = __importDefault(__webpack_require__(/*! @material-ui/core/Container */ "../node_modules/@material-ui/core/esm/Container/index.js"));
 const CssBaseline_1 = __importDefault(__webpack_require__(/*! @material-ui/core/CssBaseline */ "../node_modules/@material-ui/core/esm/CssBaseline/index.js"));
@@ -79472,7 +79487,22 @@ const SignUp = ({}) => {
         });
     };
     function onSignUp() {
-        react_1.default.createElement(Router.Redirect, { to: "/" });
+        $.ajax({
+            url: "http://localhost:8000/api/auth/signup",
+            method: "POST",
+            data: {
+                email: signUpForm.signUpEmail,
+                password: signUpForm.signUpPassword,
+                first_name: signUpForm.signUpFirstName,
+                last_name: signUpForm.signUpLastName
+            },
+            success: function (data) {
+                console.log(data);
+            },
+            error: function () {
+                console.log("Error!");
+            }
+        });
     }
     const classes = Style();
     return (react_1.default.createElement("div", null,
@@ -79725,8 +79755,8 @@ exports.default = Main;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\Users\Monica Ng\gitty\capstone-project-chillax\frontend\node_modules\webpack-dev-server\client\index.js?http://localhost:8080 */"../node_modules/webpack-dev-server/client/index.js?http://localhost:8080");
-module.exports = __webpack_require__(/*! C:\Users\Monica Ng\gitty\capstone-project-chillax\frontend\src\js\index.tsx */"./js/index.tsx");
+__webpack_require__(/*! C:\Users\Simon\Documents\Files\Programming\Capstone\frontend\node_modules\webpack-dev-server\client\index.js?http://localhost:8080 */"../node_modules/webpack-dev-server/client/index.js?http://localhost:8080");
+module.exports = __webpack_require__(/*! C:\Users\Simon\Documents\Files\Programming\Capstone\frontend\src\js\index.tsx */"./js/index.tsx");
 
 
 /***/ })

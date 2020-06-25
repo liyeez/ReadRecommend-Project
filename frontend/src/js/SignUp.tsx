@@ -3,6 +3,7 @@
 
 import React, {ChangeEvent, useState} from "react";
 import * as Router from "react-router-dom";
+import * as $ from "jquery";
 
 // Material UI
 import Alert from "@material-ui/lab/Alert";
@@ -72,7 +73,22 @@ const SignUp: React.FC<Props> = ({}) => {
     }
 
     function onSignUp() {
-        <Router.Redirect to="/"/>
+        $.ajax({
+            url: "http://localhost:8000/api/auth/signup",
+            method: "POST",
+            data: {
+                email: signUpForm.signUpEmail,
+                password: signUpForm.signUpPassword,
+                first_name: signUpForm.signUpFirstName,
+                last_name: signUpForm.signUpLastName
+            },
+            success: function (data) {
+                console.log(data);
+            },
+            error: function () {
+                console.log("Error!");
+            }
+        });
     }
 
     const classes = Style();
