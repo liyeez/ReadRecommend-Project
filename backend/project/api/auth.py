@@ -4,7 +4,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 
-from .input_validator import input_validator
+from .utilities import auth_validator, input_validator
 
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
@@ -12,14 +12,14 @@ from rest_framework.authtoken.models import Token
 
 
 @api_view(["POST"])
-@input_validator("POST", ["email", "first_name", "last_name", "password"])
+@input_validator(["email", "first_name", "last_name", "password"])
 def signup(request):
     """
-    Signup
+    signup
 
     Stored as regular user but we just always make username = email
 
-    Takes:
+    Input:
     email (str)
     first_name (str)
     last_name (str)
@@ -46,14 +46,14 @@ def signup(request):
 
 
 @api_view(["POST"])
-@input_validator("POST", ["email", "password"])
+@input_validator(["email", "password"])
 def signin(request):
     """
-    Signin
+    signin
 
     Return a token
 
-    Takes:
+    Input:
     email (str)
     password (str)
 
@@ -68,3 +68,21 @@ def signin(request):
         return Response({"status": "ok", "message": "User successfully logged in", "id": user_id, "token": token.key}, status=status.HTTP_200_OK)
     else:
         return Response({"status": "error", "message": "Could not log in"}, status=status.HTTP_401_UNAUTHORIZED)
+
+@api_view(["POST"])
+@auth_validator
+def signout(request):
+    """
+    signout
+
+    Signs a user out
+    Requires auth token
+
+    Input:
+    nothing
+
+    Returns:
+    nothing
+    """
+    request.user.auth_token.delete()
+    return Response({"status": "ok", "message": "User successfully logged out"}, status=status.HTTP_200_OK)
