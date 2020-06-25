@@ -2,17 +2,17 @@
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework.authtoken.views import obtain_auth_token
 from rest_framework import status
 
+from .input_validator import input_validator
 
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
-from django.contrib.auth.forms import UserCreationForm
 
 
 @api_view(["POST"])
+@input_validator("POST", ["email", "first_name", "last_name", "password"])
 def signup(request):
     """
     Signup
@@ -28,22 +28,10 @@ def signup(request):
     Returns:
     token (str)
     """
-    # Input validation
-    try:
-        email = request.POST["email"]
-        first_name = request.POST["first_name"]
-        last_name = request.POST["last_name"]
-        password = request.POST["password"]
-    except:
-        return Response({"status": "error", "message": "Invalid request"}, status=status.HTTP_400_BAD_REQUEST)
-
-    if email == "" or first_name == "" or last_name == "" or password == "":
-        return Response({"status": "error", "message": "Fields cannot be blank"}, status=status.HTTP_400_BAD_REQUEST)
-
     # Create the user object and set the data fields
     user = User.objects.create_user(
-        email, first_name=first_name, last_name=last_name, email=email)
-    user.set_password(password)
+        request.POST["email"], first_name=request.POST["first_name"], last_name=request.POST["last_name"], email=request.POST["email"])
+    user.set_password(request.POST["password"])
     user.save()
 
     # Get the token
@@ -53,6 +41,7 @@ def signup(request):
 
 
 @api_view(["POST"])
+@input_validator("POST", ["email", "password"])
 def signin(request):
     """
     Signin
@@ -66,15 +55,8 @@ def signin(request):
     Returns:
     token (str)
     """
-    # Input validation
-    try:
-        email = request.POST["email"]
-        password = request.POST["password"]
-    except:
-        return Response({"status": "error", "message": "Invalid request"}, status=status.HTTP_400_BAD_REQUEST)
-
     # Try to log in and generate/get a token
-    user = authenticate(request, username=email, password=password)
+    user = authenticate(request, username=request.POST["email"], password=request.POST["password"])
     if user is not None:
         token, _ = Token.objects.get_or_create(user=user)
         return Response({"status": "ok", "message": "User successfully logged in", "token": token.key}, status=status.HTTP_200_OK)
