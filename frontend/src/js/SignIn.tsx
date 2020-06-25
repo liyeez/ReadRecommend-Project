@@ -31,7 +31,7 @@ interface Props {
 }
 
 interface SignInForm {
-    token: string;
+    token: string
     signInError: string;
     signInEmail: string;
     signInPassword: string;
@@ -128,7 +128,7 @@ const SignIn: React.FC<Props> = ({}) => {
                         </Button>
                         <Grid container justify="flex-end">
                             <Grid item>
-                                <Link href="/signup" variant="body2">
+                                <Link href="/auth/signup" variant="body2">
                                 {"Don't have an account? Sign Up"}
                                 </Link>
                             </Grid>
