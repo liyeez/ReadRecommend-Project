@@ -79,4 +79,4 @@ def signin(request):
         token, _ = Token.objects.get_or_create(user=user)
         return Response({"status": "ok", "message": "User successfully logged in", "token": token.key}, status=status.HTTP_200_OK)
     else:
-        return Response({"status": "error", "message": "Could not log in"})
+        return Response({"status": "error", "message": "Could not log in"}, status=status.HTTP_401_UNAUTHORIZED)
