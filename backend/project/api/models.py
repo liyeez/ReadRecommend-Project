@@ -35,6 +35,6 @@ class Book(models.Model):
     cover = models.CharField(max_length=128)
     title = models.CharField(max_length=100)
     author = models.CharField(max_length=100)
-    isbn = models.CharField(max_length=13)
+    isbn = models.CharField(max_length=13, primary_key=True)
     pub_date = models.DateField()
     objects = BookManager()

@@ -19,10 +19,10 @@ const routing: JSX.Element =
         <div>
             {/* Matches URL to first in the list and places the result in the div*/}
             <Router.Switch>
-                <Router.Route path="/signup">
+                <Router.Route path="/auth/signup">
                     <SignUp />
                 </Router.Route>
-                <Router.Route path="/signin">
+                <Router.Route path="/auth/signin">
                     <SignIn />
                 </Router.Route>
                 <Router.Route path="/">
