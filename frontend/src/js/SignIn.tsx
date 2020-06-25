@@ -4,6 +4,7 @@
 import React, {ChangeEvent, useState} from "react";
 import * as Router from "react-router-dom";
 import * as $ from "jquery";
+import Cookies from "universal-cookie";
 
 // Material UI
 import Button from '@material-ui/core/Button';
@@ -20,16 +21,8 @@ const Style = makeStyles((theme) => ({
     paper: {
         marginTop: theme.spacing(8),
         display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-    },
-    form: {
-        width: '100%', // Fix IE 11 issue.
-        marginTop: theme.spacing(1),
-    },
-    submit: {
-        color: "white",
         margin: theme.spacing(3, 0, 2),
+
     },
 }));
 
@@ -73,12 +66,22 @@ const SignIn: React.FC<Props> = ({}) => {
                 password: signInForm.signInPassword
             },
             success: function (data) {
-                console.log(data);
+                console.log(data.status);
+                console.log(data.message);
+                if(data.status == 'error')
+                    <Router.Redirect to="/"/>
+                else if(data.status == 'ok')        
+                    <Router.Redirect to="/"/> //todo link to user profile
             },
             error: function () {
-                console.log("Error!");
+                console.log("server error!");
             }
         });
+
+        const cookies = new Cookies();
+        cookies.set('myCat', 'Pacman', { path: '/'});
+        console.log(cookies.get('myCat'));
+
     }
 
     const classes = Style();
