@@ -22,7 +22,13 @@ const Style = makeStyles((theme) => ({
         marginTop: theme.spacing(8),
         display: 'flex',
         margin: theme.spacing(3, 0, 2),
-
+    },
+    form: {
+        width: "100%", // Fix IE 11 issue.
+        marginTop: theme.spacing(3),
+    },
+    submit: {
+        margin: theme.spacing(3, 0, 2),
     },
 }));
 
