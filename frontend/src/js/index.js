@@ -79617,10 +79617,91 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const react_1 = __importDefault(__webpack_require__(/*! react */ "../node_modules/react/index.js"));
 const Router = __importStar(__webpack_require__(/*! react-router-dom */ "../node_modules/react-router-dom/esm/react-router-dom.js"));
+const CookieService_1 = __importDefault(__webpack_require__(/*! ../services/CookieService */ "./services/CookieService.ts"));
 // Material UI
 const AppBar_1 = __importDefault(__webpack_require__(/*! @material-ui/core/AppBar */ "../node_modules/@material-ui/core/esm/AppBar/index.js"));
 const Button_1 = __importDefault(__webpack_require__(/*! @material-ui/core/Button */ "../node_modules/@material-ui/core/esm/Button/index.js"));
 const CollectionsBookmark_1 = __importDefault(__webpack_require__(/*! @material-ui/icons/CollectionsBookmark */ "../node_modules/@material-ui/icons/CollectionsBookmark.js"));
+const Toolbar_1 = __importDefault(__webpack_require__(/*! @material-ui/core/Toolbar */ "../node_modules/@material-ui/core/esm/Toolbar/index.js"));
+const Typography_1 = __importDefault(__webpack_require__(/*! @material-ui/core/Typography */ "../node_modules/@material-ui/core/esm/Typography/index.js"));
+const styles_1 = __webpack_require__(/*! @material-ui/core/styles */ "../node_modules/@material-ui/core/esm/styles/index.js");
+// Page imports
+const Sidebar_1 = __importDefault(__webpack_require__(/*! ./Sidebar */ "./js/Sidebar.tsx"));
+const userSignedIn = false;
+const drawerWidth = 240;
+const Style = styles_1.makeStyles((theme) => ({
+    root: {
+        display: 'flex',
+    },
+    appBar: {
+        zIndex: theme.zIndex.drawer + 1,
+    },
+}));
+function handleLogout() {
+    // Remove 'access_token' cookie using CookieService.
+    CookieService_1.default.remove('access_token');
+    window.location.reload();
+}
+const Header = ({ userSignedIn }) => {
+    const classes = Style();
+    // Determine whether a user is signed in by checking for 'access_token' cookie.
+    const token = CookieService_1.default.get('access_token');
+    if (token) {
+        userSignedIn = true;
+    }
+    else {
+        userSignedIn = false;
+    }
+    return (react_1.default.createElement("div", null,
+        react_1.default.createElement(AppBar_1.default, { position: "relative", className: classes.appBar },
+            react_1.default.createElement(Toolbar_1.default, null,
+                react_1.default.createElement(Typography_1.default, { variant: "h6", color: "inherit", noWrap: true },
+                    react_1.default.createElement(Button_1.default, { component: Router.Link, to: "/", color: "inherit", startIcon: react_1.default.createElement(CollectionsBookmark_1.default, null) })),
+                (userSignedIn) ? (react_1.default.createElement(Button_1.default, { component: Router.Link, to: "/", color: "inherit", onClick: handleLogout }, "Logout"))
+                    : (react_1.default.createElement(Button_1.default, { component: Router.Link, to: "/auth/signin", color: "inherit" }, "Login")))),
+        (userSignedIn) ? (react_1.default.createElement(Sidebar_1.default, null)) : (null)));
+};
+exports.default = Header;
+
+
+/***/ }),
+
+/***/ "./js/Sidebar.tsx":
+/*!************************!*\
+  !*** ./js/Sidebar.tsx ***!
+  \************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+// Sidebar.tsx
+// User sidebar which is rendered when a user is signed in.
+const react_1 = __importDefault(__webpack_require__(/*! react */ "../node_modules/react/index.js"));
+const Router = __importStar(__webpack_require__(/*! react-router-dom */ "../node_modules/react-router-dom/esm/react-router-dom.js"));
 const Drawer_1 = __importDefault(__webpack_require__(/*! @material-ui/core/Drawer */ "../node_modules/@material-ui/core/esm/Drawer/index.js"));
 const LibraryBooks_1 = __importDefault(__webpack_require__(/*! @material-ui/icons/LibraryBooks */ "../node_modules/@material-ui/icons/LibraryBooks.js"));
 const List_1 = __importDefault(__webpack_require__(/*! @material-ui/core/List */ "../node_modules/@material-ui/core/esm/List/index.js"));
@@ -79630,16 +79711,9 @@ const ListItemText_1 = __importDefault(__webpack_require__(/*! @material-ui/core
 const LocalLibrary_1 = __importDefault(__webpack_require__(/*! @material-ui/icons/LocalLibrary */ "../node_modules/@material-ui/icons/LocalLibrary.js"));
 const People_1 = __importDefault(__webpack_require__(/*! @material-ui/icons/People */ "../node_modules/@material-ui/icons/People.js"));
 const Toolbar_1 = __importDefault(__webpack_require__(/*! @material-ui/core/Toolbar */ "../node_modules/@material-ui/core/esm/Toolbar/index.js"));
-const Typography_1 = __importDefault(__webpack_require__(/*! @material-ui/core/Typography */ "../node_modules/@material-ui/core/esm/Typography/index.js"));
 const styles_1 = __webpack_require__(/*! @material-ui/core/styles */ "../node_modules/@material-ui/core/esm/styles/index.js");
 const drawerWidth = 240;
 const Style = styles_1.makeStyles((theme) => ({
-    root: {
-        display: 'flex',
-    },
-    appBar: {
-        zIndex: theme.zIndex.drawer + 1,
-    },
     drawer: {
         width: drawerWidth,
         flexShrink: 0,
@@ -79651,14 +79725,9 @@ const Style = styles_1.makeStyles((theme) => ({
         overflow: 'auto',
     },
 }));
-function Header() {
+const Sidebar = ({}) => {
     const classes = Style();
     return (react_1.default.createElement("div", null,
-        react_1.default.createElement(AppBar_1.default, { position: "relative", className: classes.appBar },
-            react_1.default.createElement(Toolbar_1.default, null,
-                react_1.default.createElement(Typography_1.default, { variant: "h6", color: "inherit", noWrap: true },
-                    react_1.default.createElement(Button_1.default, { component: Router.Link, to: "/", color: "inherit", startIcon: react_1.default.createElement(CollectionsBookmark_1.default, null) })),
-                react_1.default.createElement(Button_1.default, { component: Router.Link, to: "/auth/signin", color: "inherit" }, "Login"))),
         react_1.default.createElement(Drawer_1.default, { className: classes.drawer, variant: "permanent", classes: {
                 paper: classes.drawerPaper,
             } },
@@ -79677,8 +79746,8 @@ function Header() {
                         react_1.default.createElement(ListItemIcon_1.default, null,
                             react_1.default.createElement(People_1.default, null)),
                         react_1.default.createElement(ListItemText_1.default, { primary: 'Find Users' })))))));
-}
-exports.default = Header;
+};
+exports.default = Sidebar;
 
 
 /***/ }),
@@ -79781,6 +79850,7 @@ const SignIn = ({}) => {
                     const options = { path: "/" };
                     // Create a cookie with the token from response.
                     CookieService_1.default.set("access_token", data.token, options);
+                    window.location.reload();
                     react_1.default.createElement(Router.Redirect, { to: "/" }); //todo link to user profile
                 }
             },
@@ -79845,6 +79915,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const react_1 = __importStar(__webpack_require__(/*! react */ "../node_modules/react/index.js"));
 const Router = __importStar(__webpack_require__(/*! react-router-dom */ "../node_modules/react-router-dom/esm/react-router-dom.js"));
 const $ = __importStar(__webpack_require__(/*! jquery */ "../node_modules/jquery/dist/jquery.js"));
+const CookieService_1 = __importDefault(__webpack_require__(/*! ../services/CookieService */ "./services/CookieService.ts"));
 const Button_1 = __importDefault(__webpack_require__(/*! @material-ui/core/Button */ "../node_modules/@material-ui/core/esm/Button/index.js"));
 const Container_1 = __importDefault(__webpack_require__(/*! @material-ui/core/Container */ "../node_modules/@material-ui/core/esm/Container/index.js"));
 const CssBaseline_1 = __importDefault(__webpack_require__(/*! @material-ui/core/CssBaseline */ "../node_modules/@material-ui/core/esm/CssBaseline/index.js"));
@@ -79900,7 +79971,11 @@ const SignUp = ({}) => {
                 last_name: signUpForm.signUpLastName
             },
             success: function (data) {
-                data.token;
+                // Handle sign up success.
+                // The cookie will be available on all URLs.
+                const options = { path: "/" };
+                // Create a cookie with the token from response.
+                CookieService_1.default.set("access_token", data.token, options);
             },
             error: function () {
                 console.log("Error!");
@@ -80021,6 +80096,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const react_1 = __importDefault(__webpack_require__(/*! react */ "../node_modules/react/index.js"));
 const react_dom_1 = __importDefault(__webpack_require__(/*! react-dom */ "../node_modules/react-dom/index.js"));
 const Router = __importStar(__webpack_require__(/*! react-router-dom */ "../node_modules/react-router-dom/esm/react-router-dom.js"));
+const CookieService_1 = __importDefault(__webpack_require__(/*! ../services/CookieService */ "./services/CookieService.ts"));
 // Page imports
 const Header_1 = __importDefault(__webpack_require__(/*! ./Header */ "./js/Header.tsx"));
 const Footer_1 = __importDefault(__webpack_require__(/*! ./Footer */ "./js/Footer.tsx"));
@@ -80029,22 +80105,59 @@ const SignUp_1 = __importDefault(__webpack_require__(/*! ./SignUp */ "./js/SignU
 const SignIn_1 = __importDefault(__webpack_require__(/*! ./SignIn */ "./js/SignIn.tsx"));
 const UserLibrary_1 = __importDefault(__webpack_require__(/*! ./UserLibrary */ "./js/UserLibrary.tsx"));
 const UserCollections_1 = __importDefault(__webpack_require__(/*! ./UserCollections */ "./js/UserCollections.tsx"));
-const routing = react_1.default.createElement(Router.BrowserRouter, null,
-    react_1.default.createElement(Header_1.default, null),
-    react_1.default.createElement("div", null,
-        react_1.default.createElement(Router.Switch, null,
-            react_1.default.createElement(Router.Route, { path: "/auth/signup" },
-                react_1.default.createElement(SignUp_1.default, null)),
-            react_1.default.createElement(Router.Route, { path: "/auth/signin" },
-                react_1.default.createElement(SignIn_1.default, null)),
-            react_1.default.createElement(Router.Route, { path: "/user/userlibrary" },
-                react_1.default.createElement(UserLibrary_1.default, null)),
-            react_1.default.createElement(Router.Route, { path: "/user/usercollections" },
-                react_1.default.createElement(UserCollections_1.default, null)),
-            react_1.default.createElement(Router.Route, { path: "/" },
-                react_1.default.createElement(main_1.default, null)))),
-    react_1.default.createElement(Footer_1.default, null));
-react_dom_1.default.render(routing, document.getElementById("main"));
+let signedInStatus = true;
+const Routing = ({}) => {
+    // Determine whether a user is signed in by checking for 'access_token' cookie.
+    const token = CookieService_1.default.get('access_token');
+    if (token) {
+        signedInStatus = true;
+    }
+    else {
+        signedInStatus = false;
+    }
+    // TODO: How to pass the prop to header?
+    return (react_1.default.createElement(Router.BrowserRouter, null,
+        react_1.default.createElement(Header_1.default, { userSignedIn: signedInStatus }),
+        react_1.default.createElement("div", null,
+            react_1.default.createElement(Router.Switch, null,
+                react_1.default.createElement(Router.Route, { path: "/auth/signup" },
+                    react_1.default.createElement(SignUp_1.default, null)),
+                react_1.default.createElement(Router.Route, { path: "/auth/signin" },
+                    react_1.default.createElement(SignIn_1.default, null)),
+                react_1.default.createElement(Router.Route, { path: "/user/userlibrary" },
+                    react_1.default.createElement(UserLibrary_1.default, null)),
+                react_1.default.createElement(Router.Route, { path: "/user/usercollections" },
+                    react_1.default.createElement(UserCollections_1.default, null)),
+                react_1.default.createElement(Router.Route, { path: "/" },
+                    react_1.default.createElement(main_1.default, null)))),
+        react_1.default.createElement(Footer_1.default, null)));
+};
+// const routing: JSX.Element =
+//     <Router.BrowserRouter>
+//         <Header />
+//         <div>
+//             {/* Matches URL to first in the list and places the result in the div*/}
+//             <Router.Switch>
+//                 <Router.Route path="/auth/signup">
+//                     <SignUp />
+//                 </Router.Route>
+//                 <Router.Route path="/auth/signin">
+//                     <SignIn />
+//                 </Router.Route>
+//                 <Router.Route path="/user/userlibrary">
+//                     <UserLibrary />
+//                 </Router.Route>
+//                 <Router.Route path="/user/usercollections">
+//                     <UserCollections />
+//                 </Router.Route>
+//                 <Router.Route path="/">
+//                     <Main />
+//                 </Router.Route>
+//             </Router.Switch>
+//         </div>
+//         <Footer />
+//     </Router.BrowserRouter>;
+react_dom_1.default.render(react_1.default.createElement(Routing, null), document.getElementById("main"));
 
 
 /***/ }),

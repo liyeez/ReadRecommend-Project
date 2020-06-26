@@ -3,13 +3,13 @@
 
 import React from "react";
 import * as Router from 'react-router-dom';
+import CookieService from "../services/CookieService";
 
 // Material UI
 import AppBar from "@material-ui/core/AppBar";
 import Button from '@material-ui/core/Button';
 import CollectionsBookmarkIcon from '@material-ui/icons/CollectionsBookmark';
 import Drawer from '@material-ui/core/Drawer';
-import Divider from '@material-ui/core/Divider';
 import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -22,6 +22,10 @@ import Typography from "@material-ui/core/Typography";
 
 import { makeStyles } from "@material-ui/core/styles";
 
+// Page imports
+import Sidebar from "./Sidebar";
+
+const userSignedIn = false;
 const drawerWidth = 240;
 
 const Style = makeStyles((theme) => ({
@@ -31,20 +35,29 @@ const Style = makeStyles((theme) => ({
     appBar: {
         zIndex: theme.zIndex.drawer + 1,
     },
-    drawer: {
-        width: drawerWidth,
-        flexShrink: 0,
-    },
-    drawerPaper: {
-        width: drawerWidth,
-    },
-    drawerContainer: {
-        overflow: 'auto',
-    },
 }));
 
-export default function Header(): JSX.Element {
+function handleLogout() {
+    // Remove 'access_token' cookie using CookieService.
+    CookieService.remove('access_token');
+    window.location.reload();
+}
+
+interface Props {
+    userSignedIn: boolean;
+}
+
+const Header: React.FC<Props> = ({userSignedIn} : Props) => {
     const classes = Style();
+    // Determine whether a user is signed in by checking for 'access_token' cookie.
+    const token = CookieService.get('access_token')
+
+    if (token) {
+        userSignedIn = true;
+    } else {
+        userSignedIn = false;
+    }
+
     return (
         <div>
             <AppBar position="relative" className={classes.appBar}>
@@ -52,34 +65,17 @@ export default function Header(): JSX.Element {
                     <Typography variant="h6" color="inherit" noWrap>
                         <Button component={Router.Link} to="/" color="inherit" startIcon={<CollectionsBookmarkIcon />}/>
                     </Typography>
-                    <Button component={Router.Link} to="/auth/signin" color="inherit">Login</Button>
+                    {/* Renders Login button if user not signed in, otherwise reders Logout button.*/}
+                    {(userSignedIn) ? (<Button component={Router.Link} to="/" color="inherit" onClick={handleLogout}>Logout</Button>)
+                                    : (<Button component={Router.Link} to="/auth/signin" color="inherit">Login</Button>)}
+
                 </Toolbar>
             </AppBar>
-            <Drawer
-                className={classes.drawer}
-                variant="permanent"
-                classes={{
-                  paper: classes.drawerPaper,
-                }}
-            >
-            <Toolbar />
-                <div className={classes.drawerContainer}>
-                    <List>
-                        <ListItem button key={'My Library'} component={Router.Link} to="/users/userlibrary">
-                        <ListItemIcon><LocalLibraryIcon /></ListItemIcon>
-                        <ListItemText primary={'My Library'} />
-                        </ListItem>
-                        <ListItem button key={"My Collections"} component={Router.Link} to="/users/usercollections">
-                        <ListItemIcon><LibraryBooksIcon /></ListItemIcon>
-                        <ListItemText primary={'My Collections'} />
-                        </ListItem>
-                        <ListItem button key={'Find Users'}>
-                        <ListItemIcon><PeopleIcon /></ListItemIcon>
-                        <ListItemText primary={'Find Users'} />
-                        </ListItem>
-                    </List>
-                </div>
-            </Drawer>
+
+            {/* Renders sidebar only if user is signed in */}
+            {(userSignedIn) ? (<Sidebar />) : (null)}
         </div>
     )
 }
+
+export default Header;

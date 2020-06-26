@@ -4,7 +4,6 @@
 import React, {ChangeEvent, useState} from "react";
 import * as Router from "react-router-dom";
 import * as $ from "jquery";
-import Cookies from "universal-cookie";
 import CookieService from "../services/CookieService";
 
 // Material UI
@@ -87,7 +86,7 @@ const SignIn: React.FC<Props> = ({}) => {
                     const options = { path: "/" };
                     // Create a cookie with the token from response.
                     CookieService.set("access_token", data.token, options);
-                    
+                    window.location.reload();
                     <Router.Redirect to="/"/> //todo link to user profile
                 }
             },

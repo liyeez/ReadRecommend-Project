@@ -4,7 +4,7 @@
 import React, {ChangeEvent, useState} from "react";
 import * as Router from "react-router-dom";
 import * as $ from "jquery";
-import Cookies from "universal-cookie";
+import CookieService from "../services/CookieService";
 
 // Material UI
 import Alert from "@material-ui/lab/Alert";
@@ -84,7 +84,12 @@ const SignUp: React.FC<Props> = ({}) => {
                 last_name: signUpForm.signUpLastName
             },
             success: function (data) {
-                data.token
+                // Handle sign up success.
+
+                // The cookie will be available on all URLs.
+                const options = { path: "/" };
+                // Create a cookie with the token from response.
+                CookieService.set("access_token", data.token, options);
             },
             error: function () {
                 console.log("Error!");
