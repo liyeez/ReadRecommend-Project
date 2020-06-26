@@ -59,6 +59,11 @@ const Sidebar: React.FC = ({}) => {
                         <ListItemIcon><PeopleIcon /></ListItemIcon>
                         <ListItemText primary={'Find Users'} />
                         </ListItem>
+
+                        <ListItem button key={"My Profile"} component={Router.Link} to="/user/profile">
+                        <ListItemIcon><LibraryBooksIcon /></ListItemIcon>
+                        <ListItemText primary={'My Profile'} />
+                        </ListItem>
                         {/* For testing purposes. Prints Signed In if userSignedIn property is true. */}
                         {/*(userSignedIn) ? (<p>Signed In</p>) : (<p>Signed Out</p>)*/}
                     </List>

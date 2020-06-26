@@ -19,7 +19,7 @@ import LocalLibraryIcon from '@material-ui/icons/LocalLibrary';
 import PeopleIcon from '@material-ui/icons/People';
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
-
+import * as $ from "jquery";
 import { makeStyles } from "@material-ui/core/styles";
 
 // Page imports

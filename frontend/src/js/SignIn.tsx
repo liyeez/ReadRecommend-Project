@@ -66,6 +66,7 @@ const SignIn: React.FC<Props> = ({}) => {
     }
 
     function onSignIn() {
+        
         $.ajax({
             url: "http://localhost:8000/api/auth/signin",
             method: "POST",
@@ -74,27 +75,30 @@ const SignIn: React.FC<Props> = ({}) => {
                 password: signInForm.signInPassword
             },
             success: function (data) {
+
                 console.log(data.status);
                 console.log(data.message);
+
                 if(data.status == 'error') {
                     <Router.Redirect to="/"/>
 
                 } else if(data.status == 'ok') {
                     // Handle sign in success.
-
+                   
+                    //window.location.href = "/";
                     // The cookie will be available on all URLs.
                     const options = { path: "/" };
                     // Create a cookie with the token from response.
                     CookieService.set("access_token", data.token, options);
                     window.location.reload();
-                    <Router.Redirect to="/"/> //todo link to user profile
+                    <Router.Redirect to="/user/profile"/> //todo link to user profile
                 }
             },
             error: function () {
                 console.log("server error!");
             }
         });
-
+        
     }
 
     const classes = Style();

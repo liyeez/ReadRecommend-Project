@@ -79624,6 +79624,7 @@ const Button_1 = __importDefault(__webpack_require__(/*! @material-ui/core/Butto
 const CollectionsBookmark_1 = __importDefault(__webpack_require__(/*! @material-ui/icons/CollectionsBookmark */ "../node_modules/@material-ui/icons/CollectionsBookmark.js"));
 const Toolbar_1 = __importDefault(__webpack_require__(/*! @material-ui/core/Toolbar */ "../node_modules/@material-ui/core/esm/Toolbar/index.js"));
 const Typography_1 = __importDefault(__webpack_require__(/*! @material-ui/core/Typography */ "../node_modules/@material-ui/core/esm/Typography/index.js"));
+const $ = __importStar(__webpack_require__(/*! jquery */ "../node_modules/jquery/dist/jquery.js"));
 const styles_1 = __webpack_require__(/*! @material-ui/core/styles */ "../node_modules/@material-ui/core/esm/styles/index.js");
 // Page imports
 const Sidebar_1 = __importDefault(__webpack_require__(/*! ./Sidebar */ "./js/Sidebar.tsx"));
@@ -79760,7 +79761,11 @@ const Sidebar = ({}) => {
                     react_1.default.createElement(ListItem_1.default, { button: true, key: 'Find Users' },
                         react_1.default.createElement(ListItemIcon_1.default, null,
                             react_1.default.createElement(People_1.default, null)),
-                        react_1.default.createElement(ListItemText_1.default, { primary: 'Find Users' })))))));
+                        react_1.default.createElement(ListItemText_1.default, { primary: 'Find Users' })),
+                    react_1.default.createElement(ListItem_1.default, { button: true, key: "My Profile", component: Router.Link, to: "/user/profile" },
+                        react_1.default.createElement(ListItemIcon_1.default, null,
+                            react_1.default.createElement(LibraryBooks_1.default, null)),
+                        react_1.default.createElement(ListItemText_1.default, { primary: 'My Profile' })))))));
 };
 exports.default = Sidebar;
 
@@ -79861,12 +79866,13 @@ const SignIn = ({}) => {
                 }
                 else if (data.status == 'ok') {
                     // Handle sign in success.
+                    //window.location.href = "/";
                     // The cookie will be available on all URLs.
                     const options = { path: "/" };
                     // Create a cookie with the token from response.
                     CookieService_1.default.set("access_token", data.token, options);
                     window.location.reload();
-                    react_1.default.createElement(Router.Redirect, { to: "/" }); //todo link to user profile
+                    react_1.default.createElement(Router.Redirect, { to: "/user/profile" }); //todo link to user profile
                 }
             },
             error: function () {
@@ -80075,6 +80081,83 @@ exports.default = UserLibrary;
 
 /***/ }),
 
+/***/ "./js/UserProfile.tsx":
+/*!****************************!*\
+  !*** ./js/UserProfile.tsx ***!
+  \****************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const react_1 = __importDefault(__webpack_require__(/*! react */ "../node_modules/react/index.js"));
+// Material UI
+const Button_1 = __importDefault(__webpack_require__(/*! @material-ui/core/Button */ "../node_modules/@material-ui/core/esm/Button/index.js"));
+const Container_1 = __importDefault(__webpack_require__(/*! @material-ui/core/Container */ "../node_modules/@material-ui/core/esm/Container/index.js"));
+const CssBaseline_1 = __importDefault(__webpack_require__(/*! @material-ui/core/CssBaseline */ "../node_modules/@material-ui/core/esm/CssBaseline/index.js"));
+const Grid_1 = __importDefault(__webpack_require__(/*! @material-ui/core/Grid */ "../node_modules/@material-ui/core/esm/Grid/index.js"));
+const Typography_1 = __importDefault(__webpack_require__(/*! @material-ui/core/Typography */ "../node_modules/@material-ui/core/esm/Typography/index.js"));
+const styles_1 = __webpack_require__(/*! @material-ui/core/styles */ "../node_modules/@material-ui/core/esm/styles/index.js");
+const Card_1 = __importDefault(__webpack_require__(/*! @material-ui/core/Card */ "../node_modules/@material-ui/core/esm/Card/index.js"));
+const CardActions_1 = __importDefault(__webpack_require__(/*! @material-ui/core/CardActions */ "../node_modules/@material-ui/core/esm/CardActions/index.js"));
+const CardContent_1 = __importDefault(__webpack_require__(/*! @material-ui/core/CardContent */ "../node_modules/@material-ui/core/esm/CardContent/index.js"));
+const CardMedia_1 = __importDefault(__webpack_require__(/*! @material-ui/core/CardMedia */ "../node_modules/@material-ui/core/esm/CardMedia/index.js"));
+const useStyles = styles_1.makeStyles((theme) => ({
+    icon: {
+        marginRight: theme.spacing(2),
+    },
+    heroContent: {
+        backgroundColor: theme.palette.background.paper,
+        padding: theme.spacing(8, 0, 6),
+    },
+    heroButtons: {
+        marginTop: theme.spacing(4),
+    },
+    cardGrid: {
+        paddingTop: theme.spacing(8),
+        paddingBottom: theme.spacing(8),
+    },
+    card: {
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+    },
+    cardMedia: {
+        paddingTop: '56.25%',
+    },
+    cardContent: {
+        flexGrow: 1,
+    },
+}));
+const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+function Album() {
+    const classes = useStyles();
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement(CssBaseline_1.default, null),
+        react_1.default.createElement("main", null,
+            react_1.default.createElement("div", { className: classes.heroContent },
+                react_1.default.createElement(Container_1.default, { maxWidth: "md" },
+                    react_1.default.createElement(Typography_1.default, { component: "h1", variant: "h2", align: "left", color: "textPrimary" }, "Your Library"))),
+            react_1.default.createElement(Container_1.default, { className: classes.cardGrid, maxWidth: "md" },
+                react_1.default.createElement(Grid_1.default, { container: true, spacing: 4 }, cards.map((card) => (react_1.default.createElement(Grid_1.default, { item: true, key: card, xs: 12, sm: 6, md: 4 },
+                    react_1.default.createElement(Card_1.default, { className: classes.card },
+                        react_1.default.createElement(CardMedia_1.default, { className: classes.cardMedia, image: "https://source.unsplash.com/random", title: "Image title" }),
+                        react_1.default.createElement(CardContent_1.default, { className: classes.cardContent },
+                            react_1.default.createElement(Typography_1.default, { gutterBottom: true, variant: "h5", component: "h2" }, "Heading"),
+                            react_1.default.createElement(Typography_1.default, null, "Book content.")),
+                        react_1.default.createElement(CardActions_1.default, null,
+                            react_1.default.createElement(Button_1.default, { size: "small", color: "primary" }, "View"),
+                            react_1.default.createElement(Button_1.default, { size: "small", color: "primary" }, "Edit")))))))))));
+}
+exports.default = Album;
+
+
+/***/ }),
+
 /***/ "./js/index.tsx":
 /*!**********************!*\
   !*** ./js/index.tsx ***!
@@ -80122,6 +80205,7 @@ const SignUp_1 = __importDefault(__webpack_require__(/*! ./SignUp */ "./js/SignU
 const SignIn_1 = __importDefault(__webpack_require__(/*! ./SignIn */ "./js/SignIn.tsx"));
 const UserLibrary_1 = __importDefault(__webpack_require__(/*! ./UserLibrary */ "./js/UserLibrary.tsx"));
 const UserCollections_1 = __importDefault(__webpack_require__(/*! ./UserCollections */ "./js/UserCollections.tsx"));
+const UserProfile_1 = __importDefault(__webpack_require__(/*! ./UserProfile */ "./js/UserProfile.tsx"));
 let signedInStatus = true;
 const Routing = ({}) => {
     // Determine whether a user is signed in by checking for 'access_token' cookie.
@@ -80145,6 +80229,8 @@ const Routing = ({}) => {
                     react_1.default.createElement(UserLibrary_1.default, null)),
                 react_1.default.createElement(Router.Route, { path: "/user/usercollections" },
                     react_1.default.createElement(UserCollections_1.default, null)),
+                react_1.default.createElement(Router.Route, { path: "/user/profile" },
+                    react_1.default.createElement(UserProfile_1.default, null)),
                 react_1.default.createElement(Router.Route, { path: "/" },
                     react_1.default.createElement(main_1.default, null)))),
         react_1.default.createElement(Footer_1.default, null)));
