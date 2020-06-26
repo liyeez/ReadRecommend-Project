@@ -80374,8 +80374,8 @@ exports.default = new CookieService();
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\Users\Monica Ng\gitty\capstone-project-chillax\frontend\node_modules\webpack-dev-server\client\index.js?http://localhost:8080 */"../node_modules/webpack-dev-server/client/index.js?http://localhost:8080");
-module.exports = __webpack_require__(/*! C:\Users\Monica Ng\gitty\capstone-project-chillax\frontend\src\js\index.tsx */"./js/index.tsx");
+__webpack_require__(/*! /home/liyeez/local_3900/capstone-project-chillax/frontend/node_modules/webpack-dev-server/client/index.js?http://localhost:8080 */"../node_modules/webpack-dev-server/client/index.js?http://localhost:8080");
+module.exports = __webpack_require__(/*! /home/liyeez/local_3900/capstone-project-chillax/frontend/src/js/index.tsx */"./js/index.tsx");
 
 
 /***/ })
