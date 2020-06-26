@@ -19,6 +19,84 @@ import { LineChart, Line, XAxis, YAxis, Label, ResponsiveContainer } from 'recha
 import { useTheme } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 
+
+
+export default function Blog() {
+  const classes = useStyles();
+  const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+  return (
+    <React.Fragment>
+      <CssBaseline />
+      <Container maxWidth="sm">
+        <div className={classes.heroContent}>
+            <Typography component="h1" variant="h2" align="center" color="textPrimary" >
+              Home Profile
+            </Typography>
+            
+        </div>
+      </Container>
+       <main className={classes.content}>
+      
+      <Container maxWidth="lg" className={classes.container}>
+        <Grid container spacing={3}>
+          {/* Chart */}
+          <Grid item xs={12} md={8} lg={9}>
+            <Paper className={fixedHeightPaper}>
+              <Chart /> 
+            </Paper>
+          </Grid>
+          {/* Goal */}
+          <Grid item xs={12} md={4} lg={3}>
+            <Paper className={fixedHeightPaper}>
+              <Goal />
+            </Paper>
+          </Grid>
+        </Grid>
+        
+        <Grid container spacing={3} className={classes.container} >  
+          <Typography variant="h4" align="left" paragraph>
+            Recently Added Books
+          </Typography>       
+          <Container className={classes.cardGrid} maxWidth="md">
+          {/* End hero unit */}
+          <Grid container spacing={4}>
+            {featuredPosts.map((book) => (
+              <Grid item key={book} xs={6} sm={3} md={4}>
+                <Card className={classes.card}>
+                  <CardMedia
+                    className={classes.cardMedia}
+                    image="https://source.unsplash.com/random?book"
+                    title="Image title"
+                  />
+                  <CardContent className={classes.cardContent}>
+                    <Typography gutterBottom variant="h5" component="h2">
+                        Book Title
+                    </Typography>
+                    <Typography>
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam molestie pellentesque tortor in rhoncus.
+                    </Typography>
+                  </CardContent>
+                  <CardActions>
+                      <Button size="small" color="primary">
+                          View
+                      </Button>
+                  </CardActions>
+                </Card>
+                </Grid>
+            ))}
+          </Grid>
+
+          </Grid>
+
+
+      </Container>
+      </main>
+    </div>
+
+    </React.Fragment>
+  );
+}
+
 const useStyles = makeStyles((theme) => ({
   title: {
     marginTop: theme.spacing(3),
@@ -40,6 +118,10 @@ const useStyles = makeStyles((theme) => ({
   container: {
     paddingTop: theme.spacing(4),
     paddingBottom: theme.spacing(4),
+  },
+  heroContent: {
+    backgroundColor: theme.palette.background.paper,
+    padding: theme.spacing(8, 0, 6),
   },
   paper: {
     padding: theme.spacing(2),
@@ -67,30 +149,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-const featuredPosts = [
-  {
-    title: 'RecommendBook 1',
-    description:
-      'This is a wider card with supporting text below as a natural lead-in to additional content.',
-    image: 'https://source.unsplash.com/random',
-    imageText: 'Image Text',
-  },
-  {
-    title: 'RecommendBook 2',
-    description:
-      'This is a wider card with supporting text below as a natural lead-in to additional content.',
-    image: 'https://source.unsplash.com/random',
-    imageText: 'Image Text',
-  },
-  {
-    title: 'RecommendBook 3',
-    description:
-      'This is a wider card with supporting text below as a natural lead-in to additional content.',
-    image: 'https://source.unsplash.com/random',
-    imageText: 'Image Text',
-  },
 
-];
 
 // Generate Sales Data
 function createData(time, amount) {
@@ -170,82 +229,78 @@ const data = [
   createData('24:00', undefined),
 ];
 
-export default function Blog() {
-  const classes = useStyles();
-  const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
-  return (
-    <React.Fragment>
-      <CssBaseline />
-      
-      <div className={classes.title}>
-        <Container maxWidth="lg">
-          <Typography component="h1" variant="h2" align="center" color="textPrimary" >
-            Home Profile
-          </Typography>
-          
-         </Container>
-      </div>
-      
-     <main className={classes.content}>
-      <div className={classes.appBarSpacer} />
-      <Container maxWidth="lg" className={classes.container}>
-        <Grid container spacing={3}>
-          {/* Chart */}
-          <Grid item xs={12} md={8} lg={9}>
-            <Paper className={fixedHeightPaper}>
-              <Chart /> 
-            </Paper>
-          </Grid>
-          {/* Goal */}
-          <Grid item xs={12} md={4} lg={3}>
-            <Paper className={fixedHeightPaper}>
-              <Goal />
-            </Paper>
-          </Grid>
-        </Grid>
-        
-        <Grid container spacing={3} className={classes.container} >  
-          <Typography variant="h4" align="left" paragraph>
-            Book Recommendations
-          </Typography>       
-          <Container className={classes.cardGrid} maxWidth="md">
-          {/* End hero unit */}
-          <Grid container spacing={4}>
-            {featuredPosts.map((book) => (
-              <Grid item key={book} xs={12} sm={6} md={4}>
-                <Card className={classes.card}>
-                  <CardMedia
-                    className={classes.cardMedia}
-                    image="https://source.unsplash.com/random?book"
-                    title="Image title"
-                  />
-                  <CardContent className={classes.cardContent}>
-                    <Typography gutterBottom variant="h5" component="h2">
-                        Book Title
-                    </Typography>
-                    <Typography>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam molestie pellentesque tortor in rhoncus.
-                    </Typography>
-                  </CardContent>
-                  <CardActions>
-                      <Button size="small" color="primary">
-                          View
-                      </Button>
-                  </CardActions>
-                </Card>
-                </Grid>
-            ))}
-          </Grid>
+const featuredPosts = [
+  {
+    title: 'RecommendBook 1',
+    description:
+      'This is a wider card with supporting text below as a natural lead-in to additional content.',
+    image: 'https://source.unsplash.com/random',
+    imageText: 'Image Text',
+  },
+  {
+    title: 'RecommendBook 2',
+    description:
+      'This is a wider card with supporting text below as a natural lead-in to additional content.',
+    image: 'https://source.unsplash.com/random',
+    imageText: 'Image Text',
+  },
+  {
+    title: 'RecommendBook 3',
+    description:
+      'This is a wider card with supporting text below as a natural lead-in to additional content.',
+    image: 'https://source.unsplash.com/random',
+    imageText: 'Image Text',
+  },
+  {
+    title: 'RecommendBook 4',
+    description:
+      'This is a wider card with supporting text below as a natural lead-in to additional content.',
+    image: 'https://source.unsplash.com/random',
+    imageText: 'Image Text',
+  },
+  {
+    title: 'RecommendBook 5',
+    description:
+      'This is a wider card with supporting text below as a natural lead-in to additional content.',
+    image: 'https://source.unsplash.com/random',
+    imageText: 'Image Text',
+  },
+  {
+    title: 'RecommendBook 6',
+    description:
+      'This is a wider card with supporting text below as a natural lead-in to additional content.',
+    image: 'https://source.unsplash.com/random',
+    imageText: 'Image Text',
+  },
+  {
+    title: 'RecommendBook 7',
+    description:
+      'This is a wider card with supporting text below as a natural lead-in to additional content.',
+    image: 'https://source.unsplash.com/random',
+    imageText: 'Image Text',
+  },
+  {
+    title: 'RecommendBook 8',
+    description:
+      'This is a wider card with supporting text below as a natural lead-in to additional content.',
+    image: 'https://source.unsplash.com/random',
+    imageText: 'Image Text',
+  },
+  {
+    title: 'RecommendBook 9',
+    description:
+      'This is a wider card with supporting text below as a natural lead-in to additional content.',
+    image: 'https://source.unsplash.com/random',
+    imageText: 'Image Text',
+  },
+  {
+    title: 'RecommendBook 10',
+    description:
+      'This is a wider card with supporting text below as a natural lead-in to additional content.',
+    image: 'https://source.unsplash.com/random',
+    imageText: 'Image Text',
+  },
 
-          </Grid>
-
-
-      </Container>
-      </main>
-    </div>
-
-    </React.Fragment>
-  );
-}
+];
 
 //<FeaturedPost book={book} />

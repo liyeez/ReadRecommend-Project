@@ -21,6 +21,8 @@ const useStyles = makeStyles({
   },
 });
 
+// todo in future: do ajax request from Recommend algo
+
 export default function RecommendBook(props) {
   const classes = useStyles();
   const { book } = props;
