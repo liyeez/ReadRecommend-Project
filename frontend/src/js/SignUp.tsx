@@ -90,6 +90,8 @@ const SignUp: React.FC<Props> = ({}) => {
                 const options = { path: "/" };
                 // Create a cookie with the token from response.
                 CookieService.set("access_token", data.token, options);
+                window.location.reload();
+                <Router.Redirect to="/"/>
             },
             error: function () {
                 console.log("Error!");

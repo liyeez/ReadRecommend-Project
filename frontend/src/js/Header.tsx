@@ -38,7 +38,24 @@ const Style = makeStyles((theme) => ({
 }));
 
 function handleLogout() {
-    // Remove 'access_token' cookie using CookieService.
+    const tokenToRemove = CookieService.get('access_token')
+
+    // Remove cookie on backend.
+    $.ajax({
+        url: "http://localhost:8000/api/auth/signout",
+        method: "POST",
+        data: {
+            token: tokenToRemove,
+        },
+        success: function (data) {
+            console.log("Logged out");
+        },
+        error: function () {
+            console.log("server error!");
+        }
+    });
+
+    // Remove 'access_token' cookie on frontend using CookieService.
     CookieService.remove('access_token');
     window.location.reload();
 }

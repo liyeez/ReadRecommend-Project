@@ -79638,7 +79638,22 @@ const Style = styles_1.makeStyles((theme) => ({
     },
 }));
 function handleLogout() {
-    // Remove 'access_token' cookie using CookieService.
+    const tokenToRemove = CookieService_1.default.get('access_token');
+    // Remove cookie on backend.
+    $.ajax({
+        url: "http://localhost:8000/api/auth/signout",
+        method: "POST",
+        data: {
+            token: tokenToRemove,
+        },
+        success: function (data) {
+            console.log("Logged out");
+        },
+        error: function () {
+            console.log("server error!");
+        }
+    });
+    // Remove 'access_token' cookie on frontend using CookieService.
     CookieService_1.default.remove('access_token');
     window.location.reload();
 }
@@ -79976,6 +79991,8 @@ const SignUp = ({}) => {
                 const options = { path: "/" };
                 // Create a cookie with the token from response.
                 CookieService_1.default.set("access_token", data.token, options);
+                window.location.reload();
+                react_1.default.createElement(Router.Redirect, { to: "/" });
             },
             error: function () {
                 console.log("Error!");
