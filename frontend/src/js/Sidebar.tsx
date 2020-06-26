@@ -16,6 +16,7 @@ import PeopleIcon from '@material-ui/icons/People';
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 
+import CookieService from "../services/CookieService";
 import { makeStyles } from "@material-ui/core/styles";
 
 const drawerWidth = 240;
@@ -34,6 +35,8 @@ const Style = makeStyles((theme) => ({
 }));
 
 const Sidebar: React.FC = ({}) => {
+    
+
     const classes = Style();
     return (
         <div>
