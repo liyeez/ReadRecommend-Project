@@ -4,6 +4,7 @@
 import React, {ChangeEvent, useState} from "react";
 import * as Router from "react-router-dom";
 import * as $ from "jquery";
+import Cookies from "universal-cookie";
 
 // Material UI
 import Alert from "@material-ui/lab/Alert";
@@ -83,7 +84,7 @@ const SignUp: React.FC<Props> = ({}) => {
                 last_name: signUpForm.signUpLastName
             },
             success: function (data) {
-                console.log(data);
+                data.token
             },
             error: function () {
                 console.log("Error!");

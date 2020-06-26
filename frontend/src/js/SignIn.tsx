@@ -5,6 +5,7 @@ import React, {ChangeEvent, useState} from "react";
 import * as Router from "react-router-dom";
 import * as $ from "jquery";
 import Cookies from "universal-cookie";
+import CookieService from "../services/CookieService";
 
 // Material UI
 import Button from '@material-ui/core/Button';
@@ -21,6 +22,8 @@ const Style = makeStyles((theme) => ({
     paper: {
         marginTop: theme.spacing(8),
         display: 'flex',
+        flexDirection: "column",
+        alignItems: "center",
         margin: theme.spacing(3, 0, 2),
     },
     form: {
@@ -74,19 +77,24 @@ const SignIn: React.FC<Props> = ({}) => {
             success: function (data) {
                 console.log(data.status);
                 console.log(data.message);
-                if(data.status == 'error')
+                if(data.status == 'error') {
                     <Router.Redirect to="/"/>
-                else if(data.status == 'ok')        
+
+                } else if(data.status == 'ok') {
+                    // Handle sign in success.
+
+                    // The cookie will be available on all URLs.
+                    const options = { path: "/" };
+                    // Create a cookie with the token from response.
+                    CookieService.set("access_token", data.token, options);
+                    
                     <Router.Redirect to="/"/> //todo link to user profile
+                }
             },
             error: function () {
                 console.log("server error!");
             }
         });
-
-        const cookies = new Cookies();
-        cookies.set('myCat', 'Pacman', { path: '/'});
-        console.log(cookies.get('myCat'));
 
     }
 

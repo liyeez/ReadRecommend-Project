@@ -12,6 +12,8 @@ import Footer from "./Footer";
 import Main from "./main";
 import SignUp from "./SignUp";
 import SignIn from "./SignIn";
+import UserLibrary from "./UserLibrary";
+import UserCollections from "./UserCollections";
 
 const routing: JSX.Element =
     <Router.BrowserRouter>
@@ -24,6 +26,12 @@ const routing: JSX.Element =
                 </Router.Route>
                 <Router.Route path="/auth/signin">
                     <SignIn />
+                </Router.Route>
+                <Router.Route path="/user/userlibrary">
+                    <UserLibrary />
+                </Router.Route>
+                <Router.Route path="/user/usercollections">
+                    <UserCollections />
                 </Router.Route>
                 <Router.Route path="/">
                     <Main />

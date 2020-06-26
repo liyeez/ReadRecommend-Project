@@ -79665,11 +79665,11 @@ function Header() {
             react_1.default.createElement(Toolbar_1.default, null),
             react_1.default.createElement("div", { className: classes.drawerContainer },
                 react_1.default.createElement(List_1.default, null,
-                    react_1.default.createElement(ListItem_1.default, { button: true, key: 'My Library' },
+                    react_1.default.createElement(ListItem_1.default, { button: true, key: 'My Library', component: Router.Link, to: "/users/userlibrary" },
                         react_1.default.createElement(ListItemIcon_1.default, null,
                             react_1.default.createElement(LocalLibrary_1.default, null)),
                         react_1.default.createElement(ListItemText_1.default, { primary: 'My Library' })),
-                    react_1.default.createElement(ListItem_1.default, { button: true, key: 'My Collections' },
+                    react_1.default.createElement(ListItem_1.default, { button: true, key: "My Collections", component: Router.Link, to: "/users/usercollections" },
                         react_1.default.createElement(ListItemIcon_1.default, null,
                             react_1.default.createElement(LibraryBooks_1.default, null)),
                         react_1.default.createElement(ListItemText_1.default, { primary: 'My Collections' })),
@@ -79720,7 +79720,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const react_1 = __importStar(__webpack_require__(/*! react */ "../node_modules/react/index.js"));
 const Router = __importStar(__webpack_require__(/*! react-router-dom */ "../node_modules/react-router-dom/esm/react-router-dom.js"));
 const $ = __importStar(__webpack_require__(/*! jquery */ "../node_modules/jquery/dist/jquery.js"));
-const universal_cookie_1 = __importDefault(__webpack_require__(/*! universal-cookie */ "../node_modules/universal-cookie/es6/index.js"));
+const CookieService_1 = __importDefault(__webpack_require__(/*! ../services/CookieService */ "./services/CookieService.ts"));
 // Material UI
 const Button_1 = __importDefault(__webpack_require__(/*! @material-ui/core/Button */ "../node_modules/@material-ui/core/esm/Button/index.js"));
 const Container_1 = __importDefault(__webpack_require__(/*! @material-ui/core/Container */ "../node_modules/@material-ui/core/esm/Container/index.js"));
@@ -79734,6 +79734,8 @@ const Style = styles_1.makeStyles((theme) => ({
     paper: {
         marginTop: theme.spacing(8),
         display: 'flex',
+        flexDirection: "column",
+        alignItems: "center",
         margin: theme.spacing(3, 0, 2),
     },
     form: {
@@ -79770,18 +79772,22 @@ const SignIn = ({}) => {
             success: function (data) {
                 console.log(data.status);
                 console.log(data.message);
-                if (data.status == 'error')
+                if (data.status == 'error') {
                     react_1.default.createElement(Router.Redirect, { to: "/" });
-                else if (data.status == 'ok')
+                }
+                else if (data.status == 'ok') {
+                    // Handle sign in success.
+                    // The cookie will be available on all URLs.
+                    const options = { path: "/" };
+                    // Create a cookie with the token from response.
+                    CookieService_1.default.set("access_token", data.token, options);
                     react_1.default.createElement(Router.Redirect, { to: "/" }); //todo link to user profile
+                }
             },
             error: function () {
                 console.log("server error!");
             }
         });
-        const cookies = new universal_cookie_1.default();
-        cookies.set('myCat', 'Pacman', { path: '/' });
-        console.log(cookies.get('myCat'));
     }
     const classes = Style();
     return (react_1.default.createElement("div", null,
@@ -79894,7 +79900,7 @@ const SignUp = ({}) => {
                 last_name: signUpForm.signUpLastName
             },
             success: function (data) {
-                console.log(data);
+                data.token;
             },
             error: function () {
                 console.log("Error!");
@@ -79923,6 +79929,56 @@ const SignUp = ({}) => {
                             react_1.default.createElement(Link_1.default, { href: "/signin", variant: "body2" }, "Already have an account? Sign in."))))))));
 };
 exports.default = SignUp;
+
+
+/***/ }),
+
+/***/ "./js/UserCollections.tsx":
+/*!********************************!*\
+  !*** ./js/UserCollections.tsx ***!
+  \********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const react_1 = __importDefault(__webpack_require__(/*! react */ "../node_modules/react/index.js"));
+const UserCollections = ({}) => {
+    // This page is rendered when user clicks on 'My Collections.'
+    // This page contains all of the book collections the user has created.
+    return (react_1.default.createElement("div", null,
+        react_1.default.createElement("p", null, " User collections??")));
+};
+exports.default = UserCollections;
+
+
+/***/ }),
+
+/***/ "./js/UserLibrary.tsx":
+/*!****************************!*\
+  !*** ./js/UserLibrary.tsx ***!
+  \****************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const react_1 = __importDefault(__webpack_require__(/*! react */ "../node_modules/react/index.js"));
+const UserLibrary = ({}) => {
+    // This page is rendered when user clicks on 'My Library.'
+    // This page contains all of the books the user has added to their profile.
+    return (react_1.default.createElement("div", null,
+        react_1.default.createElement("p", null, " User library??")));
+};
+exports.default = UserLibrary;
 
 
 /***/ }),
@@ -79971,6 +80027,8 @@ const Footer_1 = __importDefault(__webpack_require__(/*! ./Footer */ "./js/Foote
 const main_1 = __importDefault(__webpack_require__(/*! ./main */ "./js/main.tsx"));
 const SignUp_1 = __importDefault(__webpack_require__(/*! ./SignUp */ "./js/SignUp.tsx"));
 const SignIn_1 = __importDefault(__webpack_require__(/*! ./SignIn */ "./js/SignIn.tsx"));
+const UserLibrary_1 = __importDefault(__webpack_require__(/*! ./UserLibrary */ "./js/UserLibrary.tsx"));
+const UserCollections_1 = __importDefault(__webpack_require__(/*! ./UserCollections */ "./js/UserCollections.tsx"));
 const routing = react_1.default.createElement(Router.BrowserRouter, null,
     react_1.default.createElement(Header_1.default, null),
     react_1.default.createElement("div", null,
@@ -79979,6 +80037,10 @@ const routing = react_1.default.createElement(Router.BrowserRouter, null,
                 react_1.default.createElement(SignUp_1.default, null)),
             react_1.default.createElement(Router.Route, { path: "/auth/signin" },
                 react_1.default.createElement(SignIn_1.default, null)),
+            react_1.default.createElement(Router.Route, { path: "/user/userlibrary" },
+                react_1.default.createElement(UserLibrary_1.default, null)),
+            react_1.default.createElement(Router.Route, { path: "/user/usercollections" },
+                react_1.default.createElement(UserCollections_1.default, null)),
             react_1.default.createElement(Router.Route, { path: "/" },
                 react_1.default.createElement(main_1.default, null)))),
     react_1.default.createElement(Footer_1.default, null));
@@ -80144,6 +80206,37 @@ exports.default = Main;
 
 /***/ }),
 
+/***/ "./services/CookieService.ts":
+/*!***********************************!*\
+  !*** ./services/CookieService.ts ***!
+  \***********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const universal_cookie_1 = __importDefault(__webpack_require__(/*! universal-cookie */ "../node_modules/universal-cookie/es6/index.js"));
+const cookie = new universal_cookie_1.default();
+class CookieService {
+    get(key) {
+        return cookie.get(key);
+    }
+    set(key, value, options) {
+        cookie.set(key, value, options);
+    }
+    remove(key) {
+        cookie.remove(key);
+    }
+}
+exports.default = new CookieService();
+
+
+/***/ }),
+
 /***/ 0:
 /*!********************************************************************************************!*\
   !*** multi ../node_modules/webpack-dev-server/client?http://localhost:8080 ./js/index.tsx ***!
@@ -80151,8 +80244,8 @@ exports.default = Main;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\Users\Simon\Documents\Files\Programming\Capstone\frontend\node_modules\webpack-dev-server\client\index.js?http://localhost:8080 */"../node_modules/webpack-dev-server/client/index.js?http://localhost:8080");
-module.exports = __webpack_require__(/*! C:\Users\Simon\Documents\Files\Programming\Capstone\frontend\src\js\index.tsx */"./js/index.tsx");
+__webpack_require__(/*! C:\Users\Monica Ng\gitty\capstone-project-chillax\frontend\node_modules\webpack-dev-server\client\index.js?http://localhost:8080 */"../node_modules/webpack-dev-server/client/index.js?http://localhost:8080");
+module.exports = __webpack_require__(/*! C:\Users\Monica Ng\gitty\capstone-project-chillax\frontend\src\js\index.tsx */"./js/index.tsx");
 
 
 /***/ })

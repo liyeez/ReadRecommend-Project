@@ -65,11 +65,11 @@ export default function Header(): JSX.Element {
             <Toolbar />
                 <div className={classes.drawerContainer}>
                     <List>
-                        <ListItem button key={'My Library'}>
+                        <ListItem button key={'My Library'} component={Router.Link} to="/users/userlibrary">
                         <ListItemIcon><LocalLibraryIcon /></ListItemIcon>
                         <ListItemText primary={'My Library'} />
                         </ListItem>
-                        <ListItem button key={'My Collections'}>
+                        <ListItem button key={"My Collections"} component={Router.Link} to="/users/usercollections">
                         <ListItemIcon><LibraryBooksIcon /></ListItemIcon>
                         <ListItemText primary={'My Collections'} />
                         </ListItem>
