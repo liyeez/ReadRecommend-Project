@@ -15,6 +15,8 @@ import Link from "@material-ui/core/Link";
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 
+
+import "react-multi-carousel/lib/styles.css";
 import { makeStyles } from "@material-ui/core/styles";
 
 const Style = makeStyles((theme) => ({
