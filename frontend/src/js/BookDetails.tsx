@@ -1,88 +1,142 @@
-import React from "react";
-import Carousel from "react-multi-carousel"
-import CssBaseline from '@material-ui/core/CssBaseline';
-import * as Router from 'react-router-dom';
 
-import { makeStyles } from '@material-ui/core/styles';
-import Drawer from '@material-ui/core/Drawer';
-import Grid from '@material-ui/core/Grid';
-import Link from "@material-ui/core/Link";
-import TextField from '@material-ui/core/TextField';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
+// import * as React from 'react';
+ import CssBaseline from '@material-ui/core/CssBaseline';
+// import styled from "styled-components";
+ import { makeStyles } from "@material-ui/core/styles";
+ import Card from '@material-ui/core/Card';
+ import CardActions from '@material-ui/core/CardActions';
+ import CardContent from '@material-ui/core/CardContent';
+ import CardMedia from '@material-ui/core/CardMedia';
+ import Grid from '@material-ui/core/Grid';
+// import { CarouselProvider, ButtonNext, ButtonBack, Slide, Slider } from 'pure-react-carousel';
+// import 'pure-react-carousel/dist/react-carousel.es.css';
+import React from 'react';
+import Carousel from 'react-material-ui-carousel'
+import {Paper} from '@material-ui/core'
+import Button from '@material-ui/core/Button'; 
 import Container from '@material-ui/core/Container';
-// import "react-multi-carousel/lib/styles.css";
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    height: '100vh',
-  },
+
   image: {
-    backgroundImage: 'url(https://source.unsplash.com/random)',
-    backgroundRepeat: 'no-repeat',
-    backgroundColor:
+      backgroundImage: 'url(https://source.unsplash.com/random)',
+      backgroundRepeat: 'no-repeat',
+      backgroundColor:
       theme.palette.type === 'light' ? theme.palette.grey[50] : theme.palette.grey[900],
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
   },
-  paper: {
-    margin: theme.spacing(8, 4),
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
+  root: {
+      display: 'center',
+      height: '100vh',
   },
-  avatar: {
-    margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
+  container: {
+    paddingTop: theme.spacing(4),
+    paddingBottom: theme.spacing(4),
+    paddingLeft: theme.spacing(4),
+    paddingRight: theme.spacing(4),
+    wrap: 'nowrap'
   },
-  form: {
-    width: '100%', // Fix IE 11 issue.
-    marginTop: theme.spacing(1),
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-  },
-}));
-
-
-export default function BookDetails() {
-    // This page is rendered when user clicks on 'My Collections.'
-// const responsive = {
-//   superLargeDesktop: {
-//     // the naming can be any, depends on you.
-//     breakpoint: { max: 4000, min: 3000 },
-//     items: 5
-//   },
-//   desktop: {
-//     breakpoint: { max: 3000, min: 1024 },
-//     items: 3
-//   },
-//   tablet: {
-//     breakpoint: { max: 1024, min: 464 },
-//     items: 2
-//   },
-//   mobile: {
-//     breakpoint: { max: 464, min: 0 },
-//     items: 1
-//   }
-// };
+}))
+function Example(props)
+{
+    var items = [
+        {
+            name: "Random Name #1",
+            description: "Probably the most random thing you have ever seen!"
+        },
+        {
+            name: "Random Name #2",
+            description: "Hello World!"
+        }
+    ]
+ 
+    return (
+        <Carousel>
+            {
+                items.map( item => <Item item={item} /> )
+            }
+        </Carousel>
+    )
+}
+ 
+function Item(props)
+{
     const classes = useStyles();
     return (
+        <Paper className={classes.container}>
+            <h2>{props.item.name}</h2>
+            <p>{props.item.description}</p>
+ 
+            <Button className="CheckButton">
+                Check it out!
+            </Button>
+        </Paper>
+        
+    )
+}
+
+interface Props {
+
+}
+
+const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+const BookDetails: React.FC<Props> = ({}) => {
+    // This page is rendered when user clicks on 'My Collections.'
+    //const [index, setIndex] = React.useState(0);
+    const classes = useStyles();
+    // const handleSelect = (selectedIndex, e) => {
+    //     setIndex(selectedIndex);
+    // };
+
+    return (
       <React.Fragment>
-        <Grid container component="main" className={classes.root}>      
+          <Grid container alignItems="center" justify="center" component="main" className={classes.root}>
             <CssBaseline />
-           
-                 <Grid item xs={false} sm={4} md={7} className={classes.image} /> 
-             
-        </Grid>      
+                <Container maxWidth="sm">
+                   <Grid item xs={false} sm={4} md={7} className={classes.image} />
+                </Container>
+              
+          </Grid>
+          <Example/>
       </React.Fragment>         
     );    
 
 }
 
-// <Carousel responsive={responsive}>
-//                   <div>Item 1</div>
-//                   <div>Item 2</div>
-//                   <div>Item 3</div>
-//                   <div>Item 4</div>
-//                 </Carousel>;
+export default BookDetails;
+
+// <React.Fragment>
+//           <Grid container component="main" className={classes.root}>
+//             <CssBaseline />
+//               <Grid item xs={false} sm={4} md={7} className={classes.image} />
+//                  <CarouselProvider
+//                     naturalSlideWidth={100}
+//                     naturalSlideHeight={125}
+//                     totalSlides={3}
+//                   >
+//                     <Slider>
+//                       <Slide index={0}>I am the first Slide.</Slide>
+//                       <Slide index={1}>I am the second Slide.</Slide>
+//                       <Slide index={2}>I am the third Slide.</Slide>
+//                     </Slider>
+//                     <ButtonBack>Back</ButtonBack>
+//                     <ButtonNext>Next</ButtonNext>
+//                   </CarouselProvider>
+//               </Grid>    
+//       </React.Fragment>   
+
+// <CarouselProvider
+//                     naturalSlideWidth={100}
+//                     naturalSlideHeight={125}
+//                     totalSlides={3}
+//                   >
+//                     <Slider>
+//                       <Slide index={0}>I am the first Slide.</Slide>
+//                       <Slide index={1}>I am the second Slide.</Slide>
+//                       <Slide index={2}>I am the third Slide.</Slide>
+//                     </Slider>
+//                     <ButtonBack>Back</ButtonBack>
+//                     <ButtonNext>Next</ButtonNext>
+//                   </CarouselProvider>
+
