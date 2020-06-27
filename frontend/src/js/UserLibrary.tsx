@@ -84,7 +84,7 @@ export default function Profile() {
         <div className={classes.heroContent}>
           <Container maxWidth="md">
             <Typography component="h1" variant="h2" align="left" color="textPrimary" >
-              Home Profile
+              My Library
             </Typography>
           
           </Container>

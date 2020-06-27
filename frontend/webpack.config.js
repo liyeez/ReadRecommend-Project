@@ -17,11 +17,17 @@ module.exports = {
         path: path.join(__dirname, "src", "js"),
     },
     module: {
-        rules: [{
-            test: /\.tsx?$/,
-            loader: "ts-loader",
-            exclude: /node_modules/
-        }]
+        rules: [
+        	{
+        	    test: /\.tsx?$/,
+        	    loader: "ts-loader",
+        	    exclude: /node_modules/
+        	},
+        	{
+    			test: /\.(sass|less|css)$/,
+    			loaders: ['style-loader', 'css-loader', 'less-loader']
+  			},	
+        ]
     },
     resolve: {
         extensions: [".tsx", ".ts", ".js"]
@@ -61,4 +67,7 @@ module.exports = {
     //         }
     //     }),
     // ]
+	
+	
+
 };
