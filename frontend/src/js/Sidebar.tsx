@@ -35,7 +35,7 @@ const Style = makeStyles((theme) => ({
 }));
 
 const Sidebar: React.FC = ({}) => {
-    
+
 
     const classes = Style();
     return (
@@ -50,11 +50,11 @@ const Sidebar: React.FC = ({}) => {
             <Toolbar />
                 <div className={classes.drawerContainer}>
                     <List>
-                        <ListItem button key={'My Library'} component={Router.Link} to="/users/userlibrary">
+                        <ListItem button key={'My Library'} component={Router.Link} to="/user/userlibrary">
                         <ListItemIcon><LocalLibraryIcon /></ListItemIcon>
                         <ListItemText primary={'My Library'} />
                         </ListItem>
-                        <ListItem button key={"My Collections"} component={Router.Link} to="/users/usercollections">
+                        <ListItem button key={"My Collections"} component={Router.Link} to="/user/usercollections">
                         <ListItemIcon><LibraryBooksIcon /></ListItemIcon>
                         <ListItemText primary={'My Collections'} />
                         </ListItem>

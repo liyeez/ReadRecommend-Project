@@ -30,7 +30,6 @@ const Routing: React.FC = ({}) => {
         signedInStatus = false;
     }
 
-    // TODO: How to pass the prop to header?
     return (
         <Router.BrowserRouter>
             <Header userSignedIn={signedInStatus}/>
@@ -56,7 +55,7 @@ const Routing: React.FC = ({}) => {
                         <BookDetails />
                     </Router.Route>
                     <Router.Route path="/">
-                        <Main />
+                        <Main userSignedIn={signedInStatus}/>
                     </Router.Route>
                 </Router.Switch>
             </div>
