@@ -16,6 +16,7 @@ import SignIn from "./SignIn";
 import UserLibrary from "./UserLibrary";
 import UserCollections from "./UserCollections";
 import UserProfile from "./UserProfile";
+import BookDetails from "./BookDetails";
 
 let signedInStatus = true;
 
@@ -48,8 +49,11 @@ const Routing: React.FC = ({}) => {
                     <Router.Route path="/user/usercollections">
                         <UserCollections />
                     </Router.Route>
-                     <Router.Route path="/user/profile">
+                    <Router.Route path="/user/profile">
                         <UserProfile />
+                    </Router.Route>
+                    <Router.Route path="/bookdata/metadata">
+                        <BookDetails />
                     </Router.Route>
                     <Router.Route path="/">
                         <Main />

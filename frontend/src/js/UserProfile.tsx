@@ -13,113 +13,76 @@ import Container from '@material-ui/core/Container';
 import GitHubIcon from '@material-ui/icons/GitHub';
 import FacebookIcon from '@material-ui/icons/Facebook';
 import TwitterIcon from '@material-ui/icons/Twitter';
-import FeaturedPost from './RecommendBook';
 import Typography from '@material-ui/core/Typography';
 import { LineChart, Line, XAxis, YAxis, Label, ResponsiveContainer } from 'recharts';
 import { useTheme } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
+import RecentlyAdded from './RecentAddedBooks';
+import * as Router from 'react-router-dom';
 
-
-
+  
 export default function Blog() {
+
   const classes = useStyles();
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
   return (
     <React.Fragment>
       <CssBaseline />
-      <Container maxWidth="sm">
-        <div className={classes.heroContent}>
-            <Typography component="h1" variant="h2" align="center" color="textPrimary" >
-              Home Profile
-            </Typography>
-            
-        </div>
-      </Container>
-       <main className={classes.content}>
-      
-      <Container maxWidth="lg" className={classes.container}>
-        <Grid container spacing={3}>
-          {/* Chart */}
-          <Grid item xs={12} md={8} lg={9}>
-            <Paper className={fixedHeightPaper}>
-              <Chart /> 
-            </Paper>
-          </Grid>
-          {/* Goal */}
-          <Grid item xs={12} md={4} lg={3}>
-            <Paper className={fixedHeightPaper}>
-              <Goal />
-            </Paper>
-          </Grid>
-        </Grid>
+        <Container maxWidth="sm">
+          <div>
+              <Typography component="h2" variant="h2" align="center" color="textPrimary" >
+                Home Profile
+              </Typography>              
+          </div>
+        </Container>
         
-        <Grid container spacing={3} className={classes.container} >  
-          <Typography variant="h4" align="left" paragraph>
-            Recently Added Books
-          </Typography>       
-          <Container className={classes.cardGrid} maxWidth="md">
-          {/* End hero unit */}
-          <Grid container spacing={4}>
-            {featuredPosts.map((book) => (
-              <Grid item key={book} xs={6} sm={3} md={4}>
-                <Card className={classes.card}>
-                  <CardMedia
-                    className={classes.cardMedia}
-                    image="https://source.unsplash.com/random?book"
-                    title="Image title"
-                  />
-                  <CardContent className={classes.cardContent}>
-                    <Typography gutterBottom variant="h5" component="h2">
-                        Book Title
-                    </Typography>
-                    <Typography>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam molestie pellentesque tortor in rhoncus.
-                    </Typography>
-                  </CardContent>
-                  <CardActions>
-                      <Button size="small" color="primary">
-                          View
-                      </Button>
-                  </CardActions>
-                </Card>
-                </Grid>
-            ))}
-          </Grid>
+        <main>      
+          <Container maxWidth="lg" className={classes.container}>
+            <Grid container spacing={3}>
+              {/* Chart */}
+              <Grid item xs={12} md={8} lg={9}>
+                <Paper className={fixedHeightPaper}>
+                  <Chart /> 
+                </Paper>
+              </Grid>
+              {/* Goal */}
+              <Grid item xs={12} md={4} lg={3}>
+                <Paper className={fixedHeightPaper}>
+                  <Goal />
+                </Paper>
+              </Grid>
+            </Grid>
+          </Container>
 
-          </Grid>
+          <Container maxWidth="md">
+            <Typography component="h4" variant="h4" align="left" color="textPrimary" gutterBottom>
+                Recently Added Books
+            </Typography>
 
 
-      </Container>
-      </main>
-    </div>
+              <Grid container direction={'row'} spacing={4}>
+              
+                {featuredPosts.map((book) => (
+                  <RecentlyAdded key={book.title} book={book}/>
+                ))}
+               
+              </Grid>
+            
+          </Container> 
+           
+        </main>    
 
     </React.Fragment>
   );
 }
 
 const useStyles = makeStyles((theme) => ({
-  title: {
-    marginTop: theme.spacing(3),
-    marginBottom: theme.spacing(3),
-    
-  },
-  mainGrid: {
-    marginTop: theme.spacing(3),
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  appBarSpacer: theme.mixins.toolbar,
-  content: {
-    flexGrow: 1,
-    height: '50vh',
-    overflow: 'auto',
-  },
   container: {
     paddingTop: theme.spacing(4),
     paddingBottom: theme.spacing(4),
+    wrap: 'nowrap'
   },
-  heroContent: {
+  heroContent: { 
     backgroundColor: theme.palette.background.paper,
     padding: theme.spacing(8, 0, 6),
   },
@@ -146,9 +109,17 @@ const useStyles = makeStyles((theme) => ({
   cardContent: {
     flexGrow: 1,
   },
+  
 }));
 
-
+// const settings = {    TO FIX SLIDING FEATURE T^T
+//   dots: false,
+//   infinite: false,
+//   speed: 100,
+//   slidesToShow: 5,
+//   slidesToScroll: 5,
+//   adaptiveHeight: true,
+// };
 
 
 // Generate Sales Data
@@ -158,6 +129,7 @@ function createData(time, amount) {
 
 function Chart(){
   const theme = useTheme();
+
   return(
     <React.Fragment>
       <ResponsiveContainer>
@@ -170,6 +142,7 @@ function Chart(){
             left: 24,
           }}
         >
+
         <XAxis dataKey="time" stroke={theme.palette.text.secondary} />
         <YAxis stroke={theme.palette.text.secondary}>
           <Label
@@ -185,10 +158,6 @@ function Chart(){
       </ResponsiveContainer>
     </React.Fragment>
   );
-}
-
-function preventDefault(event) {
-  event.preventDefault();
 }
 
 function Goal(){
@@ -209,7 +178,7 @@ function Goal(){
         </Typography>
       </Container>   
       <Container className={classes.container}>
-        <Link color="primary" href="#" onClick={preventDefault}>
+        <Link color="primary" href="#" >
           Set Goal
         </Link>
       </Container>  

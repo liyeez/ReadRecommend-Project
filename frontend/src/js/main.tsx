@@ -40,8 +40,8 @@ const Style = makeStyles((theme) => ({
         padding: 10,
     },
     cardGrid: {
-        paddingTop: theme.spacing(8),
-        paddingBottom: theme.spacing(8),
+      paddingTop: theme.spacing(8),
+      paddingBottom: theme.spacing(8),
     },
     card: {
         height: '100%',
@@ -164,7 +164,7 @@ export default function Main(): JSX.Element {
                                         </Typography>
                                     </CardContent>
                                     <CardActions>
-                                        <Button size="small" color="primary">
+                                        <Button size="small" color="primary" component={Router.Link} to="/bookdata/metadata">
                                             View
                                         </Button>
                                     </CardActions>

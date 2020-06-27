@@ -9,6 +9,9 @@ import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Hidden from '@material-ui/core/Hidden';
 
+import * as Router from 'react-router-dom';
+import Button from '@material-ui/core/Button';
+
 const useStyles = makeStyles({
   card: {
     display: 'flex',
@@ -21,12 +24,12 @@ const useStyles = makeStyles({
   },
 });
 
-// todo in future: do ajax request from Recommend algo
+// todo in future: do ajax request from Recommend algot
 
 export default function RecommendBook(props) {
   const classes = useStyles();
   const { book } = props;
-
+  
   return (
     <Grid item xs={12} md={6}>
       <CardActionArea component="a" href="#">
@@ -42,9 +45,15 @@ export default function RecommendBook(props) {
               <Typography variant="subtitle1" paragraph>
                 {book.description}
               </Typography>
-              <Typography variant="subtitle1" color="primary">
-                Continue reading...
-              </Typography>
+              
+              <Button size="small" color="primary" component={Router.Link} to="/bookdata/metadata">
+                <Typography variant="subtitle1" color="primary" >
+                  Continue reading...
+                </Typography>
+              </Button>
+
+              
+
             </CardContent>
           </div>
           <Hidden xsDown>
