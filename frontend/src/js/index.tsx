@@ -17,6 +17,9 @@ import UserLibrary from "./UserLibrary";
 import UserCollections from "./UserCollections";
 import UserProfile from "./UserProfile";
 import BookDetails from "./BookDetails";
+import OtherUserProfile from "./OtherUserProfile";
+import OtherUserCollection from "./OtherUserCollection";
+import FindUser from "./FindUser";
 
 let signedInStatus = true;
 
@@ -51,6 +54,15 @@ const Routing: React.FC = ({}) => {
                     </Router.Route>
                     <Router.Route path="/user/profile">
                         <UserProfile />
+                    </Router.Route>
+                    <Router.Route path="/user/findusers">
+                        <FindUser />
+                    </Router.Route>
+                    <Router.Route path="/user/otherusers">
+                        <OtherUserProfile />
+                    </Router.Route>
+                    <Router.Route path="/user/othercollections">
+                        <OtherUserCollection />
                     </Router.Route>
                     <Router.Route path="/bookdata/metadata">
                         <BookDetails />

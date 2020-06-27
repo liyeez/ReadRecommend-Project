@@ -58,7 +58,7 @@ const Sidebar: React.FC = ({}) => {
                         <ListItemIcon><LibraryBooksIcon /></ListItemIcon>
                         <ListItemText primary={'My Collections'} />
                         </ListItem>
-                        <ListItem button key={'Find Users'}>
+                        <ListItem button key={'Find Users'} component={Router.Link} to="/user/findusers">
                         <ListItemIcon><PeopleIcon /></ListItemIcon>
                         <ListItemText primary={'Find Users'} />
                         </ListItem>
@@ -66,6 +66,16 @@ const Sidebar: React.FC = ({}) => {
                         <ListItem button key={"My Profile"} component={Router.Link} to="/user/profile">
                         <ListItemIcon><LibraryBooksIcon /></ListItemIcon>
                         <ListItemText primary={'My Profile'} />
+                        </ListItem>
+
+                        <ListItem button key={"(TEST) Other User Profile"} component={Router.Link} to="/user/otherusers">
+                        <ListItemIcon><LibraryBooksIcon /></ListItemIcon>
+                        <ListItemText primary={'(TEST) Other User Profile'} />
+                        </ListItem>
+
+                        <ListItem button key={"(TEST) Other User Collection"} component={Router.Link} to="/user/othercollections">
+                        <ListItemIcon><LibraryBooksIcon /></ListItemIcon>
+                        <ListItemText primary={'(TEST) Other User Collection'} />
                         </ListItem>
                         {/* For testing purposes. Prints Signed In if userSignedIn property is true. */}
                         {/*(userSignedIn) ? (<p>Signed In</p>) : (<p>Signed Out</p>)*/}
