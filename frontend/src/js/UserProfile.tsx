@@ -62,7 +62,7 @@ export default function Blog() {
 
               <Grid container direction={'row'} spacing={4}>
               
-                {featuredPosts.map((book) => (
+                {RecentlyAddedBooks.map((book) => (
                   <RecentlyAdded key={book.title} book={book}/>
                 ))}
                
@@ -198,7 +198,7 @@ const data = [
   createData('24:00', undefined),
 ];
 
-const featuredPosts = [
+const RecentlyAddedBooks = [
   {
     title: 'RecommendBook 1',
     description:
