@@ -112,5 +112,7 @@ temp/
 
 # Dont need the package-lock either
 package-lock.json
-frontend/src/js/index.js
-frontend/src/js/index.js.map
+
+# Compiled output
+index.js
+index.js.map
