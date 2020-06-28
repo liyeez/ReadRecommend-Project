@@ -71,8 +71,6 @@ interface SearchForm {
     title: any;
 }
 
-
-
 const Search: React.FC<Props> = ({}) => {
     
     let cards: any;
@@ -99,7 +97,7 @@ const Search: React.FC<Props> = ({}) => {
                 console.log(cards[0].fields);
             }else{
                 alert("No Matched Results!");
-                window.location.href="/";
+                window.location.href='/';
             }
             
         });
@@ -139,6 +137,10 @@ const Search: React.FC<Props> = ({}) => {
         });
     }
 
+    function viewBook(data){
+        window.location.href="/bookdata/metadata?isbn="+data;
+    }
+
    
     onSearch(request);
     const classes = Style();
@@ -168,7 +170,6 @@ const Search: React.FC<Props> = ({}) => {
                                     <Paper component="form" className={classes.root}>
                                         <TextField
                                             className={classes.input}
-                                            placeholder="Find a Book"
                                             value={SearchForm.title}
                                             name="title"
                                             label="Search ReadRecommend"
@@ -206,7 +207,7 @@ const Search: React.FC<Props> = ({}) => {
                                         </Typography>
                                     </CardContent>
                                     <CardActions>
-                                        <Button size="small" color="primary" component={Router.Link} to="/bookdata/metadata">
+                                        <Button size="small" color="primary" onClick={() => viewBook(card.pk)}>
                                             View
                                         </Button>
                                     </CardActions>
@@ -215,11 +216,14 @@ const Search: React.FC<Props> = ({}) => {
                             </Grid>
                         ))}
                     </Grid>
-                    <IconButton type="submit" component={Router.Link} to="/search" className={classes.iconButton} aria-label="search">
-   
-                        <SearchIcon/>
-                        More Results....
-                    </IconButton>
+
+                    {/* TBD...
+                        <IconButton type="submit" component={Router.Link} to="/search" className={classes.iconButton} aria-label="search">
+       
+                            <SearchIcon/>
+                            More Results....
+                        </IconButton>
+                    */}
                 </Container>
             </main>
         </React.Fragment>

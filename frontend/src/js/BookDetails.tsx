@@ -15,6 +15,7 @@ import Carousel from 'react-material-ui-carousel'
 import Button from '@material-ui/core/Button'; 
 import Container from '@material-ui/core/Container';
 import Reviews from './Reviews';
+import $ = require('jquery');
 
 const useStyles = makeStyles((theme) => ({
 
@@ -116,52 +117,70 @@ function Item(props)
     )
 }
 
+
 interface Props {
 
 }
 
-function Metadata(){
-  const classes = useStyles();
 
+function request() {
+    let book: any;
+    var data = onSearch(function(data){ 
+        if(data != null){
+            
+            book=JSON.parse(data.data)[0];
+            console.log(book);
 
-  return (
-    <React.Fragment>
-      <Grid>
-        <Typography variant="h4" align="center" color="textPrimary" >
-          Book Title
-        </Typography>
-        <Typography component="p" align="center" >
-          by Author
-        </Typography>
-        <Typography component="p" align="center" className={classes.blockSpacing}>
-          description
-        </Typography>
-        <Grid container justify="center">  
-            <Button component={Router.Link} 
-                to="/bookdata/metadata"
-                type="submit"
-                variant="contained"
-                color="primary"
-                >
-              Add to Library
-            </Button>    
-        </Grid> 
-
-      </Grid>   
-       
-    </React.Fragment>
-  );
+        }else{
+            alert("Something Wrong!");
+            window.location.href='/';
+        }
+        
+    });
+    return book;
 }
-//<Grid item xs={12} md={4} lg={3}>
-const BookDetails: React.FC<Props> = ({}) => {
-    // This page is rendered when user clicks on 'My Collections.'
-    //const [index, setIndex] = React.useState(0);
-    const classes = useStyles();
-    // const handleSelect = (selectedIndex, e) => {
-    //     setIndex(selectedIndex);
-    // };
 
+
+function onSearch(callback) {
+  let str = window.location.href.split('?')[1];
+  str = str.split('=')[1];
+  console.log(str);
+  
+  $.ajax({
+      async: false,
+      url:"http://localhost:8000/api/books/data",
+      data: {
+          isbn: str,
+      },
+      method: "GET",
+      success: function (data) {
+          console.log(data.message);
+          if(data.message == 'Isbn found success') {
+              
+              callback(data);
+
+          }else if(data.message == 'Isbn not found') {
+              callback(null);
+          }
+      },
+      error: function () {
+          console.log("server error!");
+          
+      }
+  });
+}
+
+
+const BookDetails: React.FC<Props> = ({}) => {
+    
+    const classes = useStyles();
     const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+
+    
+    
+
+    let book=request();
+    console.log(book);
     return (
       <React.Fragment>
           <CssBaseline />
@@ -174,8 +193,33 @@ const BookDetails: React.FC<Props> = ({}) => {
                   
                   <Grid item xs={12} md={6} lg={3}>
                     <Paper className={fixedHeightPaper}>
-                      <Metadata />
+                      <Grid>
+                        <Typography variant="h4" align="center" color="textPrimary" >
+                          {book.fields.title}
+                        </Typography>
+                        <Typography component="p" align="center" >
+                          By Author: {book.fields.author}
+                        </Typography>
+                        <Typography component="p" align="center" className={classes.blockSpacing}>
+                          {book.fields.pub_date}
+                        </Typography>
+
+                        {/*TBD feature*/}
+                        <Grid container justify="center">  
+                            <Button component={Router.Link} 
+                                to="/bookdata/metadata"
+                                type="submit"
+                                variant="contained"
+                                color="primary"
+                                >
+                              Add to Library
+                            </Button>    
+                        </Grid> 
+
+                      </Grid>
                     </Paper>
+
+                {/*TBD feature*/}
                     <Grid item className={classes.heroButtons}>
                         <Button component={Router.Link} 
                             to="/auth/signup"
@@ -195,14 +239,14 @@ const BookDetails: React.FC<Props> = ({}) => {
           
            <Container maxWidth="xl">
               <Grid container spacing={3} className={classes.container}>
-                  {/* Recent Orders */}
+                  {/*TBD feature*/}
                   <Grid item xs={12} md={8} lg={9}>
                       <Paper className={classes.paper}>
                         <Reviews />
                       </Paper>
                     </Grid>
 
-                  {/*Carousel*/}
+                  {/*Carousel*/} {/*TBD feature*/}
                    <Grid item xs={12} md={8} lg={9}>
                      <Typography component="h4" variant="h4" align="left" color="textSecondary" gutterBottom>
                        More Books like this:

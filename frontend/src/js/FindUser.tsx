@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {ChangeEvent, useState} from "react";
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
@@ -13,6 +13,7 @@ import SearchIcon from '@material-ui/icons/Search';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Container from '@material-ui/core/Container';
+import * as Router from 'react-router-dom';
 
 const styles= makeStyles((theme) => ({
     container: {
@@ -40,24 +41,64 @@ const styles= makeStyles((theme) => ({
     },
     addUser: {
       marginRight: theme.spacing(1),
+      marginBottom: theme.spacing(2),
     },
     contentWrapper: {
       margin: '40px 16px',
     },
+    cardGrid: {
+      paddingTop: theme.spacing(8),
+      paddingBottom: theme.spacing(8),
+    },
+    card: {
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+    },
+    cardMedia: {
+        paddingTop: '56.25%', // 16:9
+    },
+    cardContent: {
+        flexGrow: 1,
+    },
 }));
 
-interface Props{
+interface Props{}
 
+interface SearchForm {
+    title: any;
 }
+
 // export interface ContentProps extends WithStyles<typeof styles> {}
 const FindUser: React.FC<Props> = ({}) => {
-   const classes = styles();
+   
+    const classes = styles();
 
-  return (
+    const [SearchForm, setSearchForm] = useState<SearchForm>({
+      title: '',
+    });
+
+    const onTextboxChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setSearchForm(prevSearchForm => {
+          return {
+            ...prevSearchForm,
+            [name]: value,
+          };
+        });
+    }
+
+    function preventDefault(event) {
+        event.preventDefault
+        window.location.href="/search?title="+SearchForm.title;
+    }
+
+    
+    return (
     <React.Fragment>
           <CssBaseline />
            
-                <Grid container spacing={3} className={classes.container}>
+            <Grid container spacing={3} className={classes.container}>
                 <Paper className={classes.paper}>
                   <AppBar className={classes.searchBar} position="static" color="default" elevation={0}>
                     <Toolbar>
@@ -68,37 +109,34 @@ const FindUser: React.FC<Props> = ({}) => {
                         <Grid item xs={12}>
                           <TextField
                             fullWidth
-                            placeholder="Search by email address"
                             InputProps={{
-                              disableUnderline: true,
-                              className: classes.searchInput,
+                                disableUnderline: true,
+                                className: classes.searchInput,
                             }}
+                            value={SearchForm.title}
+                            name="title"
+                            label="Search by email address or name...."
+                            onChange={onTextboxChange}
                           />
                         </Grid>
                         <Grid item>
-                          <Button variant="contained" color="primary" className={classes.addUser}>
+                          <Button variant="contained" color="primary" className={classes.addUser} onClick={preventDefault}>
                             Search
                           </Button>
-                          <Tooltip title="Reload">
-                            <IconButton>
-                              <RefreshIcon className={classes.block} color="inherit" />
-                            </IconButton>
-                          </Tooltip>
+                          
                         </Grid>
                       </Grid>
                     </Toolbar>
-                  </AppBar>
-                  <div className={classes.contentWrapper}>
-                    <Typography color="textSecondary" align="center">
-                      No matched results
-                    </Typography>
-                  </div>
+                  </AppBar>       
                 </Paper>
-              </Grid>
+            </Grid>
+
+  
             
     </React.Fragment>
 
-  );
+    );
 }
 
 export default FindUser;
+
