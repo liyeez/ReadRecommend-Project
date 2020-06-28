@@ -1,6 +1,7 @@
 // Header.tsx
 // Implements the header sitewide
 
+import $ = require('jquery');
 import React from "react";
 import * as Router from 'react-router-dom';
 import CookieService from "../services/CookieService";
@@ -83,7 +84,7 @@ const Header: React.FC<Props> = ({userSignedIn} : Props) => {
                         <Button component={Router.Link} to="/" color="inherit" startIcon={<CollectionsBookmarkIcon />}/>
                     </Typography>
                     {/* Renders Login button if user not signed in, otherwise reders Logout button.*/}
-                    {(userSignedIn) ? (<Button component={Router.Link} to="/" color="inherit" onClick={handleLogout}>Logout</Button>)
+                    {(userSignedIn) ? (<Button component={Router.Link} to="/auth/signout" color="inherit" onClick={handleLogout}>Logout</Button>)
                                     : (<Button component={Router.Link} to="/auth/signin" color="inherit">Login</Button>)}
 
                 </Toolbar>

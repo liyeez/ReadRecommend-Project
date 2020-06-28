@@ -1,26 +1,31 @@
+// UserLibary.tsx
+// User Libary page
+
+import * as $ from "jquery";
 import React, {ChangeEvent, useState} from "react";
 import * as Router from "react-router-dom";
 
 // Material UI
-
-import Button from '@material-ui/core/Button';
-import Container from '@material-ui/core/Container';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Grid from '@material-ui/core/Grid';
-import Link from "@material-ui/core/Link";
-import TextField from '@material-ui/core/TextField';
-import Typography from '@material-ui/core/Typography';
-import { makeStyles } from "@material-ui/core/styles";
+import AddIcon from '@material-ui/icons/Add';
 import AppBar from '@material-ui/core/AppBar';
+import Button from '@material-ui/core/Button';
 import CameraIcon from '@material-ui/icons/PhotoCamera';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
+import Container from '@material-ui/core/Container';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import DeleteIcon from '@material-ui/icons/Delete';
+import Grid from '@material-ui/core/Grid';
+import Link from "@material-ui/core/Link";
+import TextField from '@material-ui/core/TextField';
 import Toolbar from '@material-ui/core/Toolbar';
-import * as $ from "jquery";
+import Typography from '@material-ui/core/Typography';
 
-const useStyles = makeStyles((theme) => ({
+import { makeStyles } from "@material-ui/core/styles";
+
+const Style = makeStyles((theme) => ({
   icon: {
     marginRight: theme.spacing(2),
   },
@@ -50,20 +55,20 @@ const useStyles = makeStyles((theme) => ({
   //   backgroundColor: theme.palette.background.paper,
   //   padding: theme.spacing(6),
   // },
-}))
+}));
 
 
 const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 export default function Profile() {
-  const classes = useStyles();
+  const classes = Style();
 
   // function onRender() {
-       
-  //   $.ajax({ //TODO: get user 
+
+  //   $.ajax({ //TODO: get user
   //     url: "http://localhost:8000/api/user/profile",
   //     method: "GET",
-            
+
   //     success: function (data) {
   //       console.log("Receive data");
   //       console.log(data);
@@ -72,23 +77,37 @@ export default function Profile() {
   //     error: function () {
   //       console.log("server error!");
   //     }
-  //   });    
-        
+  //   });
+
   // }
 
   return (
     <React.Fragment>
       <CssBaseline />
-      
+
       <main>
         {/* Hero unit */}
         <div className={classes.heroContent}>
-          <Container maxWidth="md">
-            <Typography component="h1" variant="h2" align="left" color="textPrimary" >
-              My Library
-            </Typography>
-          
-          </Container>
+            <Container maxWidth="md">
+                <Typography component="h1" variant="h2" align="center" color="textPrimary" >
+                  My Library
+                </Typography>
+                <div className={classes.heroButtons}>
+                    <Grid container spacing={2} justify="center">
+                        <Grid item>
+                            <Button
+                            component={Router.Link} to="/"
+                            type="submit"
+                            variant="contained"
+                            color="primary"
+                            startIcon={<AddIcon/>}
+                            >
+                                Find More Books
+                            </Button>
+                        </Grid>
+                    </Grid>
+                </div>
+            </Container>
         </div>
         <Container className={classes.cardGrid} maxWidth="md">
           {/* End hero unit */}
@@ -113,8 +132,8 @@ export default function Profile() {
                     <Button size="small" color="primary">
                       View
                     </Button>
-                    <Button size="small" color="primary">
-                      Add to Library
+                    <Button size="small" color="primary" endIcon={<DeleteIcon/>}>
+                      Remove
                     </Button>
                   </CardActions>
                 </Card>
@@ -123,7 +142,7 @@ export default function Profile() {
           </Grid>
         </Container>
       </main>
-      
+
     </React.Fragment>
   );
 }

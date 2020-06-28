@@ -42,7 +42,7 @@ def signup(request):
     # Get the token
     token, _ = Token.objects.get_or_create(user=user)
 
-    return Response({"status": "ok", "message": "User Successfully Created", "id": user_id, "token": token.key}, status=status.HTTP_200_OK)
+    return Response({"status": "ok", "message": "User Successfully Created", "user_id": user_id, "token": token.key}, status=status.HTTP_200_OK)
 
 
 @api_view(["POST"])
@@ -65,7 +65,7 @@ def signin(request):
     if user is not None:
         user_id = user.id
         token, _ = Token.objects.get_or_create(user=user)
-        return Response({"status": "ok", "message": "User successfully logged in", "id": user_id, "token": token.key}, status=status.HTTP_200_OK)
+        return Response({"status": "ok", "message": "User successfully logged in", "user_id": user_id, "token": token.key}, status=status.HTTP_200_OK)
     else:
         return Response({"status": "error", "message": "Could not log in"}, status=status.HTTP_401_UNAUTHORIZED)
 
