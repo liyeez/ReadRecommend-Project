@@ -59,10 +59,7 @@ const Sidebar: React.FC = ({}) => {
                         <ListItemIcon><LocalLibraryIcon /></ListItemIcon>
                         <ListItemText primary={'My Library'} />
                         </ListItem>
-                        <ListItem button key={"My Collections"} component={Router.Link} to="/user/usercollections">
-                        <ListItemIcon><LibraryBooksIcon /></ListItemIcon>
-                        <ListItemText primary={'My Collections'} />
-                        </ListItem>
+                        
                         <ListItem button key={'Find Users'} component={Router.Link} to="/user/findusers">
                         <ListItemIcon><PeopleIcon /></ListItemIcon>
                         <ListItemText primary={'Find Users'} />

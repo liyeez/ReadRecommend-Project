@@ -2,9 +2,10 @@
 // Main page
 
 import $ = require('jquery');
-import React from 'react';
+import React, {ChangeEvent, useState} from "react";
 import * as Router from 'react-router-dom';
 
+import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
@@ -62,14 +63,94 @@ const Style = makeStyles((theme) => ({
     },
 }));
 
+interface Props {
 
-const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+}
 
-export default function Main(): JSX.Element {
+interface SearchForm {
+    title: any;
+}
+
+
+
+const Search: React.FC<Props> = ({}) => {
+    
+    let cards: any;
+
+    const [SearchForm, setSearchForm] = useState<SearchForm>({
+      title: '',
+    });
+
+    const onTextboxChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setSearchForm(prevSearchForm => {
+          return {
+            ...prevSearchForm,
+            [name]: value,
+          };
+        });
+    }
+
+    function request() {
+        var data = onSearch(function(data){ 
+            if(data != null){
+                var myObject = JSON.parse(data);
+                cards = myObject;
+                console.log(cards[0].fields);
+            }else{
+                alert("No Matched Results!");
+                window.location.href="/";
+            }
+            
+        });
+    }
+
+    function newSearch(event) {
+        event.preventDefault();
+        window.location.href="/search?title="+SearchForm.title;
+    }
+
+    function onSearch(callback) {
+        let str = window.location.href.split('?')[1];
+        str = str.split('=')[1];
+        console.log(str);
+        
+        $.ajax({
+            async: false,
+            url:"http://localhost:8000/api/books/search",
+            data: {
+                title: str,
+            },
+            method: "GET",
+            success: function (data) {
+                console.log(data.message);
+                if(data.message == 'Titles found success') {
+                    
+                    callback(data.data);
+
+                }else if(data.message == 'title not found') {
+                    callback(null);
+                }
+            },
+            error: function () {
+                console.log("server error!");
+                
+            }
+        });
+    }
+
+   
+    onSearch(request);
     const classes = Style();
+    let str = window.location.href.split('?')[1];
+    str = str.split('=')[1];
+    console.log(str);
+
     return (
+
         <React.Fragment>
             <CssBaseline />
+
             <main>
                 {/* Hero unit */}
                 <div className={classes.heroContent}>
@@ -77,20 +158,24 @@ export default function Main(): JSX.Element {
                         <Typography component="h1" variant="h2" align="center" color="textPrimary" gutterBottom>
                             Search Results for
                         </Typography>
-                        <Typography component="h1" variant="h2" align="center" color="textPrimary" gutterBottom>
-                            BLAH
+                        <Typography component="h1" variant="h3" align="center" color="textSecondary" gutterBottom>
+                            "{str}"
                         </Typography>
                         
                         <div className={classes.heroButtons}>
                             <Grid container spacing={2} justify="center">
                                 <Grid item>
                                     <Paper component="form" className={classes.root}>
-                                        <InputBase
+                                        <TextField
                                             className={classes.input}
-                                            placeholder="Find a Book/Author"
-                                            inputProps={{ 'aria-label': 'search ReadRecommend' }}
+                                            placeholder="Find a Book"
+                                            value={SearchForm.title}
+                                            name="title"
+                                            label="Search ReadRecommend"
+                                            onChange={onTextboxChange}
+                                            
                                         />
-                                        <IconButton type="submit" className={classes.iconButton} aria-label="search">
+                                        <IconButton type="submit" className={classes.iconButton} aria-label="search" onClick={newSearch}>
                                             <SearchIcon />
                                         </IconButton>
                                     </Paper>
@@ -111,10 +196,13 @@ export default function Main(): JSX.Element {
                                     />
                                     <CardContent className={classes.cardContent}>
                                         <Typography gutterBottom variant="h5" component="h2">
-                                            Book Title
+                                            {card.fields.title}
                                         </Typography>
                                         <Typography>
-                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam molestie pellentesque tortor in rhoncus.
+                                            Author: {card.fields.author}
+                                        </Typography>
+                                         <Typography>
+                                            Published On: {card.fields.pub_date}
                                         </Typography>
                                     </CardContent>
                                     <CardActions>
@@ -137,3 +225,5 @@ export default function Main(): JSX.Element {
         </React.Fragment>
     );
 }
+
+export default Search;

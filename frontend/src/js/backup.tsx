@@ -36,10 +36,6 @@ const Style = makeStyles((theme) => ({
     },
 }));
 
-interface Props {
-
-}
-
 interface SignInForm {
     token: string;
     signInError: string;
@@ -47,8 +43,18 @@ interface SignInForm {
     signInPassword: string;
 }
 
-const SignIn: React.FC<Props> = ({}) => {
+interface Props {
+    // flag?: boolean;
+    // {flag} : Props
+}
+
+
+
+
+const SignIn: React.FC<Props> = () => {
     //HI
+    let flag=true;
+
     const [signInForm, setSignInForm] = useState<SignInForm>({
       token: '',
       signInError: '',
@@ -62,14 +68,29 @@ const SignIn: React.FC<Props> = ({}) => {
         setSignInForm(prevSignInForm => {
           return {
             ...prevSignInForm,
-            [name]: value
+            [name]: value //
           };
         });
     }
+ 
+    function preventDefault(event) {
+      event.preventDefault();
+      var data; 
+        data = onSignIn(function(id, token){ 
+            alert("hello"+token);
+            setSignInForm(prevSignInForm => {
+              return {
+                ...prevSignInForm,
+                signInEmail: token
+              };
+            });
+        });
+    }
 
-    function onSignIn() {
+    function onSignIn(callback) {
         
         $.ajax({
+            async: false,
             url: "http://localhost:8000/api/auth/signin",
             method: "POST",
             data: {
@@ -81,27 +102,58 @@ const SignIn: React.FC<Props> = ({}) => {
                 console.log(data.status);
                 console.log(data.message);
 
-                if(data.status == 'error') {
-                    <Router.Redirect to="/"/>
-
-                } else if(data.status == 'ok') {
+                if(data.status == 'ok') {
                     // Handle sign in success.
                    
+                    callback(data.user_id, data.token);
                     //window.location.href = "/";
                     // The cookie will be available on all URLs.
-                    const options = { path: "/" };
+                    //const options = { path: "/" };
                     // Create a cookie with the token from response.
-                    CookieService.set("access_token", data.token, options);
-                    window.location.reload();
-                    
+                    //CookieService.set("access_token", data.token, options);
+                    //window.location.href="/";
+                    //window.location.reload();
                 }
             },
-            error: function () {
-                console.log("server error!");
+            error: function (xhr, error) {
+                flag=false;
+                callback(error);
+                console.log("server error!"+error);
+                //window.location.href="/auth/signin";
             }
         });
         
+
+        // $.ajax({
+        //     url: "http://localhost:8000/api/auth/signin",
+        //     method: "POST",
+        //     data: {
+        //         email: signInForm.signInEmail,
+        //         password: signInForm.signInPassword
+        //     },
+        //     success: function (data) {
+
+        //         console.log(data.status);
+        //         console.log(data.message);
+        //         var data = data.token;
+        //         if(data.status == 'ok') {
+        //             const options = { path: "/" };
+        //             CookieService.set("access_token", data.token, options);
+                    
+        //             window.location.reload();
+                    
+        //         }
+        //     },
+        //     error: function () {
+        //         console.log("server error!");
+        //     }  
+        // });
+        
     }
+
+    
+
+
 
     const classes = Style();
     return (
@@ -109,7 +161,13 @@ const SignIn: React.FC<Props> = ({}) => {
             <Container component="main" maxWidth="xs">
             <CssBaseline/>
                 <div className={classes.paper}>
-                    <Typography component="h1" variant="h5"> Sign In</Typography>
+                    <Typography component="h1" variant="h2"> Sign In</Typography>
+                    <div>
+                      {{flag}        
+                        ? <Typography component="h1" variant="h5"> Welcome!</Typography>
+                        : <Typography component="h1" variant="h5" color="secondary"> Try Again...</Typography>      
+                      }
+                    </div>
                     <form className={classes.form} noValidate>
                         <TextField
                             variant="outlined"
@@ -141,7 +199,7 @@ const SignIn: React.FC<Props> = ({}) => {
                             variant="contained"
                             color="primary"
                             className={classes.submit}
-                            onClick={onSignIn}
+                            onClick={preventDefault}
                         >
                         Sign In
                         </Button>

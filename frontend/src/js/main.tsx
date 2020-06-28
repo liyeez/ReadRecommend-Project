@@ -2,10 +2,11 @@
 // Main page
 
 import $ = require('jquery');
-import React from 'react';
+import React, {ChangeEvent, useState} from "react";
 import * as Router from 'react-router-dom';
 
 // Material UI
+import TextField from '@material-ui/core/TextField';
 import AddIcon from '@material-ui/icons/Add';
 import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
@@ -65,13 +66,37 @@ const Style = makeStyles((theme) => ({
 }));
 
 const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-
+interface SearchForm {
+    title: string;
+}
 interface Props {
     userSignedIn: boolean;
 }
 
+let flag: boolean;
+
 const Main: React.FC<Props> = ({userSignedIn} : Props) => {
+    
+    const [SearchForm, setSearchForm] = useState<SearchForm>({
+      title: '',
+    });
+
+    const onTextboxChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setSearchForm(prevSearchForm => {
+          return {
+            ...prevSearchForm,
+            [name]: value,
+          };
+        });
+    }
+
+    function preventDefault(event) {
+        window.location.href="/search?title="+SearchForm.title;
+    }
+
     const classes = Style();
+    // onSearch(preventDefault);
     return (
         <React.Fragment>
             <CssBaseline />
@@ -97,14 +122,19 @@ const Main: React.FC<Props> = ({userSignedIn} : Props) => {
                                         Sign up for free!
                                     </Button>
                                 </Grid>
+                                {/*Search Bar*/}
+
                                 <Grid item>
-                                    <Paper component="form" className={classes.root}>
-                                        <InputBase
+                                    <Paper className={classes.root}>
+                                        <TextField
                                             className={classes.input}
                                             placeholder="Find a Book"
-                                            inputProps={{ 'aria-label': 'search ReadRecommend' }}
+                                            value={SearchForm.title}
+                                            name="title"
+                                            label="Search ReadRecommend"
+                                            onChange={onTextboxChange}
                                         />
-                                        <IconButton type="submit" component={Router.Link} to="/search" className={classes.iconButton} aria-label="search">
+                                        <IconButton type="submit" onClick={preventDefault} className={classes.iconButton} aria-label="search" >
                                             <SearchIcon />
                                         </IconButton>
                                     </Paper>

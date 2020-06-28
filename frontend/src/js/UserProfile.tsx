@@ -17,72 +17,59 @@ import Typography from '@material-ui/core/Typography';
 import { LineChart, Line, XAxis, YAxis, Label, ResponsiveContainer } from 'recharts';
 import { useTheme } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
-import RecentlyAdded from './RecentAddedBooks';
+import Collections from './Collections';
 import * as Router from 'react-router-dom';
-
-//todo figure out how to conduct ajax call
-// export default function getAjaxData() {
-//     const [Flag, setFlag] = useState<Flag>({
-//       flag: false,
-//     });
-
-//     // Detects value typed into input and loads it on the screen
-//     const onResponse = (e: ChangeEvent<HTMLInputElement>) => {
-//         const { name, value } = e.target;
-//         setFlag(prevSignInForm => {
-//           return {
-//             ...prevSignInForm,
-//             [name]: value
-//           };
-//         });
-//     }
-
-//     $.ajax({
-//       url: "http://localhost:8000/api/auth/signin",
-//         method: "POST",
-//         data: {
-//             email: 'lily',
-//             password: 'chillax1234'
-//         },
-//         success: function (response) {
-
-//             console.log(response.status);
-//             console.log(response.message);
-//             //this.setState({data: response, show: true});
-//             //this.setState({ video:res.data })
-//             data=response.data
-//             show: true
-//         },
-//         error: function () {
-//                 console.log("server error!");
-//         }.bind(this)
-//     });
-
-//     return (
-//       <React.Fragment>
-//         <CssBaseline />
-//           <UserProfile />
-//       </React.Fragment>
-//     );  
-//     // render() {
-//     //   let {rows} = this.state.data
-//     //   return (
-//     //       <div>
-//     //           WOW
-//     //           {this.state.show === true : <div>
-//     //             {this.state.data}
-//     //             <FilterTable rows = {this.state.data} />
-//     //           </div>: null
-//     //           }
-
-//     //       </div>
-//     //   );
-//     // }
-// }
+import CookieService from "../services/CookieService";
+ 
 
   
 export default function UserProfile() {
 
+  // function weird(){
+  //     var data; 
+  //     data = onSignIn(function(result){ 
+  //         alert("hello"+result);
+          
+  //     });
+  // }
+
+
+  // function onSignIn(callback) {
+      
+  //     $.ajax({
+  //         async: false,
+  //         url: "http://localhost:8000/api/auth/signin",
+  //         method: "POST",
+  //         data: {
+  //             email: signInForm.signInEmail,
+  //             password: signInForm.signInPassword
+  //         },
+  //         success: function (data) {
+
+  //             console.log(data.status);
+  //             console.log(data.message);
+
+  //             if(data.status == 'ok') {
+  //                 // Handle sign in success.
+  //                 var result = data.token;
+  //                 callback(result)
+  //                 console.log("result:"+result);
+  //                 //window.location.href = "/";
+  //                 // The cookie will be available on all URLs.
+  //                 const options = { path: "/" };
+  //                 // Create a cookie with the token from response.
+  //                 CookieService.set("access_token", data.token, options);
+  //                 window.location.href="/";
+  //             }
+  //         },
+  //         error: function (xhr, error) {
+  //             flag=false;
+  //             callback(error);
+  //             console.log("server error!"+error);
+  //             window.location.href="/auth/signin";
+  //         }
+  //     });
+        
   const classes = useStyles();
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
   return (
@@ -116,14 +103,14 @@ export default function UserProfile() {
 
           <Container maxWidth="md">
             <Typography component="h4" variant="h4" align="left" color="textPrimary" gutterBottom>
-                Recently Added Books
+                My Collections
             </Typography>
 
 
               <Grid container direction={'row'} spacing={4}>
               
-                {RecentlyAddedBooks.map((book) => (
-                  <RecentlyAdded key={book.title} book={book}/>
+                {MyCollections.map((collection) => (
+                  <Collections key={collection.title} collection={collection}/>
                 ))}
                
               </Grid>
@@ -171,15 +158,6 @@ const useStyles = makeStyles((theme) => ({
   },
   
 }));
-
-// const settings = {    TO FIX SLIDING FEATURE T^T
-//   dots: false,
-//   infinite: false,
-//   speed: 100,
-//   slidesToShow: 5,
-//   slidesToScroll: 5,
-//   adaptiveHeight: true,
-// };
 
 
 // Generate Sales Data
@@ -258,72 +236,72 @@ const data = [
   createData('24:00', undefined),
 ];
 
-const RecentlyAddedBooks = [
+const MyCollections = [
   {
-    title: 'RecommendBook 1',
+    title: 'Collections 1',
     description:
       'This is a wider card with supporting text below as a natural lead-in to additional content.',
     image: 'https://source.unsplash.com/random',
     imageText: 'Image Text',
   },
   {
-    title: 'RecommendBook 2',
+    title: 'Collections 2',
     description:
       'This is a wider card with supporting text below as a natural lead-in to additional content.',
     image: 'https://source.unsplash.com/random',
     imageText: 'Image Text',
   },
   {
-    title: 'RecommendBook 3',
+    title: 'Collections 3',
     description:
       'This is a wider card with supporting text below as a natural lead-in to additional content.',
     image: 'https://source.unsplash.com/random',
     imageText: 'Image Text',
   },
   {
-    title: 'RecommendBook 4',
+    title: 'Collections 4',
     description:
       'This is a wider card with supporting text below as a natural lead-in to additional content.',
     image: 'https://source.unsplash.com/random',
     imageText: 'Image Text',
   },
   {
-    title: 'RecommendBook 5',
+    title: 'Collections 5',
     description:
       'This is a wider card with supporting text below as a natural lead-in to additional content.',
     image: 'https://source.unsplash.com/random',
     imageText: 'Image Text',
   },
   {
-    title: 'RecommendBook 6',
+    title: 'Collections 6',
     description:
       'This is a wider card with supporting text below as a natural lead-in to additional content.',
     image: 'https://source.unsplash.com/random',
     imageText: 'Image Text',
   },
   {
-    title: 'RecommendBook 7',
+    title: 'Collections 7',
     description:
       'This is a wider card with supporting text below as a natural lead-in to additional content.',
     image: 'https://source.unsplash.com/random',
     imageText: 'Image Text',
   },
   {
-    title: 'RecommendBook 8',
+    title: 'Collections 8',
     description:
       'This is a wider card with supporting text below as a natural lead-in to additional content.',
     image: 'https://source.unsplash.com/random',
     imageText: 'Image Text',
   },
   {
-    title: 'RecommendBook 9',
+    title: 'Collections 9',
     description:
       'This is a wider card with supporting text below as a natural lead-in to additional content.',
     image: 'https://source.unsplash.com/random',
     imageText: 'Image Text',
   },
   {
-    title: 'RecommendBook 10',
+    title: 'Collections 10',
     description:
       'This is a wider card with supporting text below as a natural lead-in to additional content.',
     image: 'https://source.unsplash.com/random',

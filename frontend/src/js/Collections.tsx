@@ -28,7 +28,7 @@ const useStyles = makeStyles({
 
 export default function RecommendBook(props) {
   const classes = useStyles();
-  const { book } = props;
+  const { collection } = props;
   
   return (
     <Grid item xs={12} md={6}>
@@ -37,18 +37,18 @@ export default function RecommendBook(props) {
           <div className={classes.cardDetails}>
             <CardContent>
               <Typography component="h2" variant="h5">
-                {book.title}
+                {collection.title}
               </Typography>
               <Typography variant="subtitle1" color="textSecondary">
-                {book.date}
+                {collection.date}
               </Typography>
               <Typography variant="subtitle1" paragraph>
-                {book.description}
+                {collection.description}
               </Typography>
               
-              <Button size="small" color="primary" component={Router.Link} to="/bookdata/metadata">
+              <Button size="small" color="primary" component={Router.Link} to="/user/usercollections">
                 <Typography variant="subtitle1" color="primary" >
-                  Continue reading...
+                  View Collection
                 </Typography>
               </Button>
 
@@ -57,7 +57,7 @@ export default function RecommendBook(props) {
             </CardContent>
           </div>
           <Hidden xsDown>
-            <CardMedia className={classes.cardMedia} image={book.image} title={book.imageTitle} />
+            <CardMedia className={classes.cardMedia} image={collection.image} title={collection.imageTitle} />
           </Hidden>
         </Card>
       </CardActionArea>
@@ -66,5 +66,5 @@ export default function RecommendBook(props) {
 }
 
 RecommendBook.propTypes = {
-  book: PropTypes.object,
+  collection: PropTypes.object,
 };
