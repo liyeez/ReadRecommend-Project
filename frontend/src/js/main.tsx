@@ -5,6 +5,8 @@ import $ = require('jquery');
 import React from 'react';
 import * as Router from 'react-router-dom';
 
+// Material UI
+import AddIcon from '@material-ui/icons/Add';
 import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
@@ -62,46 +64,13 @@ const Style = makeStyles((theme) => ({
     },
 }));
 
-// $().ready(function () {
-//     $.ajax({
-//         url: "http://localhost:8000/api/hello_world",
-//         method: "GET",
-//         success: function (data) {
-//             console.log(data);
-//             console.log(data.name);
-//         },
-//         error: function () {
-//             console.log("Error!");
-//         }
-//     });
-//     $.ajax({
-//         url: "http://localhost:8000/api/hello_name_post",
-//         method: "POST",
-//         data: {
-//             name: "test name"
-//         },
-//         success: function (data) {
-//             console.log(data);
-//         },
-//         error: function () {
-//             console.log("Error!");
-//         }
-//     });
-//     $.ajax({
-//         url: "http://localhost:8000/api/signup",
-//         method: "GET",
-//         success: function () {
-//             console.log("Sign up")
-//         },
-//         error: function () {
-//             console.log("Error!");
-//         }
-//     })
-// });
-
 const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
-export default function Main(): JSX.Element {
+interface Props {
+    userSignedIn: boolean;
+}
+
+const Main: React.FC<Props> = ({userSignedIn} : Props) => {
     const classes = Style();
     return (
         <React.Fragment>
@@ -166,6 +135,8 @@ export default function Main(): JSX.Element {
                                         <Button size="small" color="primary" component={Router.Link} to="/bookdata/metadata">
                                             View
                                         </Button>
+                                        {(userSignedIn) ? (<Button size="small" color="primary" component={Router.Link} to="/bookdata/metadata" endIcon={<AddIcon />}> Add to Libary </Button>)
+                                                        : (null)}
                                     </CardActions>
                                 </Card>
                             </Grid>
@@ -176,3 +147,5 @@ export default function Main(): JSX.Element {
         </React.Fragment>
     );
 }
+
+export default Main;
