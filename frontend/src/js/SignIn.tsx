@@ -41,7 +41,7 @@ interface Props {
 }
 
 interface SignInForm {
-    token: string
+    token: string;
     signInError: string;
     signInEmail: string;
     signInPassword: string;

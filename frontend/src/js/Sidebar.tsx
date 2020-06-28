@@ -50,6 +50,11 @@ const Sidebar: React.FC = ({}) => {
             <Toolbar />
                 <div className={classes.drawerContainer}>
                     <List>
+                        <ListItem button key={'Home Page'} component={Router.Link} to="/">
+                        <ListItemIcon><LocalLibraryIcon /></ListItemIcon>
+                        <ListItemText primary={'Home Page'} />
+                        </ListItem>
+
                         <ListItem button key={'My Library'} component={Router.Link} to="/user/userlibrary">
                         <ListItemIcon><LocalLibraryIcon /></ListItemIcon>
                         <ListItemText primary={'My Library'} />

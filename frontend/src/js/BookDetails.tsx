@@ -1,15 +1,12 @@
 import clsx from 'clsx';
- import CssBaseline from '@material-ui/core/CssBaseline';
-// import styled from "styled-components";
- import { makeStyles } from "@material-ui/core/styles";
- import Card from '@material-ui/core/Card';
- import CardActions from '@material-ui/core/CardActions';
- import CardContent from '@material-ui/core/CardContent';
- import CardMedia from '@material-ui/core/CardMedia';
- import Grid from '@material-ui/core/Grid';
- import * as Router from 'react-router-dom';
-// import { CarouselProvider, ButtonNext, ButtonBack, Slide, Slider } from 'pure-react-carousel';
-// import 'pure-react-carousel/dist/react-carousel.es.css';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import { makeStyles } from "@material-ui/core/styles";
+import Card from '@material-ui/core/Card';
+import CardActions from '@material-ui/core/CardActions';
+import CardContent from '@material-ui/core/CardContent';
+import CardMedia from '@material-ui/core/CardMedia';
+import Grid from '@material-ui/core/Grid';
+import * as Router from 'react-router-dom';
 import Link from '@material-ui/core/Link';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
@@ -106,7 +103,7 @@ function Item(props)
             <Grid container justify="center" className={classes.blockSpacing}>  
               <Button 
                 component={Router.Link} 
-                to="/auth/signup"
+                to="/bookdata/metadata"
                 type="submit"
                 variant="contained"
                 color="primary">
@@ -141,7 +138,7 @@ function Metadata(){
         </Typography>
         <Grid container justify="center">  
             <Button component={Router.Link} 
-                to="/auth/signup"
+                to="/bookdata/metadata"
                 type="submit"
                 variant="contained"
                 color="primary"

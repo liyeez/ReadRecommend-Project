@@ -135,7 +135,7 @@ export default function Main(): JSX.Element {
                                             placeholder="Find a Book"
                                             inputProps={{ 'aria-label': 'search ReadRecommend' }}
                                         />
-                                        <IconButton type="submit" className={classes.iconButton} aria-label="search">
+                                        <IconButton type="submit" component={Router.Link} to="/search" className={classes.iconButton} aria-label="search">
                                             <SearchIcon />
                                         </IconButton>
                                     </Paper>

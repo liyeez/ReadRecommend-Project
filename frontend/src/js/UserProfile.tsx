@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {ChangeEvent, useState} from "react";
 import clsx from 'clsx';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
@@ -20,8 +20,68 @@ import Paper from '@material-ui/core/Paper';
 import RecentlyAdded from './RecentAddedBooks';
 import * as Router from 'react-router-dom';
 
+//todo figure out how to conduct ajax call
+// export default function getAjaxData() {
+//     const [Flag, setFlag] = useState<Flag>({
+//       flag: false,
+//     });
+
+//     // Detects value typed into input and loads it on the screen
+//     const onResponse = (e: ChangeEvent<HTMLInputElement>) => {
+//         const { name, value } = e.target;
+//         setFlag(prevSignInForm => {
+//           return {
+//             ...prevSignInForm,
+//             [name]: value
+//           };
+//         });
+//     }
+
+//     $.ajax({
+//       url: "http://localhost:8000/api/auth/signin",
+//         method: "POST",
+//         data: {
+//             email: 'lily',
+//             password: 'chillax1234'
+//         },
+//         success: function (response) {
+
+//             console.log(response.status);
+//             console.log(response.message);
+//             //this.setState({data: response, show: true});
+//             //this.setState({ video:res.data })
+//             data=response.data
+//             show: true
+//         },
+//         error: function () {
+//                 console.log("server error!");
+//         }.bind(this)
+//     });
+
+//     return (
+//       <React.Fragment>
+//         <CssBaseline />
+//           <UserProfile />
+//       </React.Fragment>
+//     );  
+//     // render() {
+//     //   let {rows} = this.state.data
+//     //   return (
+//     //       <div>
+//     //           WOW
+//     //           {this.state.show === true : <div>
+//     //             {this.state.data}
+//     //             <FilterTable rows = {this.state.data} />
+//     //           </div>: null
+//     //           }
+
+//     //       </div>
+//     //   );
+//     // }
+// }
+
   
-export default function Blog() {
+export default function UserProfile() {
 
   const classes = useStyles();
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);

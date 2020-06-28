@@ -20,6 +20,8 @@ import BookDetails from "./BookDetails";
 import OtherUserProfile from "./OtherUserProfile";
 import OtherUserCollection from "./OtherUserCollection";
 import FindUser from "./FindUser";
+import Search from "./Search";
+
 
 let signedInStatus = true;
 
@@ -66,6 +68,9 @@ const Routing: React.FC = ({}) => {
                     </Router.Route>
                     <Router.Route path="/bookdata/metadata">
                         <BookDetails />
+                    </Router.Route>
+                    <Router.Route path="/search">
+                        <Search />
                     </Router.Route>
                     <Router.Route path="/">
                         <Main />
