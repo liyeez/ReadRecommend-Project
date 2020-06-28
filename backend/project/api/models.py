@@ -38,3 +38,8 @@ class Book(models.Model):
     isbn = models.CharField(max_length=13, primary_key=True)
     pub_date = models.DateField()
     objects = BookManager()
+
+class Collection(models.Model):
+    name = models.CharField(max_length = 100)
+    books = models.ManyToManyField(Book)
+    
