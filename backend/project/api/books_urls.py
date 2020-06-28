@@ -3,4 +3,5 @@ from . import books
 
 urlpatterns = [
     path("data", books.data),
+    path("search", books.search)
 ]

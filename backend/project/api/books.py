@@ -27,3 +27,20 @@ def data(request):
     book_data_json = serializers.serialize(
         'json', Book.objects.filter(pk=isbn))
     return Response({"status": "ok", "message": "Isbn found success", "data": book_data_json}, status=status.HTTP_200_OK)
+
+
+@api_view(["GET"])
+def search(request):
+    try:
+        title = request.GET["title"]
+    except:
+        return Response({"status": "error", "message": "Invalid request"}, status=status.HTTP_400_BAD_REQUEST)
+    if title == '':
+        return Response({"status": "error", "message": "Fields cannot be blank"}, status=status.HTTP_400_BAD_REQUEST)
+
+    if not Book.objects.filter(title__startswith=title):
+        return Response({"status": "error", "message": "title not found"}, status=status.HTTP_200_OK)
+
+    book_list = serializers.serialize(
+        'json', Book.objects.filter(title__startswith=title))
+    return Response({"status": "ok", "message": "Titles found success", "data": book_list}, status=status.HTTP_200_OK)
