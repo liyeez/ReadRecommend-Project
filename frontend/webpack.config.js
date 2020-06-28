@@ -1,5 +1,5 @@
 const path = require("path");
-const CopyPlugin = require('copy-webpack-plugin');
+const CopyPlugin = require("copy-webpack-plugin");
 
 module.exports = {
     // Needed to get VSCode debugging to work
@@ -17,11 +17,36 @@ module.exports = {
         path: path.join(__dirname, "src", "js"),
     },
     module: {
-        rules: [{
-            test: /\.tsx?$/,
-            loader: "ts-loader",
-            exclude: /node_modules/
-        }]
+        rules: [
+            {
+                test: /\.tsx?$/,
+                loader: "ts-loader",
+                exclude: /node_modules/
+            },
+            {
+                test: /\.css$/i,
+                use: [
+                    "style-loader",
+                    "@teamsupercell/typings-for-css-modules-loader",
+                    {
+                        loader: "css-loader",
+                        options: { modules: true }
+                    }
+                ]
+            },
+            {
+                test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
+                use: [
+                    {
+                        loader: "file-loader",
+                        options: {
+                            name: "[name].[ext]",
+                            outputPath: "../fonts"
+                        }
+                    }
+                ]
+            }
+        ]
     },
     resolve: {
         extensions: [".tsx", ".ts", ".js"]
@@ -61,4 +86,7 @@ module.exports = {
     //         }
     //     }),
     // ]
+
+
+
 };

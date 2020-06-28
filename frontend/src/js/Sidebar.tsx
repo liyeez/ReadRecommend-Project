@@ -16,6 +16,7 @@ import PeopleIcon from '@material-ui/icons/People';
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 
+import CookieService from "../services/CookieService";
 import { makeStyles } from "@material-ui/core/styles";
 
 const drawerWidth = 240;
@@ -34,6 +35,8 @@ const Style = makeStyles((theme) => ({
 }));
 
 const Sidebar: React.FC = ({}) => {
+    
+
     const classes = Style();
     return (
         <div>
@@ -47,15 +50,20 @@ const Sidebar: React.FC = ({}) => {
             <Toolbar />
                 <div className={classes.drawerContainer}>
                     <List>
-                        <ListItem button key={'My Library'} component={Router.Link} to="/users/userlibrary">
+                        <ListItem button key={'Home Page'} component={Router.Link} to="/">
+                        <ListItemIcon><LocalLibraryIcon /></ListItemIcon>
+                        <ListItemText primary={'Home Page'} />
+                        </ListItem>
+
+                        <ListItem button key={'My Library'} component={Router.Link} to="/user/userlibrary">
                         <ListItemIcon><LocalLibraryIcon /></ListItemIcon>
                         <ListItemText primary={'My Library'} />
                         </ListItem>
-                        <ListItem button key={"My Collections"} component={Router.Link} to="/users/usercollections">
+                        <ListItem button key={"My Collections"} component={Router.Link} to="/user/usercollections">
                         <ListItemIcon><LibraryBooksIcon /></ListItemIcon>
                         <ListItemText primary={'My Collections'} />
                         </ListItem>
-                        <ListItem button key={'Find Users'}>
+                        <ListItem button key={'Find Users'} component={Router.Link} to="/user/findusers">
                         <ListItemIcon><PeopleIcon /></ListItemIcon>
                         <ListItemText primary={'Find Users'} />
                         </ListItem>
@@ -63,6 +71,16 @@ const Sidebar: React.FC = ({}) => {
                         <ListItem button key={"My Profile"} component={Router.Link} to="/user/profile">
                         <ListItemIcon><LibraryBooksIcon /></ListItemIcon>
                         <ListItemText primary={'My Profile'} />
+                        </ListItem>
+
+                        <ListItem button key={"(TEST) Other User Profile"} component={Router.Link} to="/user/otherusers">
+                        <ListItemIcon><LibraryBooksIcon /></ListItemIcon>
+                        <ListItemText primary={'(TEST) Other User Profile'} />
+                        </ListItem>
+
+                        <ListItem button key={"(TEST) Other User Collection"} component={Router.Link} to="/user/othercollections">
+                        <ListItemIcon><LibraryBooksIcon /></ListItemIcon>
+                        <ListItemText primary={'(TEST) Other User Collection'} />
                         </ListItem>
                         {/* For testing purposes. Prints Signed In if userSignedIn property is true. */}
                         {/*(userSignedIn) ? (<p>Signed In</p>) : (<p>Signed Out</p>)*/}

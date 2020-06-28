@@ -40,8 +40,8 @@ const Style = makeStyles((theme) => ({
         padding: 10,
     },
     cardGrid: {
-        paddingTop: theme.spacing(8),
-        paddingBottom: theme.spacing(8),
+      paddingTop: theme.spacing(8),
+      paddingBottom: theme.spacing(8),
     },
     card: {
         height: '100%',
@@ -135,7 +135,7 @@ export default function Main(): JSX.Element {
                                             placeholder="Find a Book"
                                             inputProps={{ 'aria-label': 'search ReadRecommend' }}
                                         />
-                                        <IconButton type="submit" className={classes.iconButton} aria-label="search">
+                                        <IconButton type="submit" component={Router.Link} to="/search" className={classes.iconButton} aria-label="search">
                                             <SearchIcon />
                                         </IconButton>
                                     </Paper>
@@ -145,7 +145,6 @@ export default function Main(): JSX.Element {
                     </Container>
                 </div>
                 <Container className={classes.cardGrid} maxWidth="md">
-                    {/* End hero unit */}
                     <Grid container spacing={4}>
                         {cards.map((card) => (
                             <Grid item key={card} xs={12} sm={6} md={4}>
@@ -164,7 +163,7 @@ export default function Main(): JSX.Element {
                                         </Typography>
                                     </CardContent>
                                     <CardActions>
-                                        <Button size="small" color="primary">
+                                        <Button size="small" color="primary" component={Router.Link} to="/bookdata/metadata">
                                             View
                                         </Button>
                                     </CardActions>

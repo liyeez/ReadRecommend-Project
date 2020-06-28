@@ -15,6 +15,8 @@ import Link from "@material-ui/core/Link";
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 
+
+import "react-multi-carousel/lib/styles.css";
 import { makeStyles } from "@material-ui/core/styles";
 
 const Style = makeStyles((theme) => ({
@@ -39,7 +41,7 @@ interface Props {
 }
 
 interface SignInForm {
-    token: string
+    token: string;
     signInError: string;
     signInEmail: string;
     signInPassword: string;
@@ -91,7 +93,7 @@ const SignIn: React.FC<Props> = ({}) => {
                     // Create a cookie with the token from response.
                     CookieService.set("access_token", data.token, options);
                     window.location.reload();
-                    <Router.Redirect to="/user/profile"/> //todo link to user profile
+                    
                 }
             },
             error: function () {
