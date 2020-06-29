@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
+MAX_STR_LEN = 100
 
 class BookManager(models.Manager):
     def create_book(self, title, author, isbn, pub_date):
@@ -63,7 +64,7 @@ class CollectionManager(models.Manager):
 
 class Collection(models.Model):
     collection_id = models.AutoField(primary_key=True, unique=True)
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=MAX_STR_LEN)
     library = models.BooleanField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     books = models.ManyToManyField(Book)
