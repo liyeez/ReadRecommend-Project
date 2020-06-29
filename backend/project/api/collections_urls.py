@@ -2,7 +2,7 @@ from django.urls import path
 from . import collections
 
 urlpatterns = [
-    path("viewcollection", collections.view_collection),
-    path("addtitle", collections.add_title),
-    path("deletetitle", collections.delete_title)
+    path("view_collection", collections.view_collection),
+    path("add_title", collections.add_title),
+    path("delete_title", collections.delete_title)
 ]
