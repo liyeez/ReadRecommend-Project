@@ -1,7 +1,7 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from api.models import Collection, Book, MAX_STR_LEN
+from api.models import Collection, Book, Tag, MAX_STR_LEN
 from django.core import serializers
 from .utilities import input_validator
 
@@ -69,7 +69,7 @@ def delete_title(request): #given collection_id and isbn, removes book from coll
 
 @api_view(["GET"])
 @input_validator(["collection_id", "name"])
-def rename(request): #given collection_id and isbn, removes book from collection
+def rename(request): #given collection_id and new collection name, renames collection
     try:
         collection = Collection.objects.get(pk=request.GET["collection_id"])
     except:
@@ -81,3 +81,32 @@ def rename(request): #given collection_id and isbn, removes book from collection
     collection.save()
 
     return Response({"status": "ok", "message": "Collection successfully renamed", "collection_name":collection.name}, status=status.HTTP_200_OK)
+
+@api_view(["GET"])
+@input_validator(["collection_id", "tag_label"])
+def add_tag(request):
+    try:
+        collection = Collection.objects.get(pk=request.GET["collection_id"])
+    except:
+        return Response({"status": "error", "message": "Collection not found"}, status=status.HTTP_200_OK)
+    tag_label = request.GET["tag_label"]
+    try:
+        tag = Tag.objects.get(pk = tag_label)
+    except:
+        tag = Tag.objects.create(pk = tag_label)
+
+    try:
+        collection.tags.get(pk = tag_label)
+        return Response({"status": "error", "message": "Collection already has this tag"}, status=status.HTTP_200_OK)
+    except:
+        collection.tags.add(tag)
+        collection.save()
+        tag_list = []
+        for tag in collection.tags.all():
+            tag_list.append({'tag': tag.name})
+
+        book_list = []
+        for book in collection.books.all():
+                book_list.append({"isbn": book.isbn, "title": book.title})
+    return Response({"status": "ok", "message": "Tag successfully added to collection",
+     "collection_name": collection.name, "tag_list":tag_list, "book_list":book_list}, status=status.HTTP_200_OK)

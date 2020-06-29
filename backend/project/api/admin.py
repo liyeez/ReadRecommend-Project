@@ -7,3 +7,4 @@ from .models import *
 admin.site.register(Book)
 admin.site.register(Collection)
 admin.site.register(Profile)
+admin.site.register(Tag)

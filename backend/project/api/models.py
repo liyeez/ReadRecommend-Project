@@ -54,12 +54,14 @@ def hook_user_create(sender, instance, created, **kwargs):
 def hook_user_save(sender, instance, **kwargs):
     instance.profile.save()
 
-
+# Tags for collections
+class Tag(models.Model):
+    name = models.CharField(max_length = MAX_STR_LEN, primary_key = True)
 
 # Collection
 class CollectionManager(models.Manager):
-    def create_collection(self, name, user, library=False):
-        collection = self.create(name=name, library=library, user=user)
+    def create_collection(self, name, user, tags, library=False):
+        collection = self.create(name=name, library=library, user=user, tags=tags)
         return collection
 
 class Collection(models.Model):
@@ -68,5 +70,7 @@ class Collection(models.Model):
     library = models.BooleanField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     books = models.ManyToManyField(Book)
+    tags = models.ManyToManyField(Tag, blank = True)
 
     objects = CollectionManager()
+
