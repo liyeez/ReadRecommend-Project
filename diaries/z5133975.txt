@@ -4,3 +4,5 @@ Week 2: Simone made progress on setting basic webpage and its server. We are to 
         All user stories discussed and set in stone for sprint that is starting next week.
         
 Week 3: As the proposal is submitted, the sprint has officially started on thursday lab and user stories are allocated. I am responsible for display top 10 recently added books, viewing book details when a book is clicked, viewing titles in other users' collection. 
+
+Week 4: There has been a change of assigned stories throughout the sprint, a sunday standup meeting has also been conducted to allow communication and check up of how each member are doing. Backend members has informed others about difficulties met in implementing databases. Frontend members including me and Monica also had troubles with ajax requests and react coding.  
