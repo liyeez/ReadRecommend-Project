@@ -11,7 +11,8 @@ from django.db.models import Q
 from .models import Profile
 
 @api_view(["GET"])
-@input_validator(["user_id"])
+@auth_validator
+#@input_validator(["user_id"])
 def get_library(request):
     """
     get_library
@@ -27,8 +28,11 @@ def get_library(request):
         book_id (int)
         book_name (str)
     """
-    if User.objects.filter(id=request.GET["user_id"]).exists():
-        user: User = User.objects.get(id=request.GET["user_id"])
+    user: User = request.user
+    # Currently no additional information exists on profile but its there if we ever need it
+
+    if user:
+        
         library = user.collection_set.get(library=True)
 
         collection_id = library.collection_id
@@ -39,6 +43,19 @@ def get_library(request):
         return Response({"status": "ok", "message": "Got user library", "collection_id": collection_id, "book_list": book_list}, status=status.HTTP_200_OK)
     else:
         return Response({"status": "error", "message": "Invalid user"}, status=status.HTTP_204_NO_CONTENT)
+
+    # if User.objects.filter(id=request.GET["user_id"]).exists():
+    #     user: User = User.objects.get(id=request.GET["user_id"])
+    #     library = user.collection_set.get(library=True)
+
+    #     collection_id = library.collection_id
+    #     book_list = []
+    #     for book in library.books.all():
+    #         book_list.append({"book_id": book.isbn, "book_title": book.title})
+
+    #     return Response({"status": "ok", "message": "Got user library", "collection_id": collection_id, "book_list": book_list}, status=status.HTTP_200_OK)
+    # else:
+    #     return Response({"status": "error", "message": "Invalid user"}, status=status.HTTP_204_NO_CONTENT)
 
 @api_view(["GET"])
 @input_validator(["user_id"])
