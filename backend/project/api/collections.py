@@ -1,19 +1,74 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from api.models import Collection
+from api.models import Collection, Book
 from django.core import serializers
 
 @api_view(["GET"])
-def get_collection(request):
+def view_collection(request): #given collection id returns collection data
+    try:
+        c_id = request.GET["collection_id"]
+    except:
+        return Response({"status": "error", "message": "Invalid request"}, status=status.HTTP_400_BAD_REQUEST)
 
-    collection_id = request.GET['collection_id']
+    try:
+        Collection.objects.get(pk=c_id)
+    except:
+        return Response({"status": "error", "message": "Collection not found"}, status=status.HTTP_200_OK)
+    collection_json = serializers.serialize(
+        'json', Collection.objects.filter(pk=c_id))
+    return Response({"status": "ok", "message": "Collection data delivered", "data": collection_json}, status=status.HTTP_200_OK)
 
-    if collection_id:
-    	if(Collection.objects.filter(pk = collection_id)).exists():
-    		collection = Collection.objects.get(pk = collection_id)
-    		collection_data = serializers.serialize('json', collection)
-    	return Response({"status": "ok", "message": "Collection data delivered", "data": collection_data}, status=status.HTTP_200_OK)
-    else:
-    	return Response({"status": "error", "message": "Invalid request"}, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(["GET"])
+def add_title(request): #given collection_id and isbn, adds book to collection
+    try: 
+        c_id = request.GET["collection_id"]
+        isbn = request.GET["isbn"]
+    except:
+        return Response({"status": "error", "message": "Invalid request"}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        c = Collection.objects.get(pk=c_id)
+    except:
+        return Response({"status": "error", "message": "Collection not found"}, status=status.HTTP_200_OK)
+    try:
+        book = Book.objects.get(pk = isbn)
+    except:
+        return Response({"status": "error", "message": "Book not found"}, status=status.HTTP_200_OK)
+    try: #error if book already in collection
+        c.books.get(pk = isbn)
+        return Response({"status": "error", "message": "Book is already in collection"}, status=status.HTTP_200_OK)
+    except:
+        c.books.add(book)
+        c.save()
+        collection_json = serializers.serialize(
+            'json', Collection.objects.filter(pk=c_id))
+        return Response({"status": "ok", "message": "Book added to collection", "data": collection_json}, status=status.HTTP_200_OK)
+
+@api_view(["GET"])
+def delete_title(request): #given collection_id and isbn, removes book from collection
+    try: 
+        c_id = request.GET["collection_id"]
+        isbn = request.GET["isbn"]
+        print("isbn "+ isbn)
+    except:
+        return Response({"status": "error", "message": "Invalid request"}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        c = Collection.objects.get(pk=c_id)
+    except:
+        return Response({"status": "error", "message": "Collection not found"}, status=status.HTTP_200_OK)
+    try:
+        book = Book.objects.get(pk = isbn)
+    except:
+        return Response({"status": "error", "message": "Book not found"}, status=status.HTTP_200_OK)
+    try: #error if book already in collection
+        c.books.get(pk = isbn)
+        c.books.remove(book)
+        c.save()
+        collection_json = serializers.serialize(
+            'json', Collection.objects.filter(pk=c_id))
+        return Response({"status": "ok", "message": "Book removed from collection", "data": collection_json}, status=status.HTTP_200_OK)
+    except:
+        return Response({"status": "error", "message": "Book is not in collection"}, status=status.HTTP_200_OK)
