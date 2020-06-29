@@ -123,7 +123,7 @@ def get_profile(request):
             else:
                 library_collection_id = collection.collection_id
 
-        return Response({"status": "ok", "message": "Got user collections", "first_name": first_name, "last_name": last_name, "library_collection_id": library_collection_id, "collection_list": collection_list}, status=status.HTTP_200_OK)
+        return Response({"status": "ok", "message": "Got user profile data", "first_name": first_name, "last_name": last_name, "library_collection_id": library_collection_id, "collection_list": collection_list}, status=status.HTTP_200_OK)
     else:
         return Response({"status": "error", "message": "Invalid user"}, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
 
@@ -162,4 +162,4 @@ def my_profile(request):
         else:
             library_collection_id = collection.collection_id
 
-    return Response({"status": "ok", "message": "Got user collections", "first_name": first_name, "last_name": last_name, "library_collection_id": library_collection_id, "collection_list": collection_list}, status=status.HTTP_200_OK)
+    return Response({"status": "ok", "message": "Got current user profile data", "first_name": first_name, "last_name": last_name, "library_collection_id": library_collection_id, "collection_list": collection_list}, status=status.HTTP_200_OK)
