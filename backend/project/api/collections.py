@@ -12,13 +12,15 @@ def view_collection(request): #given collection id returns collection data
         return Response({"status": "error", "message": "Invalid request"}, status=status.HTTP_400_BAD_REQUEST)
 
     try:
-        Collection.objects.get(pk=c_id)
+        collection = Collection.objects.get(pk=c_id)
+        book_list = []
+        for b in collection.books.all():
+            book_list.append({"book_id": b.isbn, "book_title": b.title});
+
     except:
         return Response({"status": "error", "message": "Collection not found"}, status=status.HTTP_200_OK)
-    collection_json = serializers.serialize(
-        'json', Collection.objects.filter(pk=c_id))
-    return Response({"status": "ok", "message": "Collection data delivered", "data": collection_json}, status=status.HTTP_200_OK)
-
+    #collection_json = serializers.serialize('json', Collection.objects.filter(pk=c_id))
+    return Response({"status": "ok", "message": "Collection data delivered", "books": book_list, "collection_title": collection.name}, status=status.HTTP_200_OK)
 
 @api_view(["GET"])
 def add_title(request): #given collection_id and isbn, adds book to collection
