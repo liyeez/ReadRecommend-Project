@@ -6,5 +6,6 @@ urlpatterns = [
     path("add_title", collections.add_title),
     path("delete_title", collections.delete_title),
     path("rename", collections.rename), 
-    path("add_tag", collections.add_tag)
+    path("add_tag", collections.add_tag),
+    path("delete_tag", collections.delete_tag)
 ]

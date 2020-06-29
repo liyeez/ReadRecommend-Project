@@ -110,3 +110,33 @@ def add_tag(request):
                 book_list.append({"isbn": book.isbn, "title": book.title})
     return Response({"status": "ok", "message": "Tag successfully added to collection",
      "collection_name": collection.name, "tag_list":tag_list, "book_list":book_list}, status=status.HTTP_200_OK)
+
+@api_view(["GET"])
+@input_validator(["collection_id", "tag_label"])
+def delete_tag(request):
+    try:
+        collection = Collection.objects.get(pk=request.GET["collection_id"])
+    except:
+        return Response({"status": "error", "message": "Collection not found"}, status=status.HTTP_200_OK)
+    tag_label = request.GET["tag_label"]
+    try:
+        tag = Tag.objects.get(pk = tag_label)
+    except:
+        return Response({"status": "error", "message": "Tag not found"}, status=status.HTTP_200_OK)
+
+    try:
+        collection.tags.get(pk = tag_label)
+        collection.tags.remove(tag)
+        collection.save()
+        tag_list = []
+        for tag in collection.tags.all():
+            tag_list.append({'tag': tag.name})
+
+        book_list = []
+        for book in collection.books.all():
+                book_list.append({"isbn": book.isbn, "title": book.title})
+        return Response({"status": "ok", "message": "Tag successfully removed collection",
+     "collection_name": collection.name, "tag_list":tag_list, "book_list":book_list}, status=status.HTTP_200_OK)
+
+    except:
+        return Response({"status": "error", "message": "Collection does not have this tag"}, status=status.HTTP_200_OK)
