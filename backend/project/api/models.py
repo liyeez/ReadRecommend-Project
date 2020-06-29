@@ -28,12 +28,14 @@ class Book(models.Model):
 # User profile
 class ProfileManager(models.Manager):
     def create_profile(self, user):
-        profile = self.create(user=user)
+        full_name = user.first_name + " " + user.last_name
+        profile = self.create(user=user, full_name=full_name)
         return profile
 
 class Profile(models.Model):
     # Delete the profile if the user is also deleted
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    full_name = models.CharField(max_length=32)
     # Profile specific data if we ever need any
     objects = ProfileManager()
 

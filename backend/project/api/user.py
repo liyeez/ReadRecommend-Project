@@ -7,7 +7,8 @@ from rest_framework import status
 from .utilities import auth_validator, input_validator
 
 from django.contrib.auth.models import User
-from rest_framework.authtoken.models import Token
+from django.db.models import Q
+from .models import Profile
 
 @api_view(["GET"])
 @input_validator(["user_id"])
@@ -21,11 +22,23 @@ def get_library(request):
     user_id (int)
 
     Returns:
+    collection_id (int)
     book_list (list):
         book_id (int)
         book_name (str)
     """
-    return Response({"status": "ok", "message": "Got user library", "book_list": [{"book_id": 1234567891011, "book_name": "test_book0"}, {"book_id": 1234567891012, "book_name": "test_book1"}]}, status=status.HTTP_200_OK)
+    if User.objects.filter(id=request.GET["user_id"]).exists():
+        user = User.objects.get(id=request.GET["user_id"])
+        library = user.collection_set.get(library=True)
+
+        collection_id = library.collection_id
+        book_list = []
+        for book in library.books.all():
+            book_list.append({"book_id": book.isbn, "book_title": book.title})
+
+        return Response({"status": "ok", "message": "Got user library", "collection_id": collection_id, "book_list": book_list}, status=status.HTTP_200_OK)
+    else:
+        return Response({"status": "error", "message": "Invalid user"}, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
 
 @api_view(["GET"])
 @input_validator(["user_id"])
@@ -43,7 +56,17 @@ def get_collections(request):
         collection_id (int)
         collection_name (str)
     """
-    return Response({"status": "ok", "message": "Got user collections", "collection_list": [{"collection_id": 123, "collection_name": "test_collection0"}, {"collection_id": 124, "collection_name": "test_collection1"}]}, status=status.HTTP_200_OK)
+    if User.objects.filter(id=request.GET["user_id"]).exists():
+        user = User.objects.get(id=request.GET["user_id"])
+        collections = user.collection_set.filter(library=False)
+
+        collection_list = []
+        for collection in collections.all():
+            collection_list.append({"collection_id": collection.collection_id, "collection_name": collection.name})
+
+        return Response({"status": "ok", "message": "Got user collections", "collection_list": collection_list}, status=status.HTTP_200_OK)
+    else:
+        return Response({"status": "error", "message": "Invalid user"}, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
 
 @api_view(["GET"])
 @input_validator(["search"])
@@ -59,10 +82,18 @@ def find_users(request):
     Returns:
     user_list (list):
         user_id (int)
-        user_first_name (str)
-        user_last_name (str)
+        first_name (str)
+        last_name (str)
     """
-    return Response({"status": "ok", "message": "Got users", "user_list": [{"user_id": 1, "user_first_name": "test_first0", "user_last_name": "test_last0"}, {"user_id": 2, "user_first_name": "test_first1", "user_last_name": "test_last1"}, {"user_id": 3, "user_first_name": "test_first2", "user_last_name": "test_last2"}]}, status=status.HTTP_200_OK)
+    search = request.GET["search"]
+
+    profiles = Profile.objects.filter(Q(full_name__contains=search))
+
+    user_list = []
+    for profile in profiles.all():
+        user_list.append({"user_id": profile.user.id, "first_name": profile.user.first_name, "last_name": profile.user.last_name})
+
+    return Response({"status": "ok", "message": "Got users", "user_list": user_list}, status=status.HTTP_200_OK)
 
 @api_view(["GET"])
 @input_validator(["user_id"])
@@ -76,13 +107,33 @@ def get_profile(request):
     user_id (int)
 
     Returns:
-    user_first_name (str)
-    user_last_name (str)
+    first_name (str)
+    last_name (str)
+    library_collection_id (str)
     collection_list (list):
         collection_id (int)
         collection_name (str)
     """
-    return Response({"status": "ok", "message": "Got user profile data", "user_first_name": "test_first0", "user_last_name": "test_last0", "collection_list": [{"collection_id": 123, "collection_name": "test_collection0"}, {"collection_id": 124, "collection_name": "test_collection1"}]}, status=status.HTTP_200_OK)
+    if User.objects.filter(id=request.GET["user_id"]).exists():
+        user = User.objects.get(id=request.GET["user_id"])
+        # Currently no additional information exists on profile but its there if we ever need it
+        profile = user.profile
+        collections = user.collection_set
+
+        first_name = user.first_name
+        last_name = user.last_name
+        library_collection_id = 0
+
+        collection_list = []
+        for collection in collections.all():
+            if not collection.library:
+                collection_list.append({"collection_id": collection.collection_id, "collection_name": collection.name})
+            else:
+                library_collection_id = collection.collection_id
+
+        return Response({"status": "ok", "message": "Got user profile data", "first_name": first_name, "last_name": last_name, "library_collection_id": library_collection_id, "collection_list": collection_list}, status=status.HTTP_200_OK)
+    else:
+        return Response({"status": "error", "message": "Invalid user"}, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
 
 @api_view(["GET"])
 @auth_validator
@@ -96,10 +147,27 @@ def my_profile(request):
     token (str)
 
     Returns:
-    user_first_name (str)
-    user_last_name (str)
+    first_name (str)
+    last_name (str)
+    library_collection_id (str)
     collection_list (list):
         collection_id (int)
         collection_name (str)
     """
-    return Response({"status": "ok", "message": "Got current user profile data", "user_first_name": "test_first0", "user_last_name": "test_last0", "collection_list": [{"collection_id": 123, "collection_name": "test_collection0"}, {"collection_id": 124, "collection_name": "test_collection1"}]}, status=status.HTTP_200_OK)
+    user = request.user
+    # Currently no additional information exists on profile but its there if we ever need it
+    profile = user.profile
+    collections = user.collection_set
+
+    first_name = user.first_name
+    last_name = user.last_name
+    library_collection_id = 0
+
+    collection_list = []
+    for collection in collections.all():
+        if not collection.library:
+            collection_list.append({"collection_id": collection.collection_id, "collection_name": collection.name})
+        else:
+            library_collection_id = collection.collection_id
+
+    return Response({"status": "ok", "message": "Got current user profile data", "first_name": first_name, "last_name": last_name, "library_collection_id": library_collection_id, "collection_list": collection_list}, status=status.HTTP_200_OK)
