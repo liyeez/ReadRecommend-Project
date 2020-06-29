@@ -3,12 +3,12 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from django.core import serializers
 
 from .utilities import auth_validator, input_validator
 
 from django.contrib.auth.models import User
-from .models import Collection
+from django.db.models import Q
+from .models import Profile
 
 @api_view(["GET"])
 @input_validator(["user_id"])
@@ -29,7 +29,7 @@ def get_library(request):
     """
     if User.objects.filter(id=request.GET["user_id"]).exists():
         user = User.objects.get(id=request.GET["user_id"])
-        library = user.collection_set.filter(library=True)[0]
+        library = user.collection_set.get(library=True)
 
         collection_id = library.collection_id
         book_list = []
@@ -85,7 +85,15 @@ def find_users(request):
         first_name (str)
         last_name (str)
     """
-    return Response({"status": "ok", "message": "Got users", "user_list": [{"user_id": 1, "first_name": "test_first0", "last_name": "test_last0"}, {"user_id": 2, "first_name": "test_first1", "last_name": "test_last1"}, {"user_id": 3, "first_name": "test_first2", "last_name": "test_last2"}]}, status=status.HTTP_200_OK)
+    search = request.GET["search"]
+
+    profiles = Profile.objects.filter(Q(full_name__contains=search))
+
+    user_list = []
+    for profile in profiles.all():
+        user_list.append({"user_id": profile.user.id, "first_name": profile.user.first_name, "last_name": profile.user.last_name})
+
+    return Response({"status": "ok", "message": "Got users", "user_list": user_list}, status=status.HTTP_200_OK)
 
 @api_view(["GET"])
 @input_validator(["user_id"])
