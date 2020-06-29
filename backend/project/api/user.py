@@ -28,7 +28,7 @@ def get_library(request):
         book_name (str)
     """
     if User.objects.filter(id=request.GET["user_id"]).exists():
-        user = User.objects.get(id=request.GET["user_id"])
+        user: User = User.objects.get(id=request.GET["user_id"])
         library = user.collection_set.get(library=True)
 
         collection_id = library.collection_id
@@ -38,7 +38,7 @@ def get_library(request):
 
         return Response({"status": "ok", "message": "Got user library", "collection_id": collection_id, "book_list": book_list}, status=status.HTTP_200_OK)
     else:
-        return Response({"status": "error", "message": "Invalid user"}, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+        return Response({"status": "error", "message": "Invalid user"}, status=status.HTTP_204_NO_CONTENT)
 
 @api_view(["GET"])
 @input_validator(["user_id"])
@@ -57,7 +57,7 @@ def get_collections(request):
         collection_name (str)
     """
     if User.objects.filter(id=request.GET["user_id"]).exists():
-        user = User.objects.get(id=request.GET["user_id"])
+        user: User = User.objects.get(id=request.GET["user_id"])
         collections = user.collection_set.filter(library=False)
 
         collection_list = []
@@ -115,9 +115,9 @@ def get_profile(request):
         collection_name (str)
     """
     if User.objects.filter(id=request.GET["user_id"]).exists():
-        user = User.objects.get(id=request.GET["user_id"])
+        user: User = User.objects.get(id=request.GET["user_id"])
         # Currently no additional information exists on profile but its there if we ever need it
-        profile = user.profile
+        profile: Profile = user.profile
         collections = user.collection_set
 
         first_name = user.first_name
@@ -154,9 +154,9 @@ def my_profile(request):
         collection_id (int)
         collection_name (str)
     """
-    user = request.user
+    user: User = request.user
     # Currently no additional information exists on profile but its there if we ever need it
-    profile = user.profile
+    profile: Profile = user.profile
     collections = user.collection_set
 
     first_name = user.first_name
