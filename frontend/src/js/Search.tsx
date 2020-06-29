@@ -73,7 +73,9 @@ interface SearchForm {
 
 const Search: React.FC<Props> = ({}) => {
     
-    let cards: any;
+        
+    let books: Array<any> =[];
+    let users: Array<any> =[];
 
     const [SearchForm, setSearchForm] = useState<SearchForm>({
       title: '',
@@ -91,10 +93,13 @@ const Search: React.FC<Props> = ({}) => {
 
     function request() {
         var data = onSearch(function(data){ 
-            if(data != null){
-                var myObject = JSON.parse(data);
-                cards = myObject;
-                console.log(cards[0].fields);
+            console.log(data)
+            if(data.message == "Got matching books") {
+                   books = data.book_list;
+                
+            }else if (data.message == "Got users"){  
+                   users = data.user_list;
+
             }else{
                 alert("No Matched Results!");
                 window.location.href='/';
@@ -109,31 +114,25 @@ const Search: React.FC<Props> = ({}) => {
     }
 
     function onSearch(callback) {
-        let str = window.location.href.split('?')[1];
-        str = str.split('=')[1];
-        console.log(str);
         
         $.ajax({
             async: false,
-            url:"http://localhost:8000/api/books/search",
+            url: api_call,
             data: {
-                title: str,
+                search: str,
             },
             method: "GET",
             success: function (data) {
-                console.log(data.message);
-                if(data.message == 'Titles found success') {
-                    
-                    callback(data.data);
-
-                }else if(data.message == 'title not found') {
-                    callback(null);
+                console.log(data);
+                if(data!= null) {
+                    callback(data);                
                 }
+                callback(null);
             },
             error: function () {
                 console.log("server error!");
-                
-            }
+                callback(null);    
+            } 
         });
     }
 
@@ -141,12 +140,24 @@ const Search: React.FC<Props> = ({}) => {
         window.location.href="/bookdata/metadata?isbn="+data;
     }
 
-   
-    onSearch(request);
+    function viewUser(data){
+        window.location.href="/user/otherusers?userid="+data;
+    }   
+    
     const classes = Style();
     let str = window.location.href.split('?')[1];
+    let type = str.split('=')[0];
     str = str.split('=')[1];
-    console.log(str);
+    console.log("To find: "+str+ "of type: " + type);
+    
+    let api_call: string;
+    if(type == 'title'){
+        api_call= "http://localhost:8000/api/books/search";
+    }else if(type == 'finduser'){
+        api_call= "http://localhost:8000/api/user/find_users";
+    }
+
+    onSearch(request);
 
     return (
 
@@ -187,7 +198,7 @@ const Search: React.FC<Props> = ({}) => {
                 </div>
                 <Container className={classes.cardGrid} maxWidth="md">
                     <Grid container spacing={4}>
-                        {cards.map((card) => (
+                        {books.map((card) => (
                             <Grid item key={card} xs={12} sm={6} md={4}>
                                 <Card className={classes.card}>
                                     <CardMedia
@@ -197,17 +208,35 @@ const Search: React.FC<Props> = ({}) => {
                                     />
                                     <CardContent className={classes.cardContent}>
                                         <Typography gutterBottom variant="h5" component="h2">
-                                            {card.fields.title}
-                                        </Typography>
-                                        <Typography>
-                                            Author: {card.fields.author}
-                                        </Typography>
-                                         <Typography>
-                                            Published On: {card.fields.pub_date}
+                                            {card.book_title}
                                         </Typography>
                                     </CardContent>
                                     <CardActions>
-                                        <Button size="small" color="primary" onClick={() => viewBook(card.pk)}>
+                                        <Button size="small" color="primary" onClick={() => viewBook(card.book_id)}>
+                                            View
+                                        </Button>
+                                    </CardActions>
+
+                                </Card>
+                            </Grid>
+                        ))}
+
+
+                        {users.map((card) => (
+                            <Grid item key={card} xs={12} sm={6} md={4}>
+                                <Card className={classes.card}>
+                                    <CardMedia
+                                        className={classes.cardMedia}
+                                        image="https://source.unsplash.com/random?book"
+                                        title="Image title"
+                                    />
+                                    <CardContent className={classes.cardContent}>
+                                        <Typography gutterBottom variant="h5" component="h2">
+                                            {card.first_name + " " +card.last_name}
+                                        </Typography>
+                                    </CardContent>
+                                    <CardActions>
+                                        <Button size="small" color="primary" onClick={() => viewUser(card.user_id)}>
                                             View
                                         </Button>
                                     </CardActions>

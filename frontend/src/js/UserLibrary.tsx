@@ -5,6 +5,7 @@ import * as $ from "jquery";
 import React, {ChangeEvent, useState} from "react";
 import * as Router from "react-router-dom";
 
+import CookieService from "../services/CookieService";
 // Material UI
 import AddIcon from '@material-ui/icons/Add';
 import AppBar from '@material-ui/core/AppBar';
@@ -58,29 +59,51 @@ const Style = makeStyles((theme) => ({
 }));
 
 
-const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 export default function Profile() {
   const classes = Style();
+  const token = CookieService.get('access_token');
 
-  // function onRender() {
+  let cards: Array<any> =[];
+  function request() {
+        var data = onSearch(function(data){ 
+            console.log(data)
+            if(data.message == "Got matching books") {
+                   cards = data.book_list;
+   
+            }else{
+                alert("No Matched Results!");
+                window.location.href='/';
+            }
+            
+        });
+    }
 
-  //   $.ajax({ //TODO: get user
-  //     url: "http://localhost:8000/api/user/profile",
-  //     method: "GET",
+    function onSearch(callback) {
+        
+        $.ajax({
+            async: false,
+            url: "http://localhost:8000/api/user/get_library",
+            data: {
+                auth: token,
+            },
+            method: "GET",
+            success: function (data) {
+                console.log("im here");
+                console.log(data);
+                if(data!= null) {
+                    callback(data);                
+                }
+                callback(null);
+            },
+            error: function () {
+                console.log("server error!");
+                callback(null);    
+            } 
+        });
+    }
 
-  //     success: function (data) {
-  //       console.log("Receive data");
-  //       console.log(data);
-  //       callback();
-  //     },
-  //     error: function () {
-  //       console.log("server error!");
-  //     }
-  //   });
-
-  // }
-
+  request();
   return (
     <React.Fragment>
       <CssBaseline />

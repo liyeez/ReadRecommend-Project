@@ -90,7 +90,7 @@ const FindUser: React.FC<Props> = ({}) => {
 
     function preventDefault(event) {
         event.preventDefault
-        window.location.href="/search?title="+SearchForm.title;
+        window.location.href="/search?finduser="+SearchForm.title;
     }
 
     

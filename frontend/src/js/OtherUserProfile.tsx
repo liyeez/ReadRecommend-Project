@@ -55,30 +55,71 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-
-const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+interface userForm {
+    firstName: string;
+    lastName: string;
+}
 
 export default function Profile() {
   const classes = useStyles();
+  let cards: any;
+  let str = window.location.href.split('?')[1];
+  str = str.split('=')[1];
+  console.log("To find: "+str);
 
-  // function onRender() {
-       
-  //   $.ajax({ //TODO: get user 
-  //     url: "http://localhost:8000/api/user/profile",
-  //     method: "GET",
-            
-  //     success: function (data) {
-  //       console.log("Receive data");
-  //       console.log(data);
-  //       callback();
-  //     },
-  //     error: function () {
-  //       console.log("server error!");
-  //     }
-  //   });    
+  const [userForm, setUserForm] = useState<userForm>({
+    firstName: '',
+    lastName: '',
+  });
+
+  function request() {
+
+    var data = onSearch(function(data){ 
+        if(data.message == "Got user profile data") {
+            cards = data.collection_list;
+            userForm.firstName = data.first_name;
+            userForm.lastName = data.last_name;
+        }else{
+            alert("No Matched Results!");
+            window.location.href='/';
+        }
         
-  // }
+    });
+  }
 
+    function onSearch(callback) {
+        
+        $.ajax({
+            async: false,
+            url: 'http://localhost:8000/api/user/get_profile',
+            data: {
+                user_id: str,
+            },
+            method: "GET",
+            success: function (data) {
+                if(data!= null) {
+                    callback(data);                
+                }
+                callback(null);
+            },
+            error: function () {
+                console.log("server error!");
+                callback(null);    
+            } 
+        });
+    }
+
+    function viewCollection(data){
+       // NOTICE:
+       // user id is passed instead of collectionid due to 
+       // GET /user/view_collection not being implemented yet
+
+        window.location.href="/user/viewcollection?collectionid="+data;
+    }
+   
+  
+
+  request();
   return (
     <React.Fragment>
       <CssBaseline />
@@ -93,14 +134,10 @@ export default function Profile() {
                 <IconButton>
                   <AccountCircleIcon display='block' style={{ fontSize: 100 }} color="inherit" />
                 </IconButton>
-                Bob Jones
+                {userForm.firstName + " " + userForm.lastName}
               </Typography>
           </Grid>
-          <Grid item>
-              <Typography gutterBottom variant="h5" component="h2">
-                  email
-              </Typography>
-          </Grid>    
+             
           </Grid>
           </Container>
 
@@ -119,16 +156,15 @@ export default function Profile() {
                   />
                   <CardContent className={classes.cardContent}>
                     <Typography gutterBottom variant="h5" component="h2">
-                      Collection x
+                      {card.collection_name}
                     </Typography>
-                    <Typography>
-                      Description
-                    </Typography>
+                    
                   </CardContent>
                   <CardActions>
-                    <Button size="small" color="primary">
+                    <Button size="small" color="primary" onClick={() => viewCollection(card.collection_id)}>
                       View
                     </Button>
+
                     <Button size="small" color="primary">
                       Import to My Collections
                     </Button>

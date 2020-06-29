@@ -44,6 +44,7 @@ export default function UserProfile() {
                 user_id: 6
             },
             success: function (data) {
+                console.log(data);
                 if(data.status == 'ok') {
                     var result = data.collection_list;
                     callback(result);

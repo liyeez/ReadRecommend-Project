@@ -86,8 +86,7 @@ const SignIn: React.FC<Props> = ({}) => {
                     // Create a cookie with the token from response.
                     CookieService.set("access_token", data.token, options);
                     console.log(data.user_id);
-                    <Router.Redirect to="/"/>
-                    //window.location.reload();
+                    window.location.reload();
                 }
             },
             error: function () {
