@@ -87,13 +87,18 @@ def find_users(request):
     """
     search = request.GET["search"]
 
-    profiles = Profile.objects.filter(Q(full_name__contains=search))
+    profiles = Profile.objects.filter(Q(full_name__icontains=search))
 
     user_list = []
     for profile in profiles.all():
         user_list.append({"user_id": profile.user.id, "first_name": profile.user.first_name, "last_name": profile.user.last_name})
 
-    return Response({"status": "ok", "message": "Got users", "user_list": user_list}, status=status.HTTP_200_OK)
+    if len(user_list) > 0:
+        message = "Got users"
+    else:
+        message = "No matches found"
+
+    return Response({"status": "ok", "message": message, "user_list": user_list}, status=status.HTTP_200_OK)
 
 @api_view(["GET"])
 @input_validator(["user_id"])

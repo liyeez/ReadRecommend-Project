@@ -3,5 +3,6 @@ from . import books
 
 urlpatterns = [
     path("data", books.data),
-    path("search", books.search)
+    path("search", books.search),
+    path("random", books.random)
 ]
