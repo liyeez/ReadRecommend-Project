@@ -7,4 +7,5 @@ urlpatterns = [
     path("find_users", user.find_users),
     path("get_profile", user.get_profile),
     path("my_profile", user.my_profile)
+
 ]
