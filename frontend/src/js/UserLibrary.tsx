@@ -58,7 +58,14 @@ const Style = makeStyles((theme) => ({
   // },
 }));
 
+function viewBook(data){
+    window.location.href="/bookdata/metadata?isbn="+data;
+}
 
+// TODO AFTER API IMPLEMENTED
+function removeBook(data){
+    //window.location.href="/bookdata/metadata?isbn="+data;
+}
 
 export default function Profile() {
   const classes = Style();
@@ -68,9 +75,9 @@ export default function Profile() {
   function request() {
         var data = onSearch(function(data){ 
             console.log(data)
-            if(data.message == "Got matching books") {
-                   cards = data.book_list;
-   
+            if(data.message == "Got user library") {
+                cards = data.book_list;
+                console.log(cards[0].book_title);   
             }else{
                 alert("No Matched Results!");
                 window.location.href='/';
@@ -78,6 +85,7 @@ export default function Profile() {
             
         });
     }
+
 
     function onSearch(callback) {
         
@@ -89,7 +97,6 @@ export default function Profile() {
             },
             method: "GET",
             success: function (data) {
-                console.log("im here");
                 console.log(data);
                 if(data!= null) {
                     callback(data);                
@@ -145,17 +152,15 @@ export default function Profile() {
                   />
                   <CardContent className={classes.cardContent}>
                     <Typography gutterBottom variant="h5" component="h2">
-                      Heading
+                      {card.book_title}
                     </Typography>
-                    <Typography>
-                      Book content.
-                    </Typography>
+                    
                   </CardContent>
                   <CardActions>
-                    <Button size="small" color="primary">
+                    <Button size="small" color="primary" onClick={() => viewBook(card.book_id)}>
                       View
                     </Button>
-                    <Button size="small" color="primary" endIcon={<DeleteIcon/>}>
+                    <Button size="small" color="primary" endIcon={<DeleteIcon/>} onClick={() => removeBook(card.book_id)}> 
                       Remove
                     </Button>
                   </CardActions>

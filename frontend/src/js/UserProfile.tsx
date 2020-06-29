@@ -38,18 +38,19 @@ export default function UserProfile() {
     function retrieveCollections(callback) {
         $.ajax({
             async: false,
-            url: "http://localhost:8000/api/user/get_collections",
+            url: "http://localhost:8000/api/user/my_profile",
             method: "GET",
-            data: {
-                user_id: 6
+            data:{
+                auth: token
             },
             success: function (data) {
                 console.log(data);
-                if(data.status == 'ok') {
-                    var result = data.collection_list;
-                    callback(result);
-                    console.log("hey");
-                    console.log(userProfileData.userBookCollections);
+                if(data.message == 'Got current user profile data') {
+                    callback(data);
+                    //console.log("hey");
+                    //console.log(userProfileData.userBookCollections);
+                }else{
+                    callback(null);
                 }
             },
             error: function (error) {
@@ -62,11 +63,32 @@ export default function UserProfile() {
     const classes = useStyles();
     const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
-    retrieveCollections(function(result) {
+   
+    // retrieveCollections(function(result) {
+    //     // Updates the user's collections with the results returned.
+    //     userProfileData.userBookCollections = result;
+        
+    // });
+    
+    
+    let Name: string = '';
+    const token = CookieService.get('access_token');
+    function request() {
+        var result = retrieveCollections(function(result) {
         // Updates the user's collections with the results returned.
-        userProfileData.userBookCollections = result;
-    });
+            if(result != null) {
+                userProfileData.userBookCollections = result.collection_list;
+                Name = result.first_name + ' ' +result.last_name;
 
+            }else{
+                alert("Sth wrong!");
+                window.location.href='/';
+            }
+           
+        });
+    }
+
+    request();
     return (
         <React.Fragment>
             <CssBaseline />
@@ -76,6 +98,9 @@ export default function UserProfile() {
                     <Container maxWidth="sm">
                     <Typography component="h2" variant="h2" align="center" color="textPrimary" >
                         Home Profile
+                    </Typography>
+                    <Typography component="h2" variant="h5" align="center" color="textSecondary" >
+                        Welcome {Name}!
                     </Typography>
                     </Container>
                 </div>
@@ -99,7 +124,7 @@ export default function UserProfile() {
                 </Container>
 
                 {/* User's Book Collections */}
-                <Container className={classes.cardGrid} maxWidth="md">
+                {/*<Container className={classes.cardGrid} maxWidth="md">
                     <Typography component="h4" variant="h4" align="left" color="textPrimary" gutterBottom>
                         User Collections
                     </Typography>
@@ -110,7 +135,7 @@ export default function UserProfile() {
                           <Collections key={collection.title} collection={collection}/>
                         ))}
                     </Grid>
-                </Container>
+                </Container>*/}
 
                 {/* Hardcoded Collections */}
                 <Container className={classes.cardGrid} maxWidth="md">

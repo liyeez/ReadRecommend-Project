@@ -110,10 +110,6 @@ export default function Profile() {
     }
 
     function viewCollection(data){
-       // NOTICE:
-       // user id is passed instead of collectionid due to 
-       // GET /user/view_collection not being implemented yet
-
         window.location.href="/user/viewcollection?collectionid="+data;
     }
    
