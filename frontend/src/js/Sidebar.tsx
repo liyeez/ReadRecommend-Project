@@ -2,6 +2,7 @@
 // User sidebar which is rendered when a user is signed in.
 import React from "react";
 import * as Router from 'react-router-dom';
+import * as $ from "jquery";
 
 // Material UI
 import CollectionsBookmarkIcon from '@material-ui/icons/CollectionsBookmark';
@@ -34,9 +35,8 @@ const Style = makeStyles((theme) => ({
     },
 }));
 
+
 const Sidebar: React.FC = ({}) => {
-
-
     const classes = Style();
     return (
         <div>
@@ -59,7 +59,7 @@ const Sidebar: React.FC = ({}) => {
                         <ListItemIcon><LocalLibraryIcon /></ListItemIcon>
                         <ListItemText primary={'My Library'} />
                         </ListItem>
-                        
+
                         <ListItem button key={'Find Users'} component={Router.Link} to="/user/findusers">
                         <ListItemIcon><PeopleIcon /></ListItemIcon>
                         <ListItemText primary={'Find Users'} />
@@ -79,8 +79,6 @@ const Sidebar: React.FC = ({}) => {
                         <ListItemIcon><LibraryBooksIcon /></ListItemIcon>
                         <ListItemText primary={'(TEST) Other User Collection'} />
                         </ListItem>
-                        {/* For testing purposes. Prints Signed In if userSignedIn property is true. */}
-                        {/*(userSignedIn) ? (<p>Signed In</p>) : (<p>Signed Out</p>)*/}
                     </List>
                 </div>
             </Drawer>
