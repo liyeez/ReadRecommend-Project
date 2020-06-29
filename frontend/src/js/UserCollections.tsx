@@ -81,7 +81,7 @@ const UserCollections: React.FC<Props> = ({}) => {
                 <div className={classes.heroContent}>
                     <Container maxWidth="sm">
                         <Typography component="h1" variant="h2" align="center" color="textPrimary" gutterBottom>
-                            My Collections
+                            Collection Title
                         </Typography>
                         <Typography variant="h5" align="center" color="textSecondary" paragraph>
                             Organize your books into intuitive collections.
@@ -123,10 +123,10 @@ const UserCollections: React.FC<Props> = ({}) => {
                                         </Typography>
                                     </CardContent>
                                     <CardActions>
-                                        <Button size="small" color="primary" component={Router.Link} to="/">
+                                        <Button size="small" color="primary" component={Router.Link} to="/view">
                                             View
                                         </Button>
-                                        <Button size="small" color="primary" component={Router.Link} to="/">
+                                        <Button size="small" color="primary" component={Router.Link} to="/edit">
                                             Edit
                                         </Button>
                                     </CardActions>

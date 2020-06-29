@@ -1,3 +1,6 @@
+// OtherUserCollection.tsx
+// A page where the user can browse book collections owned by other users.
+
 import React, {ChangeEvent, useState} from "react";
 import * as Router from "react-router-dom";
 
@@ -51,7 +54,7 @@ const useStyles = makeStyles((theme) => ({
   container: {
       paddingTop: theme.spacing(4),
       paddingLeft: theme.spacing(16),
-   
+
   },
 }))
 
@@ -62,11 +65,11 @@ export default function Profile() {
   const classes = useStyles();
 
   // function onRender() {
-       
-  //   $.ajax({ //TODO: get user 
+
+  //   $.ajax({ //TODO: get user
   //     url: "http://localhost:8000/api/user/profile",
   //     method: "GET",
-            
+
   //     success: function (data) {
   //       console.log("Receive data");
   //       console.log(data);
@@ -75,14 +78,14 @@ export default function Profile() {
   //     error: function () {
   //       console.log("server error!");
   //     }
-  //   });    
-        
+  //   });
+
   // }
 
   return (
     <React.Fragment>
       <CssBaseline />
-      
+
       <main>
         {/* Hero unit */}
         <div className={classes.heroContent} >
@@ -100,7 +103,7 @@ export default function Profile() {
               <Typography gutterBottom variant="h5" component="h2">
                   Collection x
               </Typography>
-          </Grid>    
+          </Grid>
           </Grid>
           </Container>
 
@@ -139,7 +142,7 @@ export default function Profile() {
           </Grid>
         </Container>
       </main>
-      
+
     </React.Fragment>
   );
 }
