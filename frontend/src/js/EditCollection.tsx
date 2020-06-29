@@ -1,7 +1,7 @@
 // EditCollection.tsx
 // A page where users can edit a previously created collection.
 
-import React, {useState} from "react";
+import React, {ChangeEvent, useState} from "react";
 import * as Router from 'react-router-dom';
 
 // Material UI
@@ -14,6 +14,11 @@ import CardMedia from '@material-ui/core/CardMedia';
 import Chip from '@material-ui/core/Chip';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Container from '@material-ui/core/Container';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle'
 import EditIcon from '@material-ui/icons/Edit';
 import Grid from '@material-ui/core/Grid';
 import HistoryIcon from '@material-ui/icons/History';
@@ -87,6 +92,47 @@ interface Props {
 const EditCollection: React.FC<Props> = ({}) => {
     const classes = Style();
 
+    // Collection Data. TODO: Add more fields.
+    const [collectionData, setCollectionData] = useState(
+        {
+            collectionTitle: "Collection Title",
+        }
+    );
+
+    // For editing the collection's title.
+    const [open, setOpen] = useState(false);
+    const [newTitle, setNewTitle] = useState('');
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    // Detects new value typed into dialog box and loads it on the screen.
+    const onTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setNewTitle(value);
+    }
+
+    function setCollectionTitle() {
+        // Closes dialog box.
+        handleClose();
+
+        // Changes the collection title on the front-end display.
+        setCollectionData(prevCollectionData => {
+            return {
+                ...prevCollectionData,
+                collectionTitle: newTitle
+            };
+        });
+
+        // TODO: Change the collection title in the back-end/database.
+        console.log("Change collection title in the backend.")
+    }
+
     // Tags are represented using the Chip Material UI component.
     const [chipData, setChipData] = useState([
         { key: 0, label: 'Fiction' },
@@ -116,9 +162,40 @@ const EditCollection: React.FC<Props> = ({}) => {
                 <div className={classes.heroContent}>
                     <Container maxWidth="sm">
                         {/*TODO: Dynamically render the collection's title */}
-                        <Typography component="h1" variant="h2" align="center" color="textPrimary" gutterBottom>
-                            Collection Title
-                        </Typography>
+                        <Grid>
+                            <Typography component="h1" variant="h2" align="center" color="textPrimary" gutterBottom>
+                                {collectionData.collectionTitle}
+                                <Button variant="outlined" color="secondary" onClick={handleClickOpen} startIcon={<EditIcon />}>
+                                    Rename Collection
+                                </Button>
+                            </Typography>
+
+                            <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+                                <DialogTitle id="form-dialog-title">Rename Collection</DialogTitle>
+                                <DialogContent>
+                                    <DialogContentText>
+                                        Enter a new title for your collection.
+                                    </DialogContentText>
+                                    <TextField
+                                        autoFocus
+                                        margin="dense"
+                                        id="name"
+                                        label="Collection Title"
+                                        type="text"
+                                        fullWidth
+                                        onChange={onTitleChange}
+                                    />
+                                </DialogContent>
+                                <DialogActions>
+                                    <Button onClick={handleClose} color="primary">
+                                        Cancel
+                                    </Button>
+                                    <Button onClick={setCollectionTitle} color="primary" variant="contained" >
+                                        Save
+                                    </Button>
+                                </DialogActions>
+                            </Dialog>
+                        </Grid>
                         <Typography variant="h5" align="center" color="textSecondary" paragraph>
                             A collection of books.
                         </Typography>
@@ -140,23 +217,12 @@ const EditCollection: React.FC<Props> = ({}) => {
                                 <Grid item>
                                     <Button
                                         type="submit"
-                                        variant="contained"
-                                        color="primary"
-                                        startIcon={<EditIcon />}
-                                    >
-                                        Edit
-                                    </Button>
-                                </Grid>
-                                <Grid item>
-                                    <Button
-                                        type="submit"
                                         variant="outlined"
                                         color="primary"
                                         startIcon={<AddIcon />}
                                     >
                                         Add Tags
                                     </Button>
-
                                 </Grid>
                                 <Grid item>
                                     <Button
