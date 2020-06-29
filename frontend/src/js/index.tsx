@@ -14,9 +14,10 @@ import Main from "./main";
 import SignUp from "./SignUp";
 import SignIn from "./SignIn";
 import UserLibrary from "./UserLibrary";
-import UserCollections from "./UserCollections";
 import UserProfile from "./UserProfile";
 import BookDetails from "./BookDetails";
+import ViewCollection from "./ViewCollection";
+import EditCollection from "./EditCollection";
 import OtherUserProfile from "./OtherUserProfile";
 import OtherUserCollection from "./OtherUserCollection";
 import FindUser from "./FindUser";
@@ -50,11 +51,14 @@ const Routing: React.FC = ({}) => {
                     <Router.Route path="/user/userlibrary">
                         <UserLibrary />
                     </Router.Route>
-                    <Router.Route path="/user/usercollections">
-                        <UserCollections />
-                    </Router.Route>
                     <Router.Route path="/user/profile">
                         <UserProfile />
+                    </Router.Route>
+                    <Router.Route path="/user/viewcollection/collectionid">
+                        <ViewCollection />
+                    </Router.Route>
+                    <Router.Route path="/user/editcollection/collectionid">
+                        <EditCollection />
                     </Router.Route>
                     <Router.Route path="/user/findusers">
                         <FindUser />

@@ -1,8 +1,7 @@
-// Main.tsx
-// Main page
+// ViewCollection.tsx
+// A page where users can edit a previously created collection.
 
-import $ = require('jquery');
-import React, {ChangeEvent, useState} from "react";
+import React, {useState} from "react";
 import * as Router from 'react-router-dom';
 
 // Material UI
@@ -14,6 +13,7 @@ import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Container from '@material-ui/core/Container';
+import EditIcon from '@material-ui/icons/Edit';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import InputBase from '@material-ui/core/InputBase';
@@ -25,7 +25,6 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 
 import { makeStyles } from "@material-ui/core/styles";
-
 
 const Style = makeStyles((theme) => ({
     heroContent: {
@@ -66,37 +65,13 @@ const Style = makeStyles((theme) => ({
 }));
 
 const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-interface SearchForm {
-    title: string;
-}
+
 interface Props {
-    userSignedIn: boolean;
+
 }
 
-let flag: boolean;
-
-const Main: React.FC<Props> = ({userSignedIn} : Props) => {
-
-    const [SearchForm, setSearchForm] = useState<SearchForm>({
-      title: '',
-    });
-
-    const onTextboxChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setSearchForm(prevSearchForm => {
-          return {
-            ...prevSearchForm,
-            [name]: value,
-          };
-        });
-    }
-
-    function preventDefault(event) {
-        window.location.href="/search?title="+SearchForm.title;
-    }
-
+const ViewCollection: React.FC<Props> = ({}) => {
     const classes = Style();
-    // onSearch(preventDefault);
     return (
         <React.Fragment>
             <CssBaseline />
@@ -104,40 +79,25 @@ const Main: React.FC<Props> = ({userSignedIn} : Props) => {
                 {/* Hero unit */}
                 <div className={classes.heroContent}>
                     <Container maxWidth="sm">
+                        {/*TODO: Dynamically render the collection's title */}
                         <Typography component="h1" variant="h2" align="center" color="textPrimary" gutterBottom>
-                            ReadRecommend
+                            Collection Title
                         </Typography>
                         <Typography variant="h5" align="center" color="textSecondary" paragraph>
-                            A seamless platform for book lovers to explore personalized book recommendations.
+                            Collection Description.
                         </Typography>
                         <div className={classes.heroButtons}>
                             <Grid container spacing={2} justify="center">
                                 <Grid item>
                                     <Button
-                                        component={Router.Link} to="/auth/signup"
+                                        component={Router.Link} to="/user/editcollection/collectionid"
                                         type="submit"
                                         variant="contained"
                                         color="primary"
+                                        startIcon={<EditIcon />}
                                     >
-                                        Sign up for free!
+                                        Edit Collection
                                     </Button>
-                                </Grid>
-                                {/*Search Bar*/}
-
-                                <Grid item>
-                                    <Paper className={classes.root}>
-                                        <TextField
-                                            className={classes.input}
-                                            placeholder="Find a Book"
-                                            value={SearchForm.title}
-                                            name="title"
-                                            label="Search ReadRecommend"
-                                            onChange={onTextboxChange}
-                                        />
-                                        <IconButton type="submit" onClick={preventDefault} className={classes.iconButton} aria-label="search" >
-                                            <SearchIcon />
-                                        </IconButton>
-                                    </Paper>
                                 </Grid>
                             </Grid>
                         </div>
@@ -165,8 +125,6 @@ const Main: React.FC<Props> = ({userSignedIn} : Props) => {
                                         <Button size="small" color="primary" component={Router.Link} to="/bookdata/metadata">
                                             View
                                         </Button>
-                                        {(userSignedIn) ? (<Button size="small" color="primary" component={Router.Link} to="/bookdata/metadata" endIcon={<AddIcon />}> Add to Libary </Button>)
-                                                        : (null)}
                                     </CardActions>
                                 </Card>
                             </Grid>
@@ -178,4 +136,4 @@ const Main: React.FC<Props> = ({userSignedIn} : Props) => {
     );
 }
 
-export default Main;
+export default ViewCollection;

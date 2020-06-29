@@ -13,6 +13,7 @@ import Collections from './Collections';
 import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
 import CssBaseline from '@material-ui/core/CssBaseline';
+import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
 import Link from '@material-ui/core/Link';
 import Paper from '@material-ui/core/Paper';
@@ -197,12 +198,11 @@ function Goal(){
     return (
         <React.Fragment>
             <Container className={classes.container}>
-                <Typography component="h4" variant="h4" align="center" color="textPrimary" >
+                <Typography component="h4" variant="h4" color="textPrimary" >
                     My Goals
                 </Typography>
-            </Container>
-            <Container className={classes.container}>
-                <Typography component="p" variant="h4">
+                <Divider />
+                <Typography component="p" variant="h5">
                     100 Books
                 </Typography>
                 <Typography color="textSecondary" className={classes.depositContext}>

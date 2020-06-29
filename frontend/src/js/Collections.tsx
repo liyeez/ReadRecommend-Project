@@ -53,9 +53,14 @@ export default function RecommendBook(props) {
                         </Typography>
 
                         {/* TODO: Dynamically change the router link to match the requested collection by collection id.*/}
-                        <Button size="small" color="primary" component={Router.Link} to="/user/collectionid">
+                        <Button size="small" color="primary" component={Router.Link} to="/user/viewcollection/collectionid">
                             <Typography variant="subtitle1" color="primary" >
                                 View
+                            </Typography>
+                        </Button>
+                        <Button size="small" color="primary" component={Router.Link} to="/user/editcollection/collectionid">
+                            <Typography variant="subtitle1" color="primary" >
+                                Edit
                             </Typography>
                         </Button>
                     </CardContent>
