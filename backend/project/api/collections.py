@@ -7,17 +7,21 @@ from .utilities import input_validator
 
 @api_view(["GET"])
 @input_validator(["collection_id"])
-def view_collection(request): #given collection id returns collection name, and book list
+def view_collection(request): #given collection id returns collection name, tag list, book list
     try: #check collection exists
         collection = Collection.objects.get(pk=request.GET["collection_id"])
     except:
         return Response({"status": "error", "message": "Collection not found"}, status=status.HTTP_200_OK)
     
+    tag_list = []
+        for tag in collection.tags.all():
+            tag_list.append({'tag': tag.name})
+
     book_list = []
     for book in collection.books.all():
         book_list.append({"isbn": book.isbn, "title": book.title})
     return Response({"status": "ok", "message": "Collection data delivered",
-     "collection_name": collection.name, "book_list":book_list}, status=status.HTTP_200_OK)
+     "collection_name": collection.name, "book_list":book_list, "tag_list":tag_list}, status=status.HTTP_200_OK)
 
 
 @api_view(["GET"])
@@ -67,14 +71,15 @@ def delete_title(request): #given collection_id and isbn, removes book from coll
     except:
         return Response({"status": "error", "message": "Book is not in collection"}, status=status.HTTP_200_OK)
 
-@api_view(["GET"])
+@api_view(["POST"])
 @input_validator(["collection_id", "name"])
 def rename(request): #given collection_id and new collection name, renames collection
+                    #returns collection name
     try:
-        collection = Collection.objects.get(pk=request.GET["collection_id"])
+        collection = Collection.objects.get(pk=request.POST["collection_id"])
     except:
         return Response({"status": "error", "message": "Collection not found"}, status=status.HTTP_200_OK)
-    name = request.GET["name"]
+    name = request.POST["name"]
     if(len(name)> MAX_STR_LEN):
         return Response({"status": "error", "message": "Name too long"}, status=status.HTTP_200_OK)
     collection.name = name
@@ -82,14 +87,15 @@ def rename(request): #given collection_id and new collection name, renames colle
 
     return Response({"status": "ok", "message": "Collection successfully renamed", "collection_name":collection.name}, status=status.HTTP_200_OK)
 
-@api_view(["GET"])
+@api_view(["POST"])
 @input_validator(["collection_id", "tag_label"])
-def add_tag(request):
+def add_tag(request): #given collection id and tag label, adds tag to collection
+                    #returns collection name, tag list and book list.
     try:
-        collection = Collection.objects.get(pk=request.GET["collection_id"])
+        collection = Collection.objects.get(pk=request.POST["collection_id"])
     except:
         return Response({"status": "error", "message": "Collection not found"}, status=status.HTTP_200_OK)
-    tag_label = request.GET["tag_label"]
+    tag_label = request.POST["tag_label"]
     try:
         tag = Tag.objects.get(pk = tag_label)
     except:
@@ -111,14 +117,15 @@ def add_tag(request):
     return Response({"status": "ok", "message": "Tag successfully added to collection",
      "collection_name": collection.name, "tag_list":tag_list, "book_list":book_list}, status=status.HTTP_200_OK)
 
-@api_view(["GET"])
+@api_view(["POST"])
 @input_validator(["collection_id", "tag_label"])
-def delete_tag(request):
+def delete_tag(request): #given collection id and tag label, removes tag from collection
+                    #returns collection name, tag list and book list.
     try:
-        collection = Collection.objects.get(pk=request.GET["collection_id"])
+        collection = Collection.objects.get(pk=request.POST["collection_id"])
     except:
         return Response({"status": "error", "message": "Collection not found"}, status=status.HTTP_200_OK)
-    tag_label = request.GET["tag_label"]
+    tag_label = request.POST["tag_label"]
     try:
         tag = Tag.objects.get(pk = tag_label)
     except:
