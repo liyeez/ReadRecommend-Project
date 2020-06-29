@@ -27,7 +27,9 @@ class Book(models.Model):
 # Collection
 class Collection(models.Model):
     collection_id = models.AutoField(primary_key=True, unique=True)
+    name = models.CharField(max_length=100)
     owner = models.IntegerField()
+    books = models.ManyToManyField(Book)
 
 
 
