@@ -6,7 +6,6 @@ from rest_framework import status
 
 from .utilities import auth_validator, input_validator
 
-from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
 
