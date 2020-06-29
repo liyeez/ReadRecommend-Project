@@ -10,6 +10,8 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
 
+from .models import Profile
+
 
 @api_view(["POST"])
 @input_validator(["email", "first_name", "last_name", "password"])

@@ -1,6 +1,7 @@
 from django.db import models
-from django.utils import timezone
-import datetime
+from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 class BookManager(models.Manager):
@@ -24,27 +25,47 @@ class Book(models.Model):
 
 
 
+# User profile
+class ProfileManager(models.Manager):
+    def create_profile(self, user):
+        profile = self.create(user=user)
+        return profile
+
+class Profile(models.Model):
+    # Delete the profile if the user is also deleted
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    # Profile specific data if we ever need any
+    objects = ProfileManager()
+
+# User profile hooks
+# Used here because extending user profile is scary
+# Manager is safer to use than just hooking everything though
+
+# Hook into user profile creation and create a Profile
+@receiver(post_save, sender=User)
+def hook_user_create(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create_profile(user=instance)
+        Collection.objects.create_collection(name="Library", user=instance, library=True)
+    
+# Hook into user save and update Profile
+@receiver(post_save, sender=User)
+def hook_user_save(sender, instance, **kwargs):
+    instance.profile.save()
+
+
+
 # Collection
+class CollectionManager(models.Manager):
+    def create_collection(self, name, user, library=False):
+        collection = self.create(name=name, library=library, user=user)
+        return collection
+
 class Collection(models.Model):
     collection_id = models.AutoField(primary_key=True, unique=True)
     name = models.CharField(max_length=100)
-    owner = models.IntegerField()
+    library = models.BooleanField()
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     books = models.ManyToManyField(Book)
 
-
-
-
-# User profile
-class ProfileManager(models.Manager):
-    def create_profile(self, user_id):
-        profile = self.create(user_id=user_id, library=1)
-
-class Profile(models.Model):
-    user_id = models.IntegerField(primary_key=True, unique=True)
-    library = models.IntegerField()
-    collections = models.ForeignKey(Collection, on_delete=models.CASCADE)
-
-    objects = ProfileManager()
-
-    class Meta:
-        ordering = ["user_id"]
+    objects = CollectionManager()
