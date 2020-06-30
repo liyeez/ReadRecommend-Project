@@ -162,7 +162,7 @@ const Main: React.FC<Props> = ({userSignedIn} : Props) => {
                                         </Typography>
                                     </CardContent>
                                     <CardActions>
-                                        <Button size="small" color="primary" component={Router.Link} to="/bookdata/metadata">
+                                        <Button size="small" color="primary" component={Router.Link} to="/bookdata/metadata?isbn=">
                                             View
                                         </Button>
                                         {(userSignedIn) ? (<Button size="small" color="primary" component={Router.Link} to="/bookdata/metadata" endIcon={<AddIcon />}> Add to Libary </Button>)
