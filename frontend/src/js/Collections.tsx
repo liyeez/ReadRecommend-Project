@@ -34,6 +34,10 @@ function viewCollection(data){
     window.location.href="/user/viewcollection?collectionid="+data;
 }
 
+function editCollection(data){
+    window.location.href="/user/editcollection?collectionid="+data;
+}
+
 export default function Collections(props) {
     const classes = useStyles();
     const { collection } = props;
@@ -61,7 +65,7 @@ export default function Collections(props) {
                                 View
                             </Typography>
                         </Button>
-                        <Button size="small" color="primary" component={Router.Link} to="/user/editcollection">
+                        <Button size="small" color="primary" component={Router.Link} to="/user/editcollection" onClick={() => editCollection(collection.collection_id)}>
                             <Typography variant="subtitle1" color="primary" >
                                 Edit
                             </Typography>

@@ -154,7 +154,7 @@ const BookDetails: React.FC<Props> = ({}) => {
             async: false,
             url:"http://localhost:8000/api/books/data",
             data: {
-                book_id: str,
+                isbn: str,
             },
             method: "GET",
             success: function (data) {
