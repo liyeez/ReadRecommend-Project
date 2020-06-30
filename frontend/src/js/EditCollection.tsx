@@ -105,7 +105,7 @@ const EditCollection: React.FC<Props> = ({}) => {
     // Collection Data. TODO: Add more fields.
     const [collectionData, setCollectionData] = useState(
         {
-            collectionTitle: "Collection Title",
+            collectionTitle: '',
         }
     );
 
@@ -176,8 +176,22 @@ const EditCollection: React.FC<Props> = ({}) => {
             };
         });
 
-        // TODO: Change the collection title in the back-end/database.
-        console.log("Change collection title in the backend.")
+        // Change the collection title in the back-end/database.
+        $.ajax({
+            async: false,
+            url: 'http://localhost:8000/api/collections/rename',
+            data: {
+                collection_id: collectionId,
+                collection_name: newTitle,
+            },
+            method: "POST",
+            success: function (data) {
+                console.log("Renamed collection!");
+            },
+            error: function () {
+                console.log("server error!");
+            }
+        });
     }
 
     // Tags are represented using the Chip Material UI component.
@@ -219,7 +233,7 @@ const EditCollection: React.FC<Props> = ({}) => {
                         {/*TODO: Dynamically render the collection's title */}
                         <Grid>
                             <Typography component="h1" variant="h2" align="center" color="textPrimary" gutterBottom>
-                                {collectionData.collectionTitle}
+                                {collection}
                                 <Button variant="outlined" color="secondary" onClick={handleClickOpen} startIcon={<EditIcon />}>
                                     Rename Collection
                                 </Button>
