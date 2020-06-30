@@ -65,6 +65,17 @@ export default function UserProfile() {
         // Closes dialog box.
         handleClose();
         console.log(newTitle);
+        var result = addCollection(function(result) {
+            console.log('in callback function now');
+            console.log(result);
+            if(result.message == 'Collection successfully added') {
+                window.location.href="/user/profile";
+                //refresh the page so we can display new collection
+            } else{
+                alert("Sth wrong!");
+                window.location.href='/';
+            }
+        });
         // TODO: Change the collection title in the back-end/database.
         console.log("Add collection title in the backend.");
     }
@@ -96,23 +107,27 @@ export default function UserProfile() {
     function addCollection(callback) {
         $.ajax({
             async: false,
-            url: "http://localhost:8000/api/collections/createcollection",
+            url: "http://localhost:8000/api/collections/create_collection",
             method: "POST",
             data:{
+                auth: token,
                 collection_name: newTitle,
             },
             success: function (data) {
+                console.log('in success');
+                console.log(data);
                 if (data != null) {
-                    if (data.message == 'Created collection!') {
-                        callback(data);
-                    } else{
-                        callback(null);
-                    }
+                    console.log('returning to callback with data');
+                    callback(data);
+                } else{
+                    callback(null);
                 }
+                
             },
             error: function (error) {
-                callback(error);
+                
                 console.log("Server error!");
+                callback(error);
             }
         });
     }
@@ -134,7 +149,7 @@ export default function UserProfile() {
             }
         });
     }
-
+    //const token = CookieService.get('access_token');
     request();
     return (
         <React.Fragment>

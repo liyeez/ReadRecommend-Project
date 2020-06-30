@@ -74,7 +74,7 @@ export default function UserLibrary() {
             if (data != null) {
                 if (data.message == "Got user library") {
                     cards = data.book_list;
-                    console.log(cards[0].book_title);
+                    //console.log(cards[0].book_title);
                 } else{
                     alert("No Matched Results!");
                     window.location.href='/';

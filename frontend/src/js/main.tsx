@@ -77,6 +77,7 @@ let flag: boolean;
 
 const Main: React.FC<Props> = ({userSignedIn} : Props) => {
 
+    let cards: any;
     const [SearchForm, setSearchForm] = useState<SearchForm>({
       title: '',
     });
@@ -95,8 +96,43 @@ const Main: React.FC<Props> = ({userSignedIn} : Props) => {
         window.location.href="/search?title="+SearchForm.title;
     }
 
+    function request() {
+        var data = randomBooks(function(data){
+            if (data != null) {
+                console.log(data);
+                cards = data.book_list;
+            } else{
+                alert("Something Wrong!");
+                window.location.href='/';
+            }
+        });
+    }
+
+    function randomBooks(callback) {
+        $.ajax({
+            async: false,
+            url:"http://localhost:8000/api/books/random",
+            data: {
+                count: 12,
+            },
+            method: "GET",
+            success: function (data) {
+                console.log(data.message);
+                if (data.message == "Got random books") {
+                    callback(data);
+                } else {
+                    callback(null);
+                }
+            },
+            error: function () {
+                console.log("server error!");
+                callback(null);
+            }
+        });
+    }
+
     const classes = Style();
-    // onSearch(preventDefault);
+    request();
     return (
         <React.Fragment>
             <CssBaseline />
@@ -155,14 +191,14 @@ const Main: React.FC<Props> = ({userSignedIn} : Props) => {
                                     />
                                     <CardContent className={classes.cardContent}>
                                         <Typography gutterBottom variant="h5" component="h2">
-                                            Book Title
+                                            {card.book_title}
                                         </Typography>
                                         <Typography>
-                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam molestie pellentesque tortor in rhoncus.
+                                            By Author: {card.book_author}                                            
                                         </Typography>
                                     </CardContent>
                                     <CardActions>
-                                        <Button size="small" color="primary" component={Router.Link} to="/bookdata/metadata?isbn=">
+                                        <Button size="small" color="primary" component={Router.Link} to={"/bookdata/metadata?isbn="+card.book_isbn}>
                                             View
                                         </Button>
                                         {(userSignedIn) ? (<Button size="small" color="primary" component={Router.Link} to="/bookdata/metadata" endIcon={<AddIcon />}> Add to Libary </Button>)
