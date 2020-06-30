@@ -77,8 +77,8 @@ class Tag(models.Model):
 
 # Collection
 class CollectionManager(models.Manager):
-    def create_collection(self, name, user, tags, library=False):
-        collection = self.create(name=name, library=library, user=user, tags=tags)
+    def create_collection(self, name, user, library=False):
+        collection = self.create(name=name, library=library, user=user)
         return collection
 
 class Collection(models.Model):
@@ -86,7 +86,7 @@ class Collection(models.Model):
     name = models.CharField(max_length=MAX_STR_LEN)
     library = models.BooleanField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    books = models.ManyToManyField(Book)
+    books = models.ManyToManyField(Book, blank = True)
     tags = models.ManyToManyField(Tag, blank = True)
 
     objects = CollectionManager()

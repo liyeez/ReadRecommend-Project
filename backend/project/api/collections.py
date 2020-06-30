@@ -1,9 +1,36 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from api.models import Collection, Book, Tag, MAX_STR_LEN
+from api.models import Collection, Book, Tag, MAX_STR_LEN, User
 from django.core import serializers
 from .utilities import input_validator
+from django.contrib.auth.models import User
+
+@api_view(["POST"])
+@input_validator(["user_id", "collection_name"])
+def create_collection(request): #given user id returns creates empty collection, returns collection_id
+    # if User.objects.filter(id=request.POST["user_id"]).exists():
+    #     user: User = User.objects.get(id=request.POST["user_id"])
+    #     collection = Collection.objects.create_collection(name = request.POST["collection_name"], user = user)
+    #     user.collection_set.add(collection)
+    #     user.save()
+    #     collection_list = []
+    #     for collection in collections.all():
+    #         collection_list.append({"collection_id": collection.collection_id, "collection_name": collection.name})
+
+    #     return Response({"status": "ok", "message": "Added user collections", "collection_list": collection_list}, status=status.HTTP_200_OK)
+    # else:
+    #     return Response({"status": "error", "message": "Invalid user"}, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+
+    try: #check collection exists
+        user = User.objects.get(pk=request.POST["user_id"])
+    except:
+        return Response({"status": "error", "message": "User not found"}, status=status.HTTP_200_OK)
+    
+    collection = Collection.objects.create_collection(name = request.POST["collection_name"], user = user)
+    user.collection_set.add(collection)
+    user.save()
+    return Response({"status": "ok", "message": "Collection successfully added", "collection_id": collection.collection_id}, status=status.HTTP_200_OK)
 
 @api_view(["GET"])
 @input_validator(["collection_id"])
@@ -23,15 +50,15 @@ def view_collection(request): #given collection id returns collection name, tag 
     return Response({"status": "ok", "message": "Collection data delivered",
      "collection_name": collection.name, "book_list":book_list, "tag_list":tag_list}, status=status.HTTP_200_OK)
 
-@api_view(["GET"])
+@api_view(["POST"])
 @input_validator(["collection_id", "isbn"])
 def add_title(request): #given collection_id and isbn, adds book to collection, returns new book list
     try: #check collection exists
-        collection = Collection.objects.get(pk=request.GET["collection_id"])
+        collection = Collection.objects.get(pk=request.POST["collection_id"])
     except:
         return Response({"status": "error", "message": "Collection not found"}, status=status.HTTP_200_OK)
     try: #check book exists
-        isbn = request.GET["isbn"]
+        isbn = request.POST["isbn"]
         book = Book.objects.get(pk = isbn)
     except:
         return Response({"status": "error", "message": "Book not found"}, status=status.HTTP_200_OK)
@@ -47,15 +74,15 @@ def add_title(request): #given collection_id and isbn, adds book to collection, 
             book_list.append({"isbn": book.isbn, "title": book.title})
         return Response({"status": "ok", "message": "Book added to collection", "book_list":book_list}, status=status.HTTP_200_OK)
 
-@api_view(["GET"])
+@api_view(["POST"])
 @input_validator(["collection_id", "isbn"])
 def delete_title(request): #given collection_id and isbn, removes book from collection
     try:
-        collection = Collection.objects.get(pk=request.GET["collection_id"])
+        collection = Collection.objects.get(pk=request.POST["collection_id"])
     except:
         return Response({"status": "error", "message": "Collection not found"}, status=status.HTTP_200_OK)
     try:
-        isbn = request.GET["isbn"]
+        isbn = request.POST["isbn"]
         book = Book.objects.get(pk = isbn)
     except:
         return Response({"status": "error", "message": "Book not found"}, status=status.HTTP_200_OK)
