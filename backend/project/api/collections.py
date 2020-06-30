@@ -14,8 +14,8 @@ def view_collection(request): #given collection id returns collection name, tag 
         return Response({"status": "error", "message": "Collection not found"}, status=status.HTTP_200_OK)
     
     tag_list = []
-        for tag in collection.tags.all():
-            tag_list.append({'tag': tag.name})
+    for tag in collection.tags.all():
+        tag_list.append({'tag': tag.name})
 
     book_list = []
     for book in collection.books.all():

@@ -25,7 +25,6 @@ import HistoryIcon from '@material-ui/icons/History';
 import IconButton from '@material-ui/core/IconButton';
 import ImportExportIcon from '@material-ui/icons/ImportExport';
 import InputBase from '@material-ui/core/InputBase';
-import Link from '@material-ui/core/Link';
 import Paper from '@material-ui/core/Paper';
 import SearchIcon from '@material-ui/icons/Search';
 import TextField from '@material-ui/core/TextField';
@@ -117,6 +116,7 @@ const EditCollection: React.FC<Props> = ({}) => {
         setNewTitle(value);
     }
 
+    // Renames collection title on both front-end and back-end.
     function setCollectionTitle() {
         // Closes dialog box.
         handleClose();
@@ -148,6 +148,12 @@ const EditCollection: React.FC<Props> = ({}) => {
 
         // TODO: Update the collection's tags in the back-end/database.
     };
+
+    // Removes book from collection on both front-end and back-end.
+    function removeBook() {
+        // TODO: Update the collection's books in the back-end/database.
+        console.log("Remove book from collection.");
+    }
 
     // TODO: Implement functionality. Gets the 10 most recently added books to the collection.
     function getRecentlyAddedBooks() {
@@ -196,9 +202,6 @@ const EditCollection: React.FC<Props> = ({}) => {
                                 </DialogActions>
                             </Dialog>
                         </Grid>
-                        <Typography variant="h5" align="center" color="textSecondary" paragraph>
-                            A collection of books.
-                        </Typography>
                         <Paper component="ul" className={classes.chipRoot}>
                             {chipData.map((data) => {
                                 return (
@@ -283,7 +286,8 @@ const EditCollection: React.FC<Props> = ({}) => {
                                         <Button size="small" color="primary" component={Router.Link} to="/bookdata/metadata">
                                             Edit Status
                                         </Button>
-                                        <Button size="small" color="primary" component={Router.Link} to="/bookdata/metadata">
+                                        {/* TODO: Display an alert saying 'book removed from collection' */}
+                                        <Button size="small" color="primary" onClick={removeBook}>
                                             Remove
                                         </Button>
                                     </CardActions>

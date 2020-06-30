@@ -38,7 +38,7 @@ export default function RecommendBook(props) {
 
     return (
         <Grid item xs={12} md={6}>
-            <CardActionArea component="a" href="#">
+            <CardActionArea>
             <Card className={classes.card}>
                 <div className={classes.cardDetails}>
                     <CardContent className={classes.cardContent}>

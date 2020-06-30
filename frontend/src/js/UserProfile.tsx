@@ -2,12 +2,14 @@
 // Displays the user's reading achievements and goals.
 // Displays the user's book collections.
 
-import React, {ChangeEvent, useState} from "react";
+import React, {ChangeEvent, useState, useEffect } from "react";
 import * as Router from 'react-router-dom';
+import * as $ from "jquery";
 import CookieService from "../services/CookieService";
 
 // Page Imports
 import Collections from './Collections';
+//import { CollectionsRetriever } from '../services/DataRetriever';
 
 // Material UI
 import Button from '@material-ui/core/Button';
@@ -28,54 +30,42 @@ import { makeStyles } from '@material-ui/core/styles';
 import { useTheme } from '@material-ui/core/styles';
 
 export default function UserProfile() {
+    // TODO: Populate user profile data with more fields.
+    const [userProfileData, setUserProfileData] = useState({
+        userBookCollections: []
+    });
 
-  // function weird(){
-  //     var data;
-  //     data = onSignIn(function(result){
-  //         alert("hello"+result);
-
-  //     });
-  // }
-
-
-  // function onSignIn(callback) {
-
-  //     $.ajax({
-  //         async: false,
-  //         url: "http://localhost:8000/api/auth/signin",
-  //         method: "POST",
-  //         data: {
-  //             email: signInForm.signInEmail,
-  //             password: signInForm.signInPassword
-  //         },
-  //         success: function (data) {
-
-  //             console.log(data.status);
-  //             console.log(data.message);
-
-  //             if(data.status == 'ok') {
-  //                 // Handle sign in success.
-  //                 var result = data.token;
-  //                 callback(result)
-  //                 console.log("result:"+result);
-  //                 //window.location.href = "/";
-  //                 // The cookie will be available on all URLs.
-  //                 const options = { path: "/" };
-  //                 // Create a cookie with the token from response.
-  //                 CookieService.set("access_token", data.token, options);
-  //                 window.location.href="/";
-  //             }
-  //         },
-  //         error: function (xhr, error) {
-  //             flag=false;
-  //             callback(error);
-  //             console.log("server error!"+error);
-  //             window.location.href="/auth/signin";
-  //         }
-  //     });
+    function retrieveCollections(callback) {
+        $.ajax({
+            async: false,
+            url: "http://localhost:8000/api/user/get_collections",
+            method: "GET",
+            data: {
+                user_id: 6
+            },
+            success: function (data) {
+                if(data.status == 'ok') {
+                    var result = data.collection_list;
+                    callback(result);
+                    console.log("hey");
+                    console.log(userProfileData.userBookCollections);
+                }
+            },
+            error: function (error) {
+                callback(error);
+                console.log("Server error!");
+            }
+        });
+    }
 
     const classes = useStyles();
     const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+
+    retrieveCollections(function(result) {
+        // Updates the user's collections with the results returned.
+        userProfileData.userBookCollections = result;
+    });
+
     return (
         <React.Fragment>
             <CssBaseline />
@@ -110,6 +100,20 @@ export default function UserProfile() {
                 {/* User's Book Collections */}
                 <Container className={classes.cardGrid} maxWidth="md">
                     <Typography component="h4" variant="h4" align="left" color="textPrimary" gutterBottom>
+                        User Collections
+                    </Typography>
+
+                    <Grid container direction={'row'} spacing={4}>
+                        {console.log(userProfileData.userBookCollections)}
+                        {(makeCollections(userProfileData.userBookCollections)).map((collection) => (
+                          <Collections key={collection.title} collection={collection}/>
+                        ))}
+                    </Grid>
+                </Container>
+
+                {/* Hardcoded Collections */}
+                <Container className={classes.cardGrid} maxWidth="md">
+                    <Typography component="h4" variant="h4" align="left" color="textPrimary" gutterBottom>
                         My Collections
                     </Typography>
 
@@ -118,7 +122,6 @@ export default function UserProfile() {
                           <Collections key={collection.title} collection={collection}/>
                         ))}
                     </Grid>
-
                 </Container>
 
             </main>
@@ -257,5 +260,22 @@ const MyCollections = [
         imageText: 'Image Text',
     },
 ];
+
+// Takes in a list of collection query results, and returns a list of collection objects.
+function makeCollections(queryResults) {
+    var toRender : any[] = [];
+    queryResults.forEach(queryResult => {
+        var n = {
+            title: queryResult.collection_name,
+            description: 'This is a wider card with supporting text below as a natural lead-in to additional content.',
+            image: 'https://source.unsplash.com/random',
+            imageText: 'Image Text',
+        };
+        toRender.push(n);
+    });
+    console.log("to render");
+    console.log(toRender);
+    return toRender;
+}
 
 //<FeaturedPost book={book} />
