@@ -44,11 +44,8 @@ export default function UserProfile() {
                 auth: token
             },
             success: function (data) {
-                console.log(data);
                 if(data.message == 'Got current user profile data') {
                     callback(data);
-                    //console.log("hey");
-                    //console.log(userProfileData.userBookCollections);
                 }else{
                     callback(null);
                 }
@@ -63,14 +60,6 @@ export default function UserProfile() {
     const classes = useStyles();
     const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
-   
-    // retrieveCollections(function(result) {
-    //     // Updates the user's collections with the results returned.
-    //     userProfileData.userBookCollections = result;
-        
-    // });
-    
-    
     let Name: string = '';
     const token = CookieService.get('access_token');
     function request() {
@@ -79,12 +68,10 @@ export default function UserProfile() {
             if(result != null) {
                 userProfileData.userBookCollections = result.collection_list;
                 Name = result.first_name + ' ' +result.last_name;
-
-            }else{
+            } else{
                 alert("Sth wrong!");
                 window.location.href='/';
             }
-           
         });
     }
 
@@ -124,21 +111,20 @@ export default function UserProfile() {
                 </Container>
 
                 {/* User's Book Collections */}
-                {/*<Container className={classes.cardGrid} maxWidth="md">
+                <Container className={classes.cardGrid} maxWidth="md">
                     <Typography component="h4" variant="h4" align="left" color="textPrimary" gutterBottom>
                         User Collections
                     </Typography>
 
                     <Grid container direction={'row'} spacing={4}>
-                        {console.log(userProfileData.userBookCollections)}
-                        {(makeCollections(userProfileData.userBookCollections)).map((collection) => (
-                          <Collections key={collection.title} collection={collection}/>
+                        {userProfileData.userBookCollections.map((collection : any) => (
+                          <Collections key={collection.collection_id} collection={collection}/>
                         ))}
                     </Grid>
-                </Container>*/}
+                </Container>
 
                 {/* Hardcoded Collections */}
-                <Container className={classes.cardGrid} maxWidth="md">
+                {/*<Container className={classes.cardGrid} maxWidth="md">
                     <Typography component="h4" variant="h4" align="left" color="textPrimary" gutterBottom>
                         My Collections
                     </Typography>
@@ -148,7 +134,7 @@ export default function UserProfile() {
                           <Collections key={collection.title} collection={collection}/>
                         ))}
                     </Grid>
-                </Container>
+                </Container>*/}
 
             </main>
 
@@ -260,48 +246,31 @@ const data = [
     createData('Jun 20', 40),
 ];
 
-const MyCollections = [
-    {
-        title: 'Collections 1',
-        description: 'This is a wider card with supporting text below as a natural lead-in to additional content.',
-        image: 'https://source.unsplash.com/random',
-        imageText: 'Image Text',
-    },
-    {
-        title: 'Collections 2',
-        description: 'This is a wider card with supporting text below as a natural lead-in to additional content.',
-        image: 'https://source.unsplash.com/random',
-        imageText: 'Image Text',
-    },
-    {
-        title: 'Collections 3',
-        description: 'This is a wider card with supporting text below as a natural lead-in to additional content.',
-        image: 'https://source.unsplash.com/random',
-        imageText: 'Image Text',
-    },
-    {
-        title: 'Collections 4',
-        description: 'This is a wider card with supporting text below as a natural lead-in to additional content.',
-        image: 'https://source.unsplash.com/random',
-        imageText: 'Image Text',
-    },
-];
-
-// Takes in a list of collection query results, and returns a list of collection objects.
-function makeCollections(queryResults) {
-    var toRender : any[] = [];
-    queryResults.forEach(queryResult => {
-        var n = {
-            title: queryResult.collection_name,
-            description: 'This is a wider card with supporting text below as a natural lead-in to additional content.',
-            image: 'https://source.unsplash.com/random',
-            imageText: 'Image Text',
-        };
-        toRender.push(n);
-    });
-    console.log("to render");
-    console.log(toRender);
-    return toRender;
-}
+// const MyCollections = [
+//     {
+//         title: 'Collections 1',
+//         description: 'This is a wider card with supporting text below as a natural lead-in to additional content.',
+//         image: 'https://source.unsplash.com/random',
+//         imageText: 'Image Text',
+//     },
+//     {
+//         title: 'Collections 2',
+//         description: 'This is a wider card with supporting text below as a natural lead-in to additional content.',
+//         image: 'https://source.unsplash.com/random',
+//         imageText: 'Image Text',
+//     },
+//     {
+//         title: 'Collections 3',
+//         description: 'This is a wider card with supporting text below as a natural lead-in to additional content.',
+//         image: 'https://source.unsplash.com/random',
+//         imageText: 'Image Text',
+//     },
+//     {
+//         title: 'Collections 4',
+//         description: 'This is a wider card with supporting text below as a natural lead-in to additional content.',
+//         image: 'https://source.unsplash.com/random',
+//         imageText: 'Image Text',
+//     },
+// ];
 
 //<FeaturedPost book={book} />

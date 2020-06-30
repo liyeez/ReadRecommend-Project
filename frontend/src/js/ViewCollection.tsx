@@ -74,57 +74,52 @@ function viewBook(data){
 }
 
 const ViewCollection: React.FC<Props> = ({}) => {
-
-
     const classes = Style();
-    
+
     let book_list: any;
     let collection: any;
     let str = window.location.href.split('?')[1];
     str = str.split('=')[1];
     console.log("To find: "+str);
 
+    // Retrieves collection data from the back-end/database.
     function request() {
-
-        var data = onSearch(function(data){ 
-            
-            if(data.message == "Collection data delivered") {
-                console.log(data);
-                book_list = data.books;
-                collection = data.collection_title;
-            }else{
-                alert("No Matched Results!");
-                window.location.href='/';
+        var data = onSearch(function(data){
+            if (data != null) {
+                if (data.message == "Collection data delivered") {
+                    book_list = data.books;
+                    collection = data.collection_title;
+                } else {
+                    alert("No Matched Results!");
+                    window.location.href='/';
+                }
             }
-            
         });
-      }  
+      }
 
     function onSearch(callback) {
-        
+
         // TEMP SOLUTION FOR BOOKS DISPLAY, URL BELOW WILL CHANGE ONCE api
         // FOR GET /collections/view_collection IS IMPLEMENTED
 
         $.ajax({
             async: false,
-            url: 'http://localhost:8000/api/collections/view_collection', 
+            url: 'http://localhost:8000/api/collections/view_collection',
             data: {
                 collection_id: str,
             },
             method: "GET",
             success: function (data) {
-                
-
                 if(data!= null) {
                     console.log("delivering data back to callback");
-                    callback(data);                
+                    callback(data);
                 }
                 callback(null);
             },
             error: function () {
                 console.log("server error!");
-                callback(null);    
-            } 
+                callback(null);
+            }
         });
     }
 
@@ -141,7 +136,7 @@ const ViewCollection: React.FC<Props> = ({}) => {
                         <Typography component="h1" variant="h2" align="center" color="textPrimary" gutterBottom>
                             {collection}
                         </Typography>
-                        
+
                         <div className={classes.heroButtons}>
                             <Grid container spacing={2} justify="center">
                                 <Grid item>
@@ -173,7 +168,7 @@ const ViewCollection: React.FC<Props> = ({}) => {
                                         <Typography gutterBottom variant="h5" component="h2">
                                             {card.book_title}
                                         </Typography>
-                                        
+
                                     </CardContent>
                                     <CardActions>
                                         <Button size="small" color="primary" onClick={() => viewBook(card.book_id)}>

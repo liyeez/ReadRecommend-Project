@@ -56,7 +56,7 @@ const Routing: React.FC = ({}) => {
                     <Router.Route path="/user/viewcollection">
                         <ViewCollection />
                     </Router.Route>
-                    <Router.Route path="/user/editcollection/collectionid">
+                    <Router.Route path="/user/editcollection">
                         <EditCollection />
                     </Router.Route>
                     <Router.Route path="/user/findusers">
@@ -80,31 +80,5 @@ const Routing: React.FC = ({}) => {
         </Router.BrowserRouter>
     );
 }
-
-// const routing: JSX.Element =
-//     <Router.BrowserRouter>
-//         <Header />
-//         <div>
-//             {/* Matches URL to first in the list and places the result in the div*/}
-//             <Router.Switch>
-//                 <Router.Route path="/auth/signup">
-//                     <SignUp />
-//                 </Router.Route>
-//                 <Router.Route path="/auth/signin">
-//                     <SignIn />
-//                 </Router.Route>
-//                 <Router.Route path="/user/userlibrary">
-//                     <UserLibrary />
-//                 </Router.Route>
-//                 <Router.Route path="/user/usercollections">
-//                     <UserCollections />
-//                 </Router.Route>
-//                 <Router.Route path="/">
-//                     <Main />
-//                 </Router.Route>
-//             </Router.Switch>
-//         </div>
-//         <Footer />
-//     </Router.BrowserRouter>;
 
 ReactDOM.render(<Routing />, document.getElementById("main"));
