@@ -2,13 +2,14 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
+from django.core.exceptions import ObjectDoesNotExist
 
 from django.db.models import Q
 from .models import Book
 from .utilities import input_validator
 
 @api_view(["GET"])
-@input_validator(["book_id"])
+@input_validator(["isbn"])
 def data(request):
     """
     data
@@ -16,27 +17,22 @@ def data(request):
     Retrieves complete book metadata
 
     Input:
-    book_id (int)
+    isbn (int)
 
     Returns:
+    book_isbn (int)
     book_title (str)
     book_cover (str): base64 encoded cover
     book_author (str)
-    book_isbn (int)
     book_pub_date (datetime)
+    last_review_id (int) [MAY BE REMOVED IN THE FUTURE]
     """
-
     try:
-        book = Book.objects.get(isbn=request.GET["book_id"])
-    except:
+        book = Book.objects.get(isbn=request.GET["isbn"])
+    except ObjectDoesNotExist:
         return Response({"status": "error", "message": "Book not found"}, status=status.HTTP_204_NO_CONTENT)
 
-    book_title = book.title
-    book_cover = book.cover
-    book_author = book.author
-    book_pub_date = book.pub_date
-
-    return Response({"status": "ok", "message": "Got book data", "book_title": book_title, "book_cover": book_cover, "book_author": book_author, "book_pub_date": book_pub_date}, status=status.HTTP_200_OK)
+    return Response({"status": "ok", "message": "Got book data", "book_title": book.title, "book_isbn": book.isbn, "book_cover": book.cover, "book_author": book.author, "book_pub_date": book.pub_date, "last_review_id": 3}, status=status.HTTP_200_OK)
 
 
 @api_view(["GET"])
@@ -52,8 +48,9 @@ def search(request):
 
     Returns:
     book_list (list):
-        book_id (int)
+        book_isbn (int)
         book_title (str)
+        book_author (str)
     """
     search = request.GET["search"]
 
@@ -61,7 +58,7 @@ def search(request):
 
     book_list = []
     for book in books.all():
-        book_list.append({"book_id": book.isbn, "book_title": book.title})
+        book_list.append({"book_isbn": book.isbn, "book_title": book.title, "book_author": book.author})
 
     if len(book_list) > 0:
         message = "Got matching books"
@@ -83,8 +80,9 @@ def random(request):
 
     Returns:
     book_list (list):
-        book_id (int)
+        book_isbn (int)
         book_title (str)
+        book_author (str)
     """
     number = int(request.GET["number"])
 
@@ -95,6 +93,6 @@ def random(request):
 
     book_list = []
     for book in books:
-        book_list.append({"book_id": book.isbn, "book_title": book.title})
+        book_list.append({"book_isbn": book.isbn, "book_title": book.title, "book_author": book.author})
 
-    return Response({"status": "ok", "message": "Got matching books", "book_list": book_list}, status=status.HTTP_200_OK)
+    return Response({"status": "ok", "message": "Got random books", "book_list": book_list}, status=status.HTTP_200_OK)

@@ -3,6 +3,7 @@
 
 import React, {ChangeEvent, useState} from "react";
 import * as Router from 'react-router-dom';
+import * as $ from "jquery";
 
 // Material UI
 import AddIcon from '@material-ui/icons/Add';
@@ -88,15 +89,61 @@ interface Props {
 
 }
 
+function viewBook(data){
+    window.location.href="/bookdata/metadata?isbn="+data;
+}
+
 const EditCollection: React.FC<Props> = ({}) => {
     const classes = Style();
+
+    let book_list: any;
+    let collection: any;
+
+    let collectionId = window.location.href.split('?')[1];
+    collectionId = collectionId.split('=')[1];
 
     // Collection Data. TODO: Add more fields.
     const [collectionData, setCollectionData] = useState(
         {
-            collectionTitle: "Collection Title",
+            collectionTitle: '',
         }
     );
+
+    // Retrieves collection data from the back-end/database.
+    function request() {
+        var data = onSearch(function(data){
+            if (data != null) {
+                if (data.message == "Collection data delivered") {
+                    book_list = data.book_list;
+                    collection = data.collection_name;
+                } else {
+                    alert("No Matched Results!");
+                    window.location.href='/';
+                }
+            }
+        });
+    }
+
+    function onSearch(callback) {
+        $.ajax({
+            async: false,
+            url: 'http://localhost:8000/api/collections/view_collection',
+            data: {
+                collection_id: collectionId,
+            },
+            method: "GET",
+            success: function (data) {
+                if(data!= null) {
+                    callback(data);
+                }
+                callback(null);
+            },
+            error: function () {
+                console.log("server error!");
+                callback(null);
+            }
+        });
+    }
 
     // For editing the collection's title.
     const [open, setOpen] = useState(false);
@@ -129,8 +176,22 @@ const EditCollection: React.FC<Props> = ({}) => {
             };
         });
 
-        // TODO: Change the collection title in the back-end/database.
-        console.log("Change collection title in the backend.")
+        // Change the collection title in the back-end/database.
+        $.ajax({
+            async: false,
+            url: 'http://localhost:8000/api/collections/rename',
+            data: {
+                collection_id: collectionId,
+                collection_name: newTitle,
+            },
+            method: "POST",
+            success: function (data) {
+                console.log("Renamed collection!");
+            },
+            error: function () {
+                console.log("server error!");
+            }
+        });
     }
 
     // Tags are represented using the Chip Material UI component.
@@ -160,6 +221,8 @@ const EditCollection: React.FC<Props> = ({}) => {
         console.log("Get 10 most recently added books!");
     }
 
+    request();
+
     return (
         <React.Fragment>
             <CssBaseline />
@@ -170,7 +233,7 @@ const EditCollection: React.FC<Props> = ({}) => {
                         {/*TODO: Dynamically render the collection's title */}
                         <Grid>
                             <Typography component="h1" variant="h2" align="center" color="textPrimary" gutterBottom>
-                                {collectionData.collectionTitle}
+                                {collection}
                                 <Button variant="outlined" color="secondary" onClick={handleClickOpen} startIcon={<EditIcon />}>
                                     Rename Collection
                                 </Button>
@@ -263,8 +326,8 @@ const EditCollection: React.FC<Props> = ({}) => {
                 </div>
                 <Container className={classes.cardGrid} maxWidth="md">
                     <Grid container spacing={4}>
-                        {cards.map((card) => (
-                            <Grid item key={card} xs={12} sm={6} md={4}>
+                        {book_list.map((card) => (
+                            <Grid item key={card.isbn} xs={12} sm={6} md={4}>
                                 <Card className={classes.card}>
                                     <CardMedia
                                         className={classes.cardMedia}
@@ -273,14 +336,14 @@ const EditCollection: React.FC<Props> = ({}) => {
                                     />
                                     <CardContent className={classes.cardContent}>
                                         <Typography gutterBottom variant="h5" component="h2">
-                                            Book Title
+                                            {card.title}
                                         </Typography>
                                         <Typography>
                                             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam molestie pellentesque tortor in rhoncus.
                                         </Typography>
                                     </CardContent>
                                     <CardActions>
-                                        <Button size="small" color="primary" component={Router.Link} to="/bookdata/metadata">
+                                        <Button size="small" color="primary" onClick={() => viewBook(card.isbn)}>
                                             View
                                         </Button>
                                         <Button size="small" color="primary" component={Router.Link} to="/bookdata/metadata">

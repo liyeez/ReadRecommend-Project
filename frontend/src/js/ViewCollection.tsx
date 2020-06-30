@@ -3,9 +3,9 @@
 
 import React, {useState} from "react";
 import * as Router from 'react-router-dom';
+import * as $ from "jquery";
 
 // Material UI
-import * as $ from "jquery";
 import AddIcon from '@material-ui/icons/Add';
 import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
@@ -96,7 +96,7 @@ const ViewCollection: React.FC<Props> = ({}) => {
                 }
             }
         });
-      }
+    }
 
     function onSearch(callback) {
 
@@ -142,7 +142,7 @@ const ViewCollection: React.FC<Props> = ({}) => {
                             <Grid container spacing={2} justify="center">
                                 <Grid item>
                                     <Button
-                                        component={Router.Link} to="/user/editcollection/collectionid"
+                                        component={Router.Link} to={"/user/editcollection?collectionid=" + str}
                                         type="submit"
                                         variant="contained"
                                         color="primary"

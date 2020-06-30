@@ -64,7 +64,7 @@ export default function UserProfile() {
     function addCollectionTitle() {
         // Closes dialog box.
         handleClose();
-
+        console.log(newTitle);
         // TODO: Change the collection title in the back-end/database.
         console.log("Add collection title in the backend.");
     }
