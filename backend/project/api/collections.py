@@ -7,10 +7,11 @@ from .utilities import auth_validator, input_validator
 from django.contrib.auth.models import User
 
 @api_view(["POST"])
-@input_validator(["user_id", "collection_name"])
+@auth_validator
+@input_validator(["collection_name"])
 def create_collection(request): #given user id returns creates empty collection, returns collection_id
     try: 
-        user = User.objects.get(pk=request.POST["user_id"])
+        user = request.user
     except:
         return Response({"status": "error", "message": "Invalid user"}, status=status.HTTP_200_OK)
     if(len(request.POST["collection_name"])> MAX_STR_LEN):
@@ -65,6 +66,25 @@ def add_title(request): #given collection_id and isbn, adds book to collection, 
             library.save()
 
         return Response({"status": "ok", "message": "Book added to collection"}, status=status.HTTP_200_OK)
+
+@api_view(["POST"])
+@auth_validator
+@input_validator(["isbn"])
+def add_to_library(request):
+    library = request.user.collection_set.get(library=True)
+    try: #check book exists
+        isbn = request.POST["isbn"]
+        book = Book.objects.get(pk = isbn)
+    except:
+        return Response({"status": "error", "message": "Book not found"}, status=status.HTTP_200_OK)
+    try: #check if book already in collection
+        library.books.get(pk = isbn)
+        return Response({"status": "error", "message": "Book is already in library"}, status=status.HTTP_200_OK)
+    except:
+        library.books.add(book)
+        library.save()
+    return Response({"status": "ok", "message": "Book added to library"}, status=status.HTTP_200_OK)
+
 
 @api_view(["POST"])
 @auth_validator
