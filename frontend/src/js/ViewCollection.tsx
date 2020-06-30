@@ -87,8 +87,9 @@ const ViewCollection: React.FC<Props> = ({}) => {
         var data = onSearch(function(data){
             if (data != null) {
                 if (data.message == "Collection data delivered") {
-                    book_list = data.books;
-                    collection = data.collection_title;
+                    console.log(data);
+                    book_list = data.book_list;
+                    collection = data.collection_name;
                 } else {
                     alert("No Matched Results!");
                     window.location.href='/';
@@ -157,7 +158,7 @@ const ViewCollection: React.FC<Props> = ({}) => {
                 <Container className={classes.cardGrid} maxWidth="md">
                     <Grid container spacing={4}>
                         {book_list.map((card) => (
-                            <Grid item key={card} xs={12} sm={6} md={4}>
+                            <Grid item key={card.isbn} xs={12} sm={6} md={4}>
                                 <Card className={classes.card}>
                                     <CardMedia
                                         className={classes.cardMedia}
@@ -166,12 +167,12 @@ const ViewCollection: React.FC<Props> = ({}) => {
                                     />
                                     <CardContent className={classes.cardContent}>
                                         <Typography gutterBottom variant="h5" component="h2">
-                                            {card.book_title}
+                                            {card.title}
                                         </Typography>
 
                                     </CardContent>
                                     <CardActions>
-                                        <Button size="small" color="primary" onClick={() => viewBook(card.book_id)}>
+                                        <Button size="small" color="primary" onClick={() => viewBook(card.isbn)}>
                                             View
                                         </Button>
                                     </CardActions>
