@@ -68,7 +68,7 @@ def search(request):
     return Response({"status": "ok", "message": message, "book_list": book_list}, status=status.HTTP_200_OK)
 
 @api_view(["GET"])
-@input_validator(["number"])
+@input_validator(["count"])
 def random(request):
     """
     random
@@ -76,7 +76,7 @@ def random(request):
     Retrieves a specified number of random books (<13) and their metadata
 
     Input:
-    number (int)
+    count (int)
 
     Returns:
     book_list (list):
@@ -84,12 +84,12 @@ def random(request):
         book_title (str)
         book_author (str)
     """
-    number = int(request.GET["number"])
+    count = int(request.GET["count"])
 
-    if number > 12:
+    if count > 12:
         return Response({"status": "error", "message": "Too many books"}, status=status.HTTP_416_REQUESTED_RANGE_NOT_SATISFIABLE)
 
-    books = Book.objects.all().order_by('?')[:number]
+    books = Book.objects.all().order_by('?')[:count]
 
     book_list = []
     for book in books:

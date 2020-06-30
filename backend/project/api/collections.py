@@ -60,7 +60,7 @@ def add_title(request): #given collection_id and isbn, adds book to collection, 
 
         # Add to library if it is not in there already
         library = collection.user.collection_set.get(library=True)
-        if book not in library.books:
+        if book not in library.books.all():
             library.books.add(book)
             library.save()
 
