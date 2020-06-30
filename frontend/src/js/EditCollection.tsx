@@ -212,7 +212,6 @@ const EditCollection: React.FC<Props> = ({}) => {
 
     // Removes book from collection on both front-end and back-end.
     function removeBook(isbnToRemove) {
-        // TODO: Update the collection's books in the back-end/database.
         console.log("Remove book from collection.");
         $.ajax({
             async: false,
@@ -306,6 +305,17 @@ const EditCollection: React.FC<Props> = ({}) => {
                                         startIcon={<AddIcon />}
                                     >
                                         Add Tags
+                                    </Button>
+                                </Grid>
+                                <Grid item>
+                                    <Button
+                                        component={Router.Link} to={"/user/addTitles?collectionid=" + collectionId}
+                                        type="submit"
+                                        variant="outlined"
+                                        color="primary"
+                                        startIcon={<AddIcon />}
+                                    >
+                                        Add Books
                                     </Button>
                                 </Grid>
                                 <Grid item>
