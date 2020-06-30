@@ -56,12 +56,12 @@ export default function Collections(props) {
                         </Typography>
                         */}
                         {/* TODO: Dynamically change the router link to match the requested collection by collection id.*/}
-                        <Button size="small" color="primary" onClick={() => viewCollection(collection.collection_id)}>
+                        <Button size="small" color="primary" component={Router.Link} to="/user/viewcollection" onClick={() => viewCollection(collection.collection_id)}>
                             <Typography variant="subtitle1" color="primary" >
                                 View
                             </Typography>
                         </Button>
-                        <Button size="small" color="primary" component={Router.Link} to="/user/editcollection/collectionid">
+                        <Button size="small" color="primary" component={Router.Link} to="/user/editcollection">
                             <Typography variant="subtitle1" color="primary" >
                                 Edit
                             </Typography>
@@ -69,7 +69,7 @@ export default function Collections(props) {
                     </CardContent>
                 </div>
                 <Hidden xsDown>
-                    <CardMedia className={classes.cardMedia} image={collection.image} title={collection.imageTitle} />
+                    <CardMedia className={classes.cardMedia} image={'https://source.unsplash.com/random'} title={'Image Text'} />
                 </Hidden>
             </Card>
             </CardActionArea>

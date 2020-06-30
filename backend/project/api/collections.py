@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from api.models import Collection, Book, Tag, MAX_STR_LEN, User
 from django.core import serializers
-from .utilities import input_validator
+from .utilities import auth_validator, input_validator
 from django.contrib.auth.models import User
 
 @api_view(["POST"])
@@ -58,7 +58,40 @@ def add_title(request): #given collection_id and isbn, adds book to collection, 
         collection.books.add(book)
         collection.save()
 
+        # Add to library if it is not in there already
+        library = collection.user.collection_set.get(library=True)
+        if book not in library.books:
+            library.books.add(book)
+            library.save()
+
         return Response({"status": "ok", "message": "Book added to collection"}, status=status.HTTP_200_OK)
+
+@api_view(["POST"])
+@auth_validator
+@input_validator(["isbn"])
+def delete_from_library(request):
+    # Check the book is real first
+    try:
+        book = Book.objects.get(isbn=request.POST["isbn"])
+    except:
+        return Response({"status": "error", "message": "Book not found"}, status=status.HTTP_204_NO_CONTENT)
+    
+    count = 0
+
+    collections = request.user.collection_set.all()
+    for collection in collections:
+        try:
+            matching_books = collection.books.get(isbn=request.POST["isbn"])
+            collection.books.remove(matching_books)
+            collection.save()
+            count += 1
+        except:
+            pass
+
+    if count == 0:
+        return Response({"status": "error", "message": "Book is not in library"}, status=status.HTTP_204_NO_CONTENT)
+    else:
+        return Response({"status": "ok", "message": "Book removed from library"}, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
 @input_validator(["collection_id", "isbn"])

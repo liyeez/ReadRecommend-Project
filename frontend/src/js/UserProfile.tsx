@@ -12,13 +12,20 @@ import Collections from './Collections';
 //import { CollectionsRetriever } from '../services/DataRetriever';
 
 // Material UI
+import AddIcon from '@material-ui/icons/Add';
 import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
 import CssBaseline from '@material-ui/core/CssBaseline';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
 import Link from '@material-ui/core/Link';
 import Paper from '@material-ui/core/Paper';
+import TextField from '@material-ui/core/TextField';
 import FacebookIcon from '@material-ui/icons/Facebook';
 import GitHubIcon from '@material-ui/icons/GitHub';
 import TwitterIcon from '@material-ui/icons/Twitter';
@@ -35,6 +42,33 @@ export default function UserProfile() {
         userBookCollections: []
     });
 
+    // Dialog for creating a new book collection.
+    const [open, setOpen] = useState(false);
+    const [newTitle, setNewTitle] = useState('');
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    // Detects new value typed into dialog box and loads it on the screen.
+    const onTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setNewTitle(value);
+    }
+
+    // Adds collection title on both front-end and back-end.
+    function addCollectionTitle() {
+        // Closes dialog box.
+        handleClose();
+
+        // TODO: Change the collection title in the back-end/database.
+        console.log("Add collection title in the backend.");
+    }
+
     function retrieveCollections(callback) {
         $.ajax({
             async: false,
@@ -44,13 +78,36 @@ export default function UserProfile() {
                 auth: token
             },
             success: function (data) {
-                console.log(data);
-                if(data.message == 'Got current user profile data') {
-                    callback(data);
-                    //console.log("hey");
-                    //console.log(userProfileData.userBookCollections);
-                }else{
-                    callback(null);
+                if (data != null) {
+                    if (data.message == 'Got current user profile data') {
+                        callback(data);
+                    } else {
+                        callback(null);
+                    }
+                }
+            },
+            error: function (error) {
+                callback(error);
+                console.log("Server error!");
+            }
+        });
+    }
+
+    function addCollection(callback) {
+        $.ajax({
+            async: false,
+            url: "http://localhost:8000/api/collections/createcollection",
+            method: "POST",
+            data:{
+                collection_name: newTitle,
+            },
+            success: function (data) {
+                if (data != null) {
+                    if (data.message == 'Created collection!') {
+                        callback(data);
+                    } else{
+                        callback(null);
+                    }
                 }
             },
             error: function (error) {
@@ -63,14 +120,6 @@ export default function UserProfile() {
     const classes = useStyles();
     const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
-   
-    // retrieveCollections(function(result) {
-    //     // Updates the user's collections with the results returned.
-    //     userProfileData.userBookCollections = result;
-        
-    // });
-    
-    
     let Name: string = '';
     const token = CookieService.get('access_token');
     function request() {
@@ -79,12 +128,10 @@ export default function UserProfile() {
             if(result != null) {
                 userProfileData.userBookCollections = result.collection_list;
                 Name = result.first_name + ' ' +result.last_name;
-
-            }else{
+            } else{
                 alert("Sth wrong!");
                 window.location.href='/';
             }
-           
         });
     }
 
@@ -124,21 +171,56 @@ export default function UserProfile() {
                 </Container>
 
                 {/* User's Book Collections */}
-                {/*<Container className={classes.cardGrid} maxWidth="md">
+                <Container className={classes.cardGrid} maxWidth="md">
                     <Typography component="h4" variant="h4" align="left" color="textPrimary" gutterBottom>
                         User Collections
                     </Typography>
 
+                    <Button
+                        type="submit"
+                        variant="outlined"
+                        color="primary"
+                        startIcon={<AddIcon />}
+                        onClick={handleClickOpen}
+                    >
+                        Create a Collection
+                    </Button>
+
+                    <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+                        <DialogTitle id="form-dialog-title">Create Collection</DialogTitle>
+                        <DialogContent>
+                            <DialogContentText>
+                                Enter a title for your new collection.
+                            </DialogContentText>
+                            <TextField
+                                autoFocus
+                                margin="dense"
+                                id="name"
+                                label="Collection Title"
+                                type="text"
+                                fullWidth
+                                onChange={onTitleChange}
+                            />
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={handleClose} color="primary">
+                                Cancel
+                            </Button>
+                            <Button onClick={addCollectionTitle} color="primary" variant="contained" >
+                                Save
+                            </Button>
+                        </DialogActions>
+                    </Dialog>
+
                     <Grid container direction={'row'} spacing={4}>
-                        {console.log(userProfileData.userBookCollections)}
-                        {(makeCollections(userProfileData.userBookCollections)).map((collection) => (
-                          <Collections key={collection.title} collection={collection}/>
+                        {userProfileData.userBookCollections.map((collection : any) => (
+                          <Collections key={collection.collection_id} collection={collection}/>
                         ))}
                     </Grid>
-                </Container>*/}
+                </Container>
 
                 {/* Hardcoded Collections */}
-                <Container className={classes.cardGrid} maxWidth="md">
+                {/*<Container className={classes.cardGrid} maxWidth="md">
                     <Typography component="h4" variant="h4" align="left" color="textPrimary" gutterBottom>
                         My Collections
                     </Typography>
@@ -148,7 +230,7 @@ export default function UserProfile() {
                           <Collections key={collection.title} collection={collection}/>
                         ))}
                     </Grid>
-                </Container>
+                </Container>*/}
 
             </main>
 
@@ -260,48 +342,31 @@ const data = [
     createData('Jun 20', 40),
 ];
 
-const MyCollections = [
-    {
-        title: 'Collections 1',
-        description: 'This is a wider card with supporting text below as a natural lead-in to additional content.',
-        image: 'https://source.unsplash.com/random',
-        imageText: 'Image Text',
-    },
-    {
-        title: 'Collections 2',
-        description: 'This is a wider card with supporting text below as a natural lead-in to additional content.',
-        image: 'https://source.unsplash.com/random',
-        imageText: 'Image Text',
-    },
-    {
-        title: 'Collections 3',
-        description: 'This is a wider card with supporting text below as a natural lead-in to additional content.',
-        image: 'https://source.unsplash.com/random',
-        imageText: 'Image Text',
-    },
-    {
-        title: 'Collections 4',
-        description: 'This is a wider card with supporting text below as a natural lead-in to additional content.',
-        image: 'https://source.unsplash.com/random',
-        imageText: 'Image Text',
-    },
-];
-
-// Takes in a list of collection query results, and returns a list of collection objects.
-function makeCollections(queryResults) {
-    var toRender : any[] = [];
-    queryResults.forEach(queryResult => {
-        var n = {
-            title: queryResult.collection_name,
-            description: 'This is a wider card with supporting text below as a natural lead-in to additional content.',
-            image: 'https://source.unsplash.com/random',
-            imageText: 'Image Text',
-        };
-        toRender.push(n);
-    });
-    console.log("to render");
-    console.log(toRender);
-    return toRender;
-}
+// const MyCollections = [
+//     {
+//         title: 'Collections 1',
+//         description: 'This is a wider card with supporting text below as a natural lead-in to additional content.',
+//         image: 'https://source.unsplash.com/random',
+//         imageText: 'Image Text',
+//     },
+//     {
+//         title: 'Collections 2',
+//         description: 'This is a wider card with supporting text below as a natural lead-in to additional content.',
+//         image: 'https://source.unsplash.com/random',
+//         imageText: 'Image Text',
+//     },
+//     {
+//         title: 'Collections 3',
+//         description: 'This is a wider card with supporting text below as a natural lead-in to additional content.',
+//         image: 'https://source.unsplash.com/random',
+//         imageText: 'Image Text',
+//     },
+//     {
+//         title: 'Collections 4',
+//         description: 'This is a wider card with supporting text below as a natural lead-in to additional content.',
+//         image: 'https://source.unsplash.com/random',
+//         imageText: 'Image Text',
+//     },
+// ];
 
 //<FeaturedPost book={book} />

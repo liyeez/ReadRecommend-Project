@@ -40,7 +40,12 @@ const Style = makeStyles((theme) => ({
 
 function handleLogout() {
     const tokenToRemove = CookieService.get('access_token')
+    console.log(tokenToRemove);
 
+    // Remove 'access_token' cookie on frontend using CookieService.
+    CookieService.remove('access_token');
+
+    console.log("is this working?");
     // Remove cookie on backend.
     $.ajax({
         url: "http://localhost:8000/api/auth/signout",
@@ -55,10 +60,8 @@ function handleLogout() {
             console.log("server error!");
         }
     });
-
-    // Remove 'access_token' cookie on frontend using CookieService.
-    CookieService.remove('access_token');
-    window.location.reload();
+    window.location.href="/";
+    //window.location.reload();
 }
 
 interface Props {
@@ -84,7 +87,7 @@ const Header: React.FC<Props> = ({userSignedIn} : Props) => {
                         <Button component={Router.Link} to="/" color="inherit" startIcon={<CollectionsBookmarkIcon />}/>
                     </Typography>
                     {/* Renders Login button if user not signed in, otherwise reders Logout button.*/}
-                    {(userSignedIn) ? (<Button component={Router.Link} to="/auth/signout" color="inherit" onClick={handleLogout}>Logout</Button>)
+                    {(userSignedIn) ? (<Button component={Router.Link} to="/" color="inherit" onClick={handleLogout}>Logout</Button>)
                                     : (<Button component={Router.Link} to="/auth/signin" color="inherit">Login</Button>)}
 
                 </Toolbar>
