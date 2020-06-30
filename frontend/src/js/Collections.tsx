@@ -30,9 +30,11 @@ const useStyles = makeStyles({
     },
 });
 
-// todo in future: do ajax request from Recommend algot
+function viewCollection(data){
+    window.location.href="/user/viewcollection?collectionid="+data;
+}
 
-export default function RecommendBook(props) {
+export default function Collections(props) {
     const classes = useStyles();
     const { collection } = props;
 
@@ -43,17 +45,18 @@ export default function RecommendBook(props) {
                 <div className={classes.cardDetails}>
                     <CardContent className={classes.cardContent}>
                         <Typography component="h2" variant="h5">
-                            {collection.title}
+                            {collection.collection_name}
                         </Typography>
+                        {/*}    only have name ...
                         <Typography variant="subtitle1" color="textSecondary">
                             {collection.date}
                         </Typography>
                         <Typography variant="subtitle1" paragraph>
                             {collection.description}
                         </Typography>
-
+                        */}
                         {/* TODO: Dynamically change the router link to match the requested collection by collection id.*/}
-                        <Button size="small" color="primary" component={Router.Link} to="/user/viewcollection/collectionid">
+                        <Button size="small" color="primary" onClick={() => viewCollection(collection.collection_id)}>
                             <Typography variant="subtitle1" color="primary" >
                                 View
                             </Typography>
@@ -74,6 +77,6 @@ export default function RecommendBook(props) {
     );
 }
 
-RecommendBook.propTypes = {
+Collections.propTypes = {
     collection: PropTypes.object,
 };

@@ -62,7 +62,7 @@ def auth_validator(func):
         except Token.DoesNotExist:
             return Response({"status": "error", "message": "Invalid auth token"}, status=status.HTTP_401_UNAUTHORIZED)
         except Exception as ex:
-            return Response({"status": "system_error", "message": ex.args}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({"status": "system_error", "message": ex.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         response.user = user
         return func(response)

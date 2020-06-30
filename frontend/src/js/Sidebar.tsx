@@ -13,6 +13,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import LocalLibraryIcon from '@material-ui/icons/LocalLibrary';
+import HomeIcon from '@material-ui/icons/Home';
 import PeopleIcon from '@material-ui/icons/People';
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
@@ -51,7 +52,7 @@ const Sidebar: React.FC = ({}) => {
                 <div className={classes.drawerContainer}>
                     <List>
                         <ListItem button key={'Home Page'} component={Router.Link} to="/">
-                        <ListItemIcon><LocalLibraryIcon /></ListItemIcon>
+                        <ListItemIcon><HomeIcon /></ListItemIcon>
                         <ListItemText primary={'Home Page'} />
                         </ListItem>
 
@@ -70,15 +71,6 @@ const Sidebar: React.FC = ({}) => {
                         <ListItemText primary={'My Profile'} />
                         </ListItem>
 
-                        <ListItem button key={"(TEST) Other User Profile"} component={Router.Link} to="/user/otherusers">
-                        <ListItemIcon><LibraryBooksIcon /></ListItemIcon>
-                        <ListItemText primary={'(TEST) Other User Profile'} />
-                        </ListItem>
-
-                        <ListItem button key={"(TEST) Other User Collection"} component={Router.Link} to="/user/othercollections">
-                        <ListItemIcon><LibraryBooksIcon /></ListItemIcon>
-                        <ListItemText primary={'(TEST) Other User Collection'} />
-                        </ListItem>
                     </List>
                 </div>
             </Drawer>

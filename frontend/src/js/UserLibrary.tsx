@@ -5,6 +5,7 @@ import * as $ from "jquery";
 import React, {ChangeEvent, useState} from "react";
 import * as Router from "react-router-dom";
 
+import CookieService from "../services/CookieService";
 // Material UI
 import AddIcon from '@material-ui/icons/Add';
 import AppBar from '@material-ui/core/AppBar';
@@ -57,30 +58,59 @@ const Style = makeStyles((theme) => ({
   // },
 }));
 
+function viewBook(data){
+    window.location.href="/bookdata/metadata?isbn="+data;
+}
 
-const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+// TODO AFTER API IMPLEMENTED
+function removeBook(data){
+    //window.location.href="/bookdata/metadata?isbn="+data;
+}
 
 export default function Profile() {
   const classes = Style();
+  const token = CookieService.get('access_token');
 
-  // function onRender() {
+  let cards: Array<any> =[];
+  function request() {
+        var data = onSearch(function(data){ 
+            console.log(data)
+            if(data.message == "Got user library") {
+                cards = data.book_list;
+                console.log(cards[0].book_title);   
+            }else{
+                alert("No Matched Results!");
+                window.location.href='/';
+            }
+            
+        });
+    }
 
-  //   $.ajax({ //TODO: get user
-  //     url: "http://localhost:8000/api/user/profile",
-  //     method: "GET",
 
-  //     success: function (data) {
-  //       console.log("Receive data");
-  //       console.log(data);
-  //       callback();
-  //     },
-  //     error: function () {
-  //       console.log("server error!");
-  //     }
-  //   });
+    function onSearch(callback) {
+        
+        $.ajax({
+            async: false,
+            url: "http://localhost:8000/api/user/get_library",
+            data: {
+                auth: token,
+            },
+            method: "GET",
+            success: function (data) {
+                console.log(data);
+                if(data!= null) {
+                    callback(data);                
+                }
+                callback(null);
+            },
+            error: function () {
+                console.log("server error!");
+                callback(null);    
+            } 
+        });
+    }
 
-  // }
-
+  request();
   return (
     <React.Fragment>
       <CssBaseline />
@@ -122,17 +152,15 @@ export default function Profile() {
                   />
                   <CardContent className={classes.cardContent}>
                     <Typography gutterBottom variant="h5" component="h2">
-                      Heading
+                      {card.book_title}
                     </Typography>
-                    <Typography>
-                      Book content.
-                    </Typography>
+                    
                   </CardContent>
                   <CardActions>
-                    <Button size="small" color="primary">
+                    <Button size="small" color="primary" onClick={() => viewBook(card.book_id)}>
                       View
                     </Button>
-                    <Button size="small" color="primary" endIcon={<DeleteIcon/>}>
+                    <Button size="small" color="primary" endIcon={<DeleteIcon/>} onClick={() => removeBook(card.book_id)}> 
                       Remove
                     </Button>
                   </CardActions>

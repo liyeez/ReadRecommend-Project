@@ -6,6 +6,7 @@ from django.core import serializers
 from .utilities import input_validator
 
 @api_view(["GET"])
+<<<<<<< HEAD
 @input_validator(["collection_id"])
 def view_collection(request): #given collection id returns collection name, tag list, book list
     try: #check collection exists
@@ -23,6 +24,24 @@ def view_collection(request): #given collection id returns collection name, tag 
     return Response({"status": "ok", "message": "Collection data delivered",
      "collection_name": collection.name, "book_list":book_list, "tag_list":tag_list}, status=status.HTTP_200_OK)
 
+=======
+def view_collection(request): #given collection id returns collection data
+    try:
+        c_id = request.GET["collection_id"]
+    except:
+        return Response({"status": "error", "message": "Invalid request"}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        collection = Collection.objects.get(pk=c_id)
+        book_list = []
+        for b in collection.books.all():
+            book_list.append({"book_id": b.isbn, "book_title": b.title});
+
+    except:
+        return Response({"status": "error", "message": "Collection not found"}, status=status.HTTP_200_OK)
+    #collection_json = serializers.serialize('json', Collection.objects.filter(pk=c_id))
+    return Response({"status": "ok", "message": "Collection data delivered", "books": book_list, "collection_title": collection.name}, status=status.HTTP_200_OK)
+>>>>>>> master
 
 @api_view(["GET"])
 @input_validator(["collection_id", "isbn"])

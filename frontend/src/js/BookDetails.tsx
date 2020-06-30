@@ -122,65 +122,64 @@ interface Props {
 
 }
 
-
-function request() {
-    let book: any;
-    var data = onSearch(function(data){ 
-        if(data != null){
-            
-            book=JSON.parse(data.data)[0];
-            console.log(book);
-
-        }else{
-            alert("Something Wrong!");
-            window.location.href='/';
-        }
-        
-    });
-    return book;
-}
-
-
-function onSearch(callback) {
-  let str = window.location.href.split('?')[1];
-  str = str.split('=')[1];
-  console.log(str);
-  
-  $.ajax({
-      async: false,
-      url:"http://localhost:8000/api/books/data",
-      data: {
-          isbn: str,
-      },
-      method: "GET",
-      success: function (data) {
-          console.log(data.message);
-          if(data.message == 'Isbn found success') {
-              
-              callback(data);
-
-          }else if(data.message == 'Isbn not found') {
-              callback(null);
-          }
-      },
-      error: function () {
-          console.log("server error!");
-          
-      }
-  });
-}
-
-
 const BookDetails: React.FC<Props> = ({}) => {
     
     const classes = useStyles();
     const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+    let str = window.location.href.split('?')[1];
+    let type = str.split('=')[0];
+    str = str.split('=')[1];
+    console.log("To find: "+str+ " of type: " + type);
+    let book: any;   
 
-    
+    function request() {
+      
+        var data = onSearch(function(data){ 
+            if(data != null){
+                console.log(data);
+                book = data;
+            }else{
+                alert("Something Wrong!");
+                window.location.href='/';
+            }
+            
+        });
+    }
+
+
+    function onSearch(callback) {
+      let str = window.location.href.split('?')[1];
+      str = str.split('=')[1];
+      console.log(str);
+      
+      $.ajax({
+          async: false,
+          url:"http://localhost:8000/api/books/data",
+          data: {
+              book_id: str,
+          },
+          method: "GET",
+          success: function (data) {
+
+              console.log(data.message);
+
+              if(data.message == 'Got book data') {   
+                  callback(data);
+              }else{
+                  callback(null);
+              }
+          },
+          error: function () {
+              console.log("server error!");
+              callback(null);
+          }
+      });
+}
     
 
-    let book=request();
-    console.log(book);
+
+    request();
+    console.log("hello "+book);
     return (
       <React.Fragment>
           <CssBaseline />
@@ -195,13 +194,13 @@ const BookDetails: React.FC<Props> = ({}) => {
                     <Paper className={fixedHeightPaper}>
                       <Grid>
                         <Typography variant="h4" align="center" color="textPrimary" >
-                          {book.fields.title}
+                          {book.book_title}
                         </Typography>
                         <Typography component="p" align="center" >
-                          By Author: {book.fields.author}
+                          By Author: {book.book_author}
                         </Typography>
                         <Typography component="p" align="center" className={classes.blockSpacing}>
-                          {book.fields.pub_date}
+                          Published by {book.book_pub_date}
                         </Typography>
 
                         {/*TBD feature*/}

@@ -19,7 +19,6 @@ import BookDetails from "./BookDetails";
 import ViewCollection from "./ViewCollection";
 import EditCollection from "./EditCollection";
 import OtherUserProfile from "./OtherUserProfile";
-import OtherUserCollection from "./OtherUserCollection";
 import FindUser from "./FindUser";
 import Search from "./Search";
 
@@ -54,7 +53,7 @@ const Routing: React.FC = ({}) => {
                     <Router.Route path="/user/profile">
                         <UserProfile />
                     </Router.Route>
-                    <Router.Route path="/user/viewcollection/collectionid">
+                    <Router.Route path="/user/viewcollection">
                         <ViewCollection />
                     </Router.Route>
                     <Router.Route path="/user/editcollection/collectionid">
@@ -65,9 +64,6 @@ const Routing: React.FC = ({}) => {
                     </Router.Route>
                     <Router.Route path="/user/otherusers">
                         <OtherUserProfile />
-                    </Router.Route>
-                    <Router.Route path="/user/othercollections">
-                        <OtherUserCollection />
                     </Router.Route>
                     <Router.Route path="/bookdata/metadata">
                         <BookDetails />

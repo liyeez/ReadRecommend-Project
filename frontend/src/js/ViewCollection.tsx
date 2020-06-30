@@ -5,6 +5,7 @@ import React, {useState} from "react";
 import * as Router from 'react-router-dom';
 
 // Material UI
+import * as $ from "jquery";
 import AddIcon from '@material-ui/icons/Add';
 import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
@@ -64,14 +65,71 @@ const Style = makeStyles((theme) => ({
     },
 }));
 
-const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-
 interface Props {
 
 }
 
+function viewBook(data){
+    window.location.href="/bookdata/metadata?isbn="+data;
+}
+
 const ViewCollection: React.FC<Props> = ({}) => {
+
+
     const classes = Style();
+    
+    let book_list: any;
+    let collection: any;
+    let str = window.location.href.split('?')[1];
+    str = str.split('=')[1];
+    console.log("To find: "+str);
+
+    function request() {
+
+        var data = onSearch(function(data){ 
+            
+            if(data.message == "Collection data delivered") {
+                console.log(data);
+                book_list = data.books;
+                collection = data.collection_title;
+            }else{
+                alert("No Matched Results!");
+                window.location.href='/';
+            }
+            
+        });
+      }  
+
+    function onSearch(callback) {
+        
+        // TEMP SOLUTION FOR BOOKS DISPLAY, URL BELOW WILL CHANGE ONCE api
+        // FOR GET /collections/view_collection IS IMPLEMENTED
+
+        $.ajax({
+            async: false,
+            url: 'http://localhost:8000/api/collections/view_collection', 
+            data: {
+                collection_id: str,
+            },
+            method: "GET",
+            success: function (data) {
+                
+
+                if(data!= null) {
+                    console.log("delivering data back to callback");
+                    callback(data);                
+                }
+                callback(null);
+            },
+            error: function () {
+                console.log("server error!");
+                callback(null);    
+            } 
+        });
+    }
+
+    request();
+
     return (
         <React.Fragment>
             <CssBaseline />
@@ -81,11 +139,9 @@ const ViewCollection: React.FC<Props> = ({}) => {
                     <Container maxWidth="sm">
                         {/*TODO: Dynamically render the collection's title */}
                         <Typography component="h1" variant="h2" align="center" color="textPrimary" gutterBottom>
-                            Collection Title
+                            {collection}
                         </Typography>
-                        <Typography variant="h5" align="center" color="textSecondary" paragraph>
-                            Collection Description.
-                        </Typography>
+                        
                         <div className={classes.heroButtons}>
                             <Grid container spacing={2} justify="center">
                                 <Grid item>
@@ -105,7 +161,7 @@ const ViewCollection: React.FC<Props> = ({}) => {
                 </div>
                 <Container className={classes.cardGrid} maxWidth="md">
                     <Grid container spacing={4}>
-                        {cards.map((card) => (
+                        {book_list.map((card) => (
                             <Grid item key={card} xs={12} sm={6} md={4}>
                                 <Card className={classes.card}>
                                     <CardMedia
@@ -115,14 +171,12 @@ const ViewCollection: React.FC<Props> = ({}) => {
                                     />
                                     <CardContent className={classes.cardContent}>
                                         <Typography gutterBottom variant="h5" component="h2">
-                                            Book Title
+                                            {card.book_title}
                                         </Typography>
-                                        <Typography>
-                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam molestie pellentesque tortor in rhoncus.
-                                        </Typography>
+                                        
                                     </CardContent>
                                     <CardActions>
-                                        <Button size="small" color="primary" component={Router.Link} to="/bookdata/metadata">
+                                        <Button size="small" color="primary" onClick={() => viewBook(card.book_id)}>
                                             View
                                         </Button>
                                     </CardActions>
