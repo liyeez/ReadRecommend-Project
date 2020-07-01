@@ -187,16 +187,20 @@ const Main: React.FC<Props> = ({userSignedIn} : Props) => {
                         </Typography>
                         <div className={classes.heroButtons}>
                             <Grid container spacing={2} justify="center">
-                                <Grid item>
-                                    <Button
-                                        component={Router.Link} to="/auth/signup"
-                                        type="submit"
-                                        variant="contained"
-                                        color="primary"
-                                    >
-                                        Sign up for free!
-                                    </Button>
-                                </Grid>
+                                {(userSignedIn) ?
+                                    (null) :
+                                    (<Grid item>
+                                        <Button
+                                            component={Router.Link} to="/auth/signup"
+                                            type="submit"
+                                            variant="contained"
+                                            color="primary"
+                                        >
+                                            Sign up for free!
+                                        </Button>
+                                    </Grid>)
+                                }
+
                                 {/*Search Bar*/}
 
                                 <Grid item>
