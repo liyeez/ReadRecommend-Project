@@ -149,7 +149,7 @@ export default function UserProfile() {
             }
         });
     }
-    //const token = CookieService.get('access_token');
+    
     request();
     return (
         <React.Fragment>

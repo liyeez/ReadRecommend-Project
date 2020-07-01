@@ -6,6 +6,7 @@ import * as Router from 'react-router-dom';
 import * as $ from "jquery";
 
 // Material UI
+import CookieService from "../services/CookieService";
 import AddIcon from '@material-ui/icons/Add';
 import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
@@ -89,29 +90,107 @@ interface Props {
 
 }
 
+
+let book_list: any;
+let tag_list: any;
+let collection: any;
+
 function viewBook(data){
     window.location.href="/bookdata/metadata?isbn="+data;
 }
 
 const EditCollection: React.FC<Props> = ({}) => {
     const classes = Style();
+    // For editing the collection's title.
+    const [open, setOpen] = useState(false);
+    const [newTitle, setNewTitle] = useState('');
+    // For editing the collection's tag.
+    const [tagDialog, setTagOpen] = useState(false);
+    const [newTag, setNewTag] = useState('');
 
-    let book_list: any;
-    let collection: any;
+    // For dialog component
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
 
-    let collectionId = window.location.href.split('?')[1];
-    collectionId = collectionId.split('=')[1];
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    const handleTagOpen = () => {
+        setTagOpen(true);
+    };
+
+    const handleTagClose = () => {
+        setTagOpen(false);
+    };
+
+    // Detects new value typed into dialog box and loads it on the screen.
+    const onTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setNewTitle(value);
+    }
+
+    // Detects new value typed into dialog box and loads it on the screen.
+    const onTagChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setNewTag(value);
+    }
 
     // Collection Data. TODO: Add more fields.
     const [collectionData, setCollectionData] = useState(
         {
             collectionTitle: '',
+            collectionTag: '',
         }
     );
 
+    // Tags are represented using the Chip Material UI component.
+    const [chipData, setChipData] = useState([
+        { key: 0, tag_label: 'Fiction' },
+        { key: 1, tag_label: 'Fantasy' },
+        { key: 2, tag_label: 'Action' },
+        { key: 3, tag_label: 'Thriller' },
+    ]);
+
+    //Deletes a tag from the array of the collection's tags.
+    const handleDelete = (chipToDelete) => () => {
+        // Deletes tag on the back-end 
+        removeTag((chips) => chips.filter((chip) => chip.tag_label));
+        // Deletes tag on the front-end display.
+        setChipData((chips) => chips.filter((chip) => chip.key !== chipToDelete.key));
+    };
+
+    function addTag(){
+        // Closes dialog box.
+        handleTagClose();
+
+        // Changes the collection title on the front-end display.
+        setCollectionData(prevCollectionData => {
+            return {
+                ...prevCollectionData,
+                collectionTag: newTag,
+            };
+        });
+
+        var data = setCollectionTag(newTag, function(data){
+            if (data != null) {
+                console.log(data.message);
+                if (data.message == "Tag successfully added to collection") {
+                    setChipData((chips) => chips.concat({key: chipData.length, tag_label:newTag}));
+                } else if(data.message == "Collection already has this tag"){
+                    window.location.href='/';
+                }else {
+                    alert("Tag weird error!");
+                    window.location.href='/';
+                }
+            }
+        });
+    }
+
     // Retrieves collection data from the back-end/database.
     function request() {
-        var data = onSearch(function(data){
+        var data = getBooks(function(data){
             if (data != null) {
                 if (data.message == "Collection data delivered") {
                     book_list = data.book_list;
@@ -122,9 +201,41 @@ const EditCollection: React.FC<Props> = ({}) => {
                 }
             }
         });
+
     }
 
-    function onSearch(callback) {
+    function requestTags(){
+        var result = getTags(function(result){
+            if (result != null) {
+                if (result.message == "Got tags") {             
+                    tag_list = result.tag_list;
+                    console.log(tag_list);
+                    let newTags: any[] =[];
+                    // setChipData( prevChipData =>{
+                    //     return {
+                    //         tag_list.map((tag) => {
+                    //             chipData.concat({key:chipData.length, tag_label: tag.tag_label})    
+                    //         })
+                    //     };    
+                        
+                    // });   
+                    tag_list.forEach(function(tagString){
+                        let Tag = {key: newTags.length, tag_label: tagString};
+                        newTags.push(Tag);
+                    }); 
+                    setChipData(newTags);
+
+                    console.log('printing chipData')
+                    console.log(chipData)
+                } else {
+                    alert("No Matched Results!");
+                    window.location.href='/';
+                }
+            }
+        });
+    }
+
+    function getBooks(callback) {
         $.ajax({
             async: false,
             url: 'http://localhost:8000/api/collections/view_collection',
@@ -145,24 +256,28 @@ const EditCollection: React.FC<Props> = ({}) => {
         });
     }
 
-    // For editing the collection's title.
-    const [open, setOpen] = useState(false);
-    const [newTitle, setNewTitle] = useState('');
-
-    const handleClickOpen = () => {
-        setOpen(true);
-    };
-
-    const handleClose = () => {
-        setOpen(false);
-    };
-
-    // Detects new value typed into dialog box and loads it on the screen.
-    const onTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setNewTitle(value);
+    function getTags(callback) {
+        $.ajax({
+            async: false,
+            url: 'http://localhost:8000/api/collections/get_tags',
+            data: {
+                collection_id: collectionId,
+            },
+            method: "GET",
+            success: function (data) {
+                if(data!= null) {
+                    callback(data);
+                }
+                callback(null);
+            },
+            error: function () {
+                console.log("server error!");
+                callback(null);
+            }
+        });
     }
 
+   
     // Renames collection title on both front-end and back-end.
     function setCollectionTitle() {
         // Closes dialog box.
@@ -194,21 +309,54 @@ const EditCollection: React.FC<Props> = ({}) => {
         });
     }
 
-    // Tags are represented using the Chip Material UI component.
-    const [chipData, setChipData] = useState([
-        { key: 0, label: 'Fiction' },
-        { key: 1, label: 'Fantasy' },
-        { key: 2, label: 'Action' },
-        { key: 3, label: 'Thriller' },
-    ]);
+    
+    // Adds collection tag on both front-end and back-end.
+    function setCollectionTag(newTag,callback) {
+                // Change the collection title in the back-end/database.
+        $.ajax({
+            async: false,
+            url: 'http://localhost:8000/api/collections/add_tag',
+            data: {
+                collection_id: collectionId,
+                tag_label: newTag,
+            },
+            method: "POST",
+            success: function (data) {
+                console.log(data.message);
+                callback(data);
+            },
+            error: function () {
+                console.log("server error!");
+            }
+        });
+    }
 
-    // Deletes a tag from the array of the collection's tags.
-    const handleDelete = (chipToDelete) => () => {
-        // Deletes tag on the front-end display.
-        setChipData((chips) => chips.filter((chip) => chip.key !== chipToDelete.key));
 
-        // TODO: Update the collection's tags in the back-end/database.
-    };
+
+    // Removes book from collection on both front-end and back-end.
+    function removeTag(tag_label) {
+        console.log("Remove tag from collection.");
+        $.ajax({
+            async: false,
+            url: 'http://localhost:8000/api/collections/delete_tag',
+            data: {
+                collection_id: collectionId,
+                tag_label: tag_label,
+            },
+            method: "POST",
+            success: function (data) {
+                if (data.message == "Tag successfully removed from collection") {
+                    console.log(data.message);
+                    window.location.reload();
+                }else if(data.message =='Tag not found'){
+                    console.log(data.message);
+                }
+            },
+            error: function () {
+                console.log("server error!");
+            }
+        });
+    }
 
     // Removes book from collection on both front-end and back-end.
     function removeBook(isbnToRemove) {
@@ -217,6 +365,7 @@ const EditCollection: React.FC<Props> = ({}) => {
             async: false,
             url: 'http://localhost:8000/api/collections/delete_title',
             data: {
+                auth: token,
                 collection_id: collectionId,
                 isbn: isbnToRemove,
             },
@@ -238,7 +387,12 @@ const EditCollection: React.FC<Props> = ({}) => {
         console.log("Get 10 most recently added books!");
     }
 
+
+    let collectionId = window.location.href.split('?')[1];
+    collectionId = collectionId.split('=')[1];
+    const token = CookieService.get('access_token');
     request();
+    requestTags();
 
     return (
         <React.Fragment>
@@ -287,8 +441,8 @@ const EditCollection: React.FC<Props> = ({}) => {
                                 return (
                                     <li key={data.key}>
                                         <Chip
-                                            label={data.label}
-                                            onDelete={handleDelete(data)}
+                                            label={data.tag_label}
+                                            //onDelete={handleDelete(data)}
                                             className={classes.chip}
                                         />
                                     </li>
@@ -296,9 +450,10 @@ const EditCollection: React.FC<Props> = ({}) => {
                             })}
                         </Paper>
                         <div className={classes.heroButtons}>
-                            <Grid container spacing={2} justify="center">
+                            <Grid container spacing={2} justify="center" >
                                 <Grid item>
                                     <Button
+                                        onClick={handleTagOpen}
                                         type="submit"
                                         variant="outlined"
                                         color="primary"
@@ -306,6 +461,8 @@ const EditCollection: React.FC<Props> = ({}) => {
                                     >
                                         Add Tags
                                     </Button>
+
+                                    
                                 </Grid>
                                 <Grid item>
                                     <Button
@@ -317,6 +474,32 @@ const EditCollection: React.FC<Props> = ({}) => {
                                     >
                                         Add Books
                                     </Button>
+
+                                    <Dialog open={tagDialog} onClose={handleTagClose} aria-labelledby="form-dialog-title">
+                                        <DialogTitle id="form-dialog-title">Add New Tag</DialogTitle>
+                                        <DialogContent>
+                                            <DialogContentText>
+                                                Enter a new tag for your collection.
+                                            </DialogContentText>
+                                            <TextField
+                                                autoFocus
+                                                margin="dense"
+                                                id="name"
+                                                label="Collection Tag"
+                                                type="text"
+                                                fullWidth
+                                                onChange={onTagChange}
+                                            />
+                                        </DialogContent>
+                                        <DialogActions>
+                                            <Button onClick={handleTagClose} color="primary">
+                                                Cancel
+                                            </Button>
+                                            <Button onClick={addTag} color="primary" variant="contained" >
+                                                Save
+                                            </Button>
+                                        </DialogActions>
+                                    </Dialog>
                                 </Grid>
                                 <Grid item>
                                     <Button
@@ -393,3 +576,5 @@ const EditCollection: React.FC<Props> = ({}) => {
 }
 
 export default EditCollection;
+
+
