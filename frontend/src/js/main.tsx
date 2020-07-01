@@ -221,7 +221,7 @@ const Main: React.FC<Props> = ({userSignedIn} : Props) => {
                 <Container className={classes.cardGrid} maxWidth="md">
                     <Grid container spacing={4}>
                         {cards.map((card) => (
-                            <Grid item key={card} xs={12} sm={6} md={4}>
+                            <Grid item key={card.book_isbn} xs={12} sm={6} md={4}>
                                 <Card className={classes.card}>
                                     <CardMedia
                                         className={classes.cardMedia}
@@ -233,7 +233,7 @@ const Main: React.FC<Props> = ({userSignedIn} : Props) => {
                                             {card.book_title}
                                         </Typography>
                                         <Typography>
-                                            By Author: {card.book_author}                                            
+                                            By Author: {card.book_author}
                                         </Typography>
                                     </CardContent>
                                     <CardActions>

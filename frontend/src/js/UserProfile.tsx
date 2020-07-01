@@ -122,10 +122,10 @@ export default function UserProfile() {
                 } else{
                     callback(null);
                 }
-                
+
             },
             error: function (error) {
-                
+
                 console.log("Server error!");
                 callback(error);
             }
@@ -189,17 +189,16 @@ export default function UserProfile() {
                 <Container className={classes.cardGrid} maxWidth="md">
                     <Typography component="h4" variant="h4" align="left" color="textPrimary" gutterBottom>
                         User Collections
+                        <Button
+                            type="submit"
+                            variant="outlined"
+                            color="primary"
+                            startIcon={<AddIcon />}
+                            onClick={handleClickOpen}
+                        >
+                            Create a Collection
+                        </Button>
                     </Typography>
-
-                    <Button
-                        type="submit"
-                        variant="outlined"
-                        color="primary"
-                        startIcon={<AddIcon />}
-                        onClick={handleClickOpen}
-                    >
-                        Create a Collection
-                    </Button>
 
                     <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
                         <DialogTitle id="form-dialog-title">Create Collection</DialogTitle>
@@ -233,20 +232,6 @@ export default function UserProfile() {
                         ))}
                     </Grid>
                 </Container>
-
-                {/* Hardcoded Collections */}
-                {/*<Container className={classes.cardGrid} maxWidth="md">
-                    <Typography component="h4" variant="h4" align="left" color="textPrimary" gutterBottom>
-                        My Collections
-                    </Typography>
-
-                    <Grid container direction={'row'} spacing={4}>
-                        {MyCollections.map((collection) => (
-                          <Collections key={collection.title} collection={collection}/>
-                        ))}
-                    </Grid>
-                </Container>*/}
-
             </main>
 
         </React.Fragment>
@@ -356,32 +341,5 @@ const data = [
     createData('May 20', 35),
     createData('Jun 20', 40),
 ];
-
-// const MyCollections = [
-//     {
-//         title: 'Collections 1',
-//         description: 'This is a wider card with supporting text below as a natural lead-in to additional content.',
-//         image: 'https://source.unsplash.com/random',
-//         imageText: 'Image Text',
-//     },
-//     {
-//         title: 'Collections 2',
-//         description: 'This is a wider card with supporting text below as a natural lead-in to additional content.',
-//         image: 'https://source.unsplash.com/random',
-//         imageText: 'Image Text',
-//     },
-//     {
-//         title: 'Collections 3',
-//         description: 'This is a wider card with supporting text below as a natural lead-in to additional content.',
-//         image: 'https://source.unsplash.com/random',
-//         imageText: 'Image Text',
-//     },
-//     {
-//         title: 'Collections 4',
-//         description: 'This is a wider card with supporting text below as a natural lead-in to additional content.',
-//         image: 'https://source.unsplash.com/random',
-//         imageText: 'Image Text',
-//     },
-// ];
 
 //<FeaturedPost book={book} />
