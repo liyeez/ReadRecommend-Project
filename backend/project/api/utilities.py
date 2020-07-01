@@ -9,6 +9,7 @@ from rest_framework import status
 from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
+from django.utils.datastructures import MultiValueDictKeyError
 
 def input_validator(fields: List[str]):
     """
@@ -56,6 +57,7 @@ def auth_validator(func):
     def wrapper(request):
         try:
             if request.method == "POST":
+                key = request.POST["auth"]
                 user = Token.objects.get(key=request.POST["auth"]).user
             elif request.method == "GET":
                 user = Token.objects.get(key=request.GET["auth"]).user
@@ -63,6 +65,8 @@ def auth_validator(func):
                 return Response({"status": "system_error", "message": "Invalid method for auth validation - backend programmer screwed up"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         except ObjectDoesNotExist:
             return Response({"status": "error", "message": "Invalid auth token"}, status=status.HTTP_401_UNAUTHORIZED)
+        except MultiValueDictKeyError:
+            return Response({"status": "error", "message": "Missing auth token"}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as ex:
             return Response({"status": "system_error", "message": ex.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
