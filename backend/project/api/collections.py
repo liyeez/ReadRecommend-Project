@@ -54,10 +54,11 @@ def view_collection(request): #given collection id returns collection name, tag 
      "collection_name": collection.name, "book_list":book_list, "tag_list":tag_list}, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
+@auth_validator
 @input_validator(["collection_id", "isbn"])
 def add_title(request): #given collection_id and isbn, adds book to collection, returns new book list
     try: #check collection exists
-        collection = Collection.objects.get(collection_id=request.POST["collection_id"])
+        collection = request.user.collection_set.get(collection_id=request.POST["collection_id"])
     except:
         return Response({"status": "error", "message": "Collection not found"}, status=status.HTTP_200_OK)
     try: #check book exists
@@ -127,10 +128,11 @@ def delete_from_library(request):
         return Response({"status": "ok", "message": "Book removed from library"}, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
+@auth_validator
 @input_validator(["collection_id", "isbn"])
 def delete_title(request): #given collection_id and isbn, removes book from collection
     try:
-        collection = Collection.objects.get(collection_id=request.POST["collection_id"])
+        collection = request.user.collection_set.get(collection_id=request.POST["collection_id"])
     except:
         return Response({"status": "error", "message": "Collection not found"}, status=status.HTTP_200_OK)
     try:
