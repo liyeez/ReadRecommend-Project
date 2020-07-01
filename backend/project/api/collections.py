@@ -15,8 +15,7 @@ def create_collection(request): #given user id returns creates empty collection,
         return Response({"status": "error", "message": "Name too long"}, status=status.HTTP_200_OK)
     
     collection = Collection.objects.create_collection(name = request.POST["collection_name"], user = user)
-    user.collection_set.add(collection)
-    user.save()
+
     return Response({"status": "ok", "message": "Collection successfully added", "collection_id": collection.collection_id}, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
@@ -25,15 +24,14 @@ def create_collection(request): #given user id returns creates empty collection,
 def delete_collection(request): #given user id returns creates empty collection, returns collection_id
     user = request.user
     try:
-        collection = user.collection_set.get(pk = request.POST["collection_id"]) 
+        collection = user.collection_set.get(collection_id=request.POST["collection_id"]) 
     except:
         return Response({"status": "error", "message": "invalid collection"}, status=status.HTTP_200_OK)
 
     if(collection.library):
         return Response({"status": "error", "message": "Cannot delete library"}, status=status.HTTP_200_OK)
 
-    user.collection_set.filter(pk = request.POST["collection_id"]).delete()
-    user.save()
+    collection.delete()
     return Response({"status": "ok", "message": "Collection successfully deleted"}, status=status.HTTP_200_OK)
 
 
@@ -41,7 +39,7 @@ def delete_collection(request): #given user id returns creates empty collection,
 @input_validator(["collection_id"])
 def view_collection(request): #given collection id returns collection name, tag list, book list
     try: #check collection exists
-        collection = Collection.objects.get(pk=request.GET["collection_id"])
+        collection = Collection.objects.get(collection_id=request.GET["collection_id"])
     except:
         return Response({"status": "error", "message": "Collection not found"}, status=status.HTTP_200_OK)
     
@@ -59,16 +57,16 @@ def view_collection(request): #given collection id returns collection name, tag 
 @input_validator(["collection_id", "isbn"])
 def add_title(request): #given collection_id and isbn, adds book to collection, returns new book list
     try: #check collection exists
-        collection = Collection.objects.get(pk=request.POST["collection_id"])
+        collection = Collection.objects.get(collection_id=request.POST["collection_id"])
     except:
         return Response({"status": "error", "message": "Collection not found"}, status=status.HTTP_200_OK)
     try: #check book exists
         isbn = request.POST["isbn"]
-        book = Book.objects.get(pk = isbn)
+        book = Book.objects.get(isbn=isbn)
     except:
         return Response({"status": "error", "message": "Book not found"}, status=status.HTTP_200_OK)
     try: #check if book already in collection
-        collection.books.get(pk = isbn)
+        collection.books.get(isbn=isbn)
         return Response({"status": "error", "message": "Book is already in collection"}, status=status.HTTP_200_OK)
     except:
         collection.books.add(book)
@@ -89,11 +87,11 @@ def add_to_library(request):
     library = request.user.collection_set.get(library=True)
     try: #check book exists
         isbn = request.POST["isbn"]
-        book = Book.objects.get(pk = isbn)
+        book = Book.objects.get(isbn=isbn)
     except:
         return Response({"status": "error", "message": "Book not found"}, status=status.HTTP_200_OK)
     try: #check if book already in collection
-        library.books.get(pk = isbn)
+        library.books.get(isbn=isbn)
         return Response({"status": "error", "message": "Book is already in library"}, status=status.HTTP_200_OK)
     except:
         library.books.add(book)
@@ -132,16 +130,16 @@ def delete_from_library(request):
 @input_validator(["collection_id", "isbn"])
 def delete_title(request): #given collection_id and isbn, removes book from collection
     try:
-        collection = Collection.objects.get(pk=request.POST["collection_id"])
+        collection = Collection.objects.get(collection_id=request.POST["collection_id"])
     except:
         return Response({"status": "error", "message": "Collection not found"}, status=status.HTTP_200_OK)
     try:
         isbn = request.POST["isbn"]
-        book = Book.objects.get(pk = isbn)
+        book = Book.objects.get(isbn=isbn)
     except:
         return Response({"status": "error", "message": "Book not found"}, status=status.HTTP_200_OK)
     try: #error if book already in collection
-        collection.books.get(pk = isbn)
+        collection.books.get(isbn=isbn)
         collection.books.remove(book)
         collection.save()
         return Response({"status": "ok", "message": "Book removed from collection"}, status=status.HTTP_200_OK)
@@ -153,7 +151,7 @@ def delete_title(request): #given collection_id and isbn, removes book from coll
 def rename(request): #given collection_id and new collection name, renames collection
                     #returns collection name
     try:
-        collection = Collection.objects.get(pk=request.POST["collection_id"])
+        collection = Collection.objects.get(collection_id=request.POST["collection_id"])
     except:
         return Response({"status": "error", "message": "Collection not found"}, status=status.HTTP_200_OK)
     name = request.POST["collection_name"]
@@ -169,17 +167,17 @@ def rename(request): #given collection_id and new collection name, renames colle
 def add_tag(request): #given collection id and tag label, adds tag to collection
                     #returns collection name, tag list and book list.
     try:
-        collection = Collection.objects.get(pk=request.POST["collection_id"])
+        collection = Collection.objects.get(collection_id=request.POST["collection_id"])
     except:
         return Response({"status": "error", "message": "Collection not found"}, status=status.HTTP_200_OK)
     tag_label = request.POST["tag_label"]
     try:
-        tag = Tag.objects.get(pk = tag_label)
+        tag = Tag.objects.get(name=tag_label)
     except:
-        tag = Tag.objects.create(pk = tag_label)
+        tag = Tag.objects.create(name=tag_label)
 
     try:
-        collection.tags.get(pk = tag_label)
+        collection.tags.get(name=tag_label)
         return Response({"status": "error", "message": "Collection already has this tag"}, status=status.HTTP_200_OK)
     except:
         collection.tags.add(tag)
@@ -191,17 +189,17 @@ def add_tag(request): #given collection id and tag label, adds tag to collection
 def delete_tag(request): #given collection id and tag label, removes tag from collection
                     #returns collection name, tag list and book list.
     try:
-        collection = Collection.objects.get(pk=request.POST["collection_id"])
+        collection = Collection.objects.get(collection_id=request.POST["collection_id"])
     except:
         return Response({"status": "error", "message": "Collection not found"}, status=status.HTTP_200_OK)
     tag_label = request.POST["tag_label"]
     try:
-        tag = Tag.objects.get(pk = tag_label)
+        tag = Tag.objects.get(name=tag_label)
     except:
         return Response({"status": "error", "message": "Tag not found"}, status=status.HTTP_200_OK)
 
     try:
-        collection.tags.get(pk = tag_label)
+        collection.tags.get(name=tag_label)
         collection.tags.remove(tag)
         collection.save()
         return Response({"status": "ok", "message": "Tag successfully removed from collection"}, status=status.HTTP_200_OK)
