@@ -208,3 +208,22 @@ def delete_tag(request): #given collection id and tag label, removes tag from co
 
     except:
         return Response({"status": "error", "message": "Collection does not have this tag"}, status=status.HTTP_200_OK)
+
+@api_view(["GET"])
+@input_validator(["collection_id"])
+def get_tags(request):
+    try:
+        collection = Collection.objects.get(collection_id=request.GET["collection_id"])
+    except:
+        return Response({"status": "error", "message": "Collection not found"}, status=status.HTTP_200_OK)
+
+    tags = collection.tags.all()
+
+    tag_list = []
+    for tag in tags:
+        tag_list.append({"tag_label": tag.name})
+
+    if len(tag_list) == 0:
+        return Response({"status": "ok", "message": "Collection has no tags"}, status=status.HTTP_200_OK)
+    else:
+        return Response({"status": "ok", "message": "Got tags", "tag_list": tag_list}, status=status.HTTP_200_OK)
