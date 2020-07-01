@@ -90,9 +90,8 @@ interface Props {
 
 }
 
-
 let book_list: any;
-let tag_list: any;
+let tag_list: any[] = [];
 let collection: any;
 
 function viewBook(data){
@@ -155,10 +154,16 @@ const EditCollection: React.FC<Props> = ({}) => {
 
     //Deletes a tag from the array of the collection's tags.
     const handleDelete = (chipToDelete) => () => {
-        // Deletes tag on the back-end 
-        removeTag((chips) => chips.filter((chip) => chip.tag_label));
+        console.log("chip to delete");
+        console.log(chipToDelete);
+        // FIX: Deletes tag on the back-end
+        removeTag(chipToDelete.tag_label);
+        //removeTag((chips) => chips.filter((chip) => chip.tag_label));
         // Deletes tag on the front-end display.
-        setChipData((chips) => chips.filter((chip) => chip.key !== chipToDelete.key));
+        //tag_list = tag_list.filter((tag) => tag.key !== chipToDelete.key);
+        //console.log(tag_list)
+        //window.location.reload();
+        // setChipData((chips) => chips.filter((chip) => chip.key !== chipToDelete.key));
     };
 
     function addTag(){
@@ -177,10 +182,10 @@ const EditCollection: React.FC<Props> = ({}) => {
             if (data != null) {
                 console.log(data.message);
                 if (data.message == "Tag successfully added to collection") {
-                    setChipData((chips) => chips.concat({key: chipData.length, tag_label:newTag}));
-                } else if(data.message == "Collection already has this tag"){
+                    // setChipData((chips) => chips.concat({key: chipData.length, tag_label:newTag}));
+                } else if (data.message == "Collection already has this tag"){
                     window.location.href='/';
-                }else {
+                } else {
                     alert("Tag weird error!");
                     window.location.href='/';
                 }
@@ -207,26 +212,15 @@ const EditCollection: React.FC<Props> = ({}) => {
     function requestTags(){
         var result = getTags(function(result){
             if (result != null) {
-                if (result.message == "Got tags") {             
-                    tag_list = result.tag_list;
-                    console.log(tag_list);
-                    let newTags: any[] =[];
-                    // setChipData( prevChipData =>{
-                    //     return {
-                    //         tag_list.map((tag) => {
-                    //             chipData.concat({key:chipData.length, tag_label: tag.tag_label})    
-                    //         })
-                    //     };    
-                        
-                    // });   
-                    tag_list.forEach(function(tagString){
-                        let Tag = {key: newTags.length, tag_label: tagString};
+                if (result.message == "Got tags") {
+                    let newTags : any[] = [];
+                    (result.tag_list).forEach(function(tag){
+                        let Tag = {key: newTags.length, tag_label: tag.tag_label};
                         newTags.push(Tag);
-                    }); 
-                    setChipData(newTags);
-
-                    console.log('printing chipData')
-                    console.log(chipData)
+                    });
+                    tag_list = newTags;
+                } else if (result.message == "Collection has no tags") {
+                    console.log("Do nothing, continue loading the page.");
                 } else {
                     alert("No Matched Results!");
                     window.location.href='/';
@@ -277,7 +271,7 @@ const EditCollection: React.FC<Props> = ({}) => {
         });
     }
 
-   
+
     // Renames collection title on both front-end and back-end.
     function setCollectionTitle() {
         // Closes dialog box.
@@ -309,7 +303,7 @@ const EditCollection: React.FC<Props> = ({}) => {
         });
     }
 
-    
+
     // Adds collection tag on both front-end and back-end.
     function setCollectionTag(newTag,callback) {
                 // Change the collection title in the back-end/database.
@@ -322,15 +316,16 @@ const EditCollection: React.FC<Props> = ({}) => {
             },
             method: "POST",
             success: function (data) {
-                console.log(data.message);
-                callback(data);
+                if (data != null) {
+                    console.log(data.message);
+                    callback(data);
+                }
             },
             error: function () {
                 console.log("server error!");
             }
         });
     }
-
 
 
     // Removes book from collection on both front-end and back-end.
@@ -437,12 +432,12 @@ const EditCollection: React.FC<Props> = ({}) => {
                             </Dialog>
                         </Grid>
                         <Paper component="ul" className={classes.chipRoot}>
-                            {chipData.map((data) => {
+                            {tag_list.map(data => {
                                 return (
                                     <li key={data.key}>
                                         <Chip
                                             label={data.tag_label}
-                                            //onDelete={handleDelete(data)}
+                                            onDelete={handleDelete(data)}
                                             className={classes.chip}
                                         />
                                     </li>
@@ -462,7 +457,7 @@ const EditCollection: React.FC<Props> = ({}) => {
                                         Add Tags
                                     </Button>
 
-                                    
+
                                 </Grid>
                                 <Grid item>
                                     <Button
@@ -576,5 +571,3 @@ const EditCollection: React.FC<Props> = ({}) => {
 }
 
 export default EditCollection;
-
-
