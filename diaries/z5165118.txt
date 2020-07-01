@@ -3,5 +3,7 @@ John Chen z5165118
 Week 1
 Joined a group and set up groupchats, joined jira and we decided on the project to work on and what to implement it with.
 Week 2
+Worked with simon to decide on how we were going to implement the backend
 Week 3
+Got the proposal finished and fully decided as a group on how the implementation was going to work and the tasks split between us
 Week 4
