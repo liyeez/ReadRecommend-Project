@@ -58,23 +58,21 @@ function viewBook(data){
     window.location.href="/bookdata/metadata?isbn="+data;
 }
 
-// TODO AFTER API IMPLEMENTED
-function removeBook(data){
-    //window.location.href="/bookdata/metadata?isbn="+data;
-}
+
 
 export default function UserLibrary() {
     const classes = Style();
     const token = CookieService.get('access_token');
 
     let cards: Array<any> =[];
-    function request() {
-        var data = onSearch(function(data){
+
+        // TODO AFTER API IMPLEMENTED
+    function removeBook(isbn){
+        var data = removeLib(isbn,function(data){
             console.log(data)
             if (data != null) {
-                if (data.message == "Got user library") {
-                    cards = data.book_list;
-                    //console.log(cards[0].book_title);
+                if (data.message == "Book removed from library") {
+                    window.location.href='/user/userlibrary';
                 } else{
                     alert("No Matched Results!");
                     window.location.href='/';
@@ -83,6 +81,43 @@ export default function UserLibrary() {
         });
     }
 
+    function removeLib(isbn, callback) {
+        $.ajax({
+            async: false,
+            url: "http://localhost:8000/api/collections/delete_from_library",
+            data: {
+                auth: token,
+                isbn: isbn
+            },
+            method: "POST",
+            success: function (data) {
+                console.log(data);
+                if(data!= null) {
+                    callback(data);
+                }
+                callback(null);
+            },
+            error: function () {
+                console.log("server error!");
+                callback(null);
+            }
+        });
+    }
+
+    function request() {
+        var data = onSearch(function(data){
+            console.log(data)
+            if (data != null) {
+                if (data.message == "Got user library") {
+                    cards = data.book_list;
+                } else{
+                    alert("No Matched Results!");
+                    window.location.href='/';
+                }
+            }
+        });
+    }
+ 
     function onSearch(callback) {
         $.ajax({
             async: false,

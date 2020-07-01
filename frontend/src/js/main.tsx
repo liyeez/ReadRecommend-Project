@@ -4,7 +4,7 @@
 import $ = require('jquery');
 import React, {ChangeEvent, useState} from "react";
 import * as Router from 'react-router-dom';
-
+import CookieService from "../services/CookieService";
 // Material UI
 import AddIcon from '@material-ui/icons/Add';
 import Button from '@material-ui/core/Button';
@@ -65,7 +65,6 @@ const Style = makeStyles((theme) => ({
     },
 }));
 
-const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 interface SearchForm {
     title: string;
 }
@@ -75,12 +74,51 @@ interface Props {
 
 let flag: boolean;
 
+
+
 const Main: React.FC<Props> = ({userSignedIn} : Props) => {
 
     let cards: any;
     const [SearchForm, setSearchForm] = useState<SearchForm>({
       title: '',
     });
+
+    function addBook(isbn){
+        var data = addLib(isbn,function(data){
+            if (data != null) {
+                console.log(data);
+                console.log('added to lib!!');
+            } else{
+                alert("Something Wrong!");
+                window.location.href='/';
+            }
+        });
+    }
+
+    function addLib(isbn, callback) {
+        console.log(isbn);
+        $.ajax({
+            async: false,
+            url:"http://localhost:8000/api/collections/add_to_library",
+            data: {
+                auth: token,
+                isbn: isbn,
+            },
+            method: "POST",
+            success: function (data) {
+                console.log(data);
+                if (data.message == 'Book added to library') {
+                    callback(data);
+                } else {
+                    callback(null);
+                }
+            },
+            error: function () {
+                console.log("server error!");
+                callback(null);
+            }
+        });
+    }
 
     const onTextboxChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -132,6 +170,7 @@ const Main: React.FC<Props> = ({userSignedIn} : Props) => {
     }
 
     const classes = Style();
+    const token = CookieService.get('access_token');
     request();
     return (
         <React.Fragment>
@@ -201,7 +240,7 @@ const Main: React.FC<Props> = ({userSignedIn} : Props) => {
                                         <Button size="small" color="primary" component={Router.Link} to={"/bookdata/metadata?isbn="+card.book_isbn}>
                                             View
                                         </Button>
-                                        {(userSignedIn) ? (<Button size="small" color="primary" component={Router.Link} to="/bookdata/metadata" endIcon={<AddIcon />}> Add to Libary </Button>)
+                                        {(userSignedIn) ? (<Button size="small" color="primary" endIcon={<AddIcon />} onClick={() => addBook(card.book_isbn)}> Add to Libary </Button>)
                                                         : (null)}
                                     </CardActions>
                                 </Card>

@@ -227,7 +227,7 @@ export default function UserProfile() {
                         </DialogActions>
                     </Dialog>
 
-                    <Grid container direction={'row'} spacing={4}>
+                    <Grid container direction={'row'} spacing={4} className={classes.container}>
                         {userProfileData.userBookCollections.map((collection : any) => (
                           <Collections key={collection.collection_id} collection={collection}/>
                         ))}

@@ -129,37 +129,11 @@ function viewBook(data){
     window.location.href="/bookdata/metadata?isbn="+data;
 }
 
-function addLib(isbn, callback) {
-    const token = CookieService.get('access_token');
-    let str = window.location.href.split('?')[1];
-    str = str.split('=')[1];
-    console.log(isbn);
-    $.ajax({
-        async: false,
-        url:"http://localhost:8000/api/collections/add_to_library",
-        data: {
-            auth: token,
-            isbn: str,
-        },
-        method: "POST",
-        success: function (data) {
-            console.log(data);
-            if (data.message == 'Book added to library') {
-                callback(data);
-            } else {
-                callback(null);
-            }
-        },
-        error: function () {
-            console.log("server error!");
-            callback(null);
-        }
-    });
-}
-
 const BookDetails: React.FC<Props> = ({}) => {
     const classes = useStyles();
     const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+
+    const token = CookieService.get('access_token');
     let str = window.location.href.split('?')[1];
     let type = str.split('=')[0];
     str = str.split('=')[1];
@@ -186,6 +160,32 @@ const BookDetails: React.FC<Props> = ({}) => {
             } else{
                 alert("Something Wrong!");
                 window.location.href='/';
+            }
+        });
+    }
+
+    function addLib(isbn, callback) {
+        
+        console.log(isbn);
+        $.ajax({
+            async: false,
+            url:"http://localhost:8000/api/collections/add_to_library",
+            data: {
+                auth: token,
+                isbn: str,
+            },
+            method: "POST",
+            success: function (data) {
+                console.log(data);
+                if (data.message == 'Book added to library') {
+                    callback(data);
+                } else {
+                    callback(null);
+                }
+            },
+            error: function () {
+                console.log("server error!");
+                callback(null);
             }
         });
     }
@@ -217,7 +217,10 @@ const BookDetails: React.FC<Props> = ({}) => {
         });
     }
 
+
     request();
+
+
     console.log("hello "+book);
     return (
         <React.Fragment>
