@@ -211,9 +211,26 @@ const EditCollection: React.FC<Props> = ({}) => {
     };
 
     // Removes book from collection on both front-end and back-end.
-    function removeBook() {
-        // TODO: Update the collection's books in the back-end/database.
+    function removeBook(isbnToRemove) {
         console.log("Remove book from collection.");
+        $.ajax({
+            async: false,
+            url: 'http://localhost:8000/api/collections/delete_title',
+            data: {
+                collection_id: collectionId,
+                isbn: isbnToRemove,
+            },
+            method: "POST",
+            success: function (data) {
+                if (data.message == "Book removed from collection") {
+                    console.log("Successfully removed book from collection!");
+                    window.location.reload();
+                }
+            },
+            error: function () {
+                console.log("server error!");
+            }
+        });
     }
 
     // TODO: Implement functionality. Gets the 10 most recently added books to the collection.
@@ -292,6 +309,17 @@ const EditCollection: React.FC<Props> = ({}) => {
                                 </Grid>
                                 <Grid item>
                                     <Button
+                                        component={Router.Link} to={"/user/addTitles?collectionid=" + collectionId}
+                                        type="submit"
+                                        variant="outlined"
+                                        color="primary"
+                                        startIcon={<AddIcon />}
+                                    >
+                                        Add Books
+                                    </Button>
+                                </Grid>
+                                <Grid item>
+                                    <Button
                                         type="submit"
                                         variant="outlined"
                                         color="primary"
@@ -350,7 +378,7 @@ const EditCollection: React.FC<Props> = ({}) => {
                                             Edit Status
                                         </Button>
                                         {/* TODO: Display an alert saying 'book removed from collection' */}
-                                        <Button size="small" color="primary" onClick={removeBook}>
+                                        <Button size="small" color="primary" onClick={() => removeBook(card.isbn)}>
                                             Remove
                                         </Button>
                                     </CardActions>

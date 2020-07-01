@@ -6,7 +6,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from django.db.models import Q
 from .models import Book
-from .utilities import input_validator
+from .utilities import input_validator, user_validator
 
 @api_view(["GET"])
 @input_validator(["isbn"])
@@ -68,7 +68,7 @@ def search(request):
     return Response({"status": "ok", "message": message, "book_list": book_list}, status=status.HTTP_200_OK)
 
 @api_view(["GET"])
-@input_validator(["number"])
+@input_validator(["count"])
 def random(request):
     """
     random
@@ -76,7 +76,7 @@ def random(request):
     Retrieves a specified number of random books (<13) and their metadata
 
     Input:
-    number (int)
+    count (int)
 
     Returns:
     book_list (list):
@@ -84,12 +84,47 @@ def random(request):
         book_title (str)
         book_author (str)
     """
-    number = int(request.GET["number"])
+    count = int(request.GET["count"])
 
-    if number > 12:
+    if count > 12:
         return Response({"status": "error", "message": "Too many books"}, status=status.HTTP_416_REQUESTED_RANGE_NOT_SATISFIABLE)
 
-    books = Book.objects.all().order_by('?')[:number]
+    books = Book.objects.all().order_by('?')[:count]
+
+    book_list = []
+    for book in books:
+        book_list.append({"book_isbn": book.isbn, "book_title": book.title, "book_author": book.author})
+
+    return Response({"status": "ok", "message": "Got random books", "book_list": book_list}, status=status.HTTP_200_OK)
+
+@api_view(["GET"])
+@input_validator(["count"])
+@user_validator
+def random_not_library(request):
+    """
+    random not library
+    
+    Get <13 random books not in a user’s library
+
+    Input:
+    user_id (int)
+    count (int)
+
+    Returns:
+    book_list (list):
+        book_isbn (int)
+        book_title (str)
+        book_author (str)
+    """
+    count = int(request.GET["count"])
+
+    if count > 12:
+        return Response({"status": "error", "message": "Too many books"}, status=status.HTTP_416_REQUESTED_RANGE_NOT_SATISFIABLE)
+
+    library = request.user.collection_set.get(library=True)
+    books_in_library = library.books.all().values_list("isbn", flat=True)
+
+    books = Book.objects.exclude(isbn__in=books_in_library).order_by('?')[:count]
 
     book_list = []
     for book in books:

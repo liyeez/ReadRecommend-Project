@@ -1,6 +1,7 @@
 import React from 'react';
 import * as Router from 'react-router-dom';
 
+import * as $ from "jquery";
 // Material UI
 import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
@@ -11,7 +12,7 @@ import Grid from '@material-ui/core/Grid';
 import Hidden from '@material-ui/core/Hidden';
 import PropTypes from 'prop-types';
 import Typography from '@material-ui/core/Typography';
-
+import CookieService from "../services/CookieService";
 import { makeStyles } from '@material-ui/core/styles';
 
 
@@ -42,6 +43,46 @@ export default function Collections(props) {
     const classes = useStyles();
     const { collection } = props;
 
+    function request(collectionid, collection_name) {
+        var data = RemoveCollection(  collectionid, collection_name, function(data){
+            if (data != null) {
+                console.log(data.message)
+                if (data.message == "Collection successfully removed") {
+                    console.log(data);
+                } else {
+                    alert("No Matched Results!");
+                    window.location.href='/';
+                }
+            }
+        });
+    }
+
+    function RemoveCollection(id, name, callback) {
+        const token = CookieService.get('access_token');
+        $.ajax({
+            async: false,
+            url: 'http://localhost:8000/api/collections/delete_collection',
+            data: {
+                auth: token,
+                collection_id: id,
+                collection_name: name,
+            },
+            method: "POST",
+            success: function (data) {
+                if(data!= null) {
+                    console.log("delivering data back to callback");
+                    callback(data);
+                }
+                callback(null);
+            },
+            error: function () {
+                console.log("server error!");
+                callback(null);
+            }
+        });
+    }
+
+
     return (
         <Grid item xs={12} md={6}>
             <CardActionArea>
@@ -68,6 +109,11 @@ export default function Collections(props) {
                         <Button size="small" color="primary" component={Router.Link} to="/user/editcollection" onClick={() => editCollection(collection.collection_id)}>
                             <Typography variant="subtitle1" color="primary" >
                                 Edit
+                            </Typography>
+                        </Button>
+                        <Button size="small" color="primary"  > {/*onClick={() => request(collection.collection_id, collection.collection_name)}*/}
+                            <Typography variant="subtitle1" color="primary" >
+                                Remove
                             </Typography>
                         </Button>
                     </CardContent>

@@ -1,12 +1,10 @@
-// Main.tsx
-// Main page
-
-import $ = require('jquery');
 import React, {ChangeEvent, useState} from "react";
 import * as Router from 'react-router-dom';
-import CookieService from "../services/CookieService";
+import $ = require('jquery');
+
 // Material UI
 import AddIcon from '@material-ui/icons/Add';
+import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
@@ -65,6 +63,7 @@ const Style = makeStyles((theme) => ({
     },
 }));
 
+const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 interface SearchForm {
     title: string;
 }
@@ -72,53 +71,17 @@ interface Props {
     userSignedIn: boolean;
 }
 
-let flag: boolean;
+const AddTitles: React.FC<Props> = ({userSignedIn} : Props) => {
+    const classes = Style();
 
+    let book_list: any;
 
+    let collectionId = window.location.href.split('?')[1];
+    collectionId = collectionId.split('=')[1];
 
-const Main: React.FC<Props> = ({userSignedIn} : Props) => {
-
-    let cards: any;
     const [SearchForm, setSearchForm] = useState<SearchForm>({
       title: '',
     });
-
-    function addBook(isbn){
-        var data = addLib(isbn,function(data){
-            if (data != null) {
-                console.log(data);
-                console.log('added to lib!!');
-            } else{
-                alert("Something Wrong!");
-                window.location.href='/';
-            }
-        });
-    }
-
-    function addLib(isbn, callback) {
-        console.log(isbn);
-        $.ajax({
-            async: false,
-            url:"http://localhost:8000/api/collections/add_to_library",
-            data: {
-                auth: token,
-                isbn: isbn,
-            },
-            method: "POST",
-            success: function (data) {
-                console.log(data);
-                if (data.message == 'Book added to library') {
-                    callback(data);
-                } else {
-                    callback(null);
-                }
-            },
-            error: function () {
-                console.log("server error!");
-                callback(null);
-            }
-        });
-    }
 
     const onTextboxChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -134,33 +97,35 @@ const Main: React.FC<Props> = ({userSignedIn} : Props) => {
         window.location.href="/search?title="+SearchForm.title;
     }
 
-    function request() {
-        var data = randomBooks(function(data){
+    // Loads the new titles requested from backend.
+    function getNewTitles() {
+        var data = findNewTitles(function(data){
             if (data != null) {
-                console.log(data);
-                cards = data.book_list;
-            } else{
-                alert("Something Wrong!");
-                window.location.href='/';
+                if (data.message == "Got random books") {
+                    book_list = data.book_list;
+                } else {
+                    alert("No Matched Results!");
+                    window.location.href='/';
+                }
             }
         });
     }
 
-    function randomBooks(callback) {
+    // Retrieves new titles from backend.
+    function findNewTitles(callback) {
         $.ajax({
             async: false,
-            url:"http://localhost:8000/api/books/random",
+            url: 'http://localhost:8000/api/books/random',
             data: {
-                count: 12,
+                count: 3,
             },
             method: "GET",
             success: function (data) {
-                console.log(data.message);
-                if (data.message == "Got random books") {
+                console.log(data);
+                if(data != null) {
                     callback(data);
-                } else {
-                    callback(null);
                 }
+                callback(null);
             },
             error: function () {
                 console.log("server error!");
@@ -169,9 +134,31 @@ const Main: React.FC<Props> = ({userSignedIn} : Props) => {
         });
     }
 
-    const classes = Style();
-    const token = CookieService.get('access_token');
-    request();
+    // TODO: Add title to collection on backend.
+    function addTitleToCollection(isbnToAdd) {
+        $.ajax({
+            async: false,
+            url: 'http://localhost:8000/api/collections/add_title',
+            data: {
+                collection_id: collectionId,
+                isbn: isbnToAdd,
+            },
+            method: "POST",
+            success: function (data) {
+                if (data != null) {
+                    if (data == "Book added to collection") {
+                        console.log("Successfully added title to collection!");
+                    }
+                }
+            },
+            error: function () {
+                console.log("server error!");
+            }
+        });
+    }
+
+    getNewTitles();
+
     return (
         <React.Fragment>
             <CssBaseline />
@@ -180,23 +167,13 @@ const Main: React.FC<Props> = ({userSignedIn} : Props) => {
                 <div className={classes.heroContent}>
                     <Container maxWidth="sm">
                         <Typography component="h1" variant="h2" align="center" color="textPrimary" gutterBottom>
-                            ReadRecommend
+                            Add Titles
                         </Typography>
                         <Typography variant="h5" align="center" color="textSecondary" paragraph>
-                            A seamless platform for book lovers to explore personalized book recommendations.
+                            Browse through books to add to your collection.
                         </Typography>
                         <div className={classes.heroButtons}>
                             <Grid container spacing={2} justify="center">
-                                <Grid item>
-                                    <Button
-                                        component={Router.Link} to="/auth/signup"
-                                        type="submit"
-                                        variant="contained"
-                                        color="primary"
-                                    >
-                                        Sign up for free!
-                                    </Button>
-                                </Grid>
                                 {/*Search Bar*/}
 
                                 <Grid item>
@@ -214,14 +191,25 @@ const Main: React.FC<Props> = ({userSignedIn} : Props) => {
                                         </IconButton>
                                     </Paper>
                                 </Grid>
+                                <Grid item>
+                                    <Button
+                                        variant="outlined"
+                                        color="default"
+                                        component={Router.Link} to={"/user/editcollection?collectionid=" + collectionId}
+                                        startIcon={<ArrowBackIosIcon />}
+                                    >
+                                        Back to Editing
+                                    </Button>
+                                </Grid>
                             </Grid>
                         </div>
                     </Container>
                 </div>
                 <Container className={classes.cardGrid} maxWidth="md">
                     <Grid container spacing={4}>
-                        {cards.map((card) => (
-                            <Grid item key={card} xs={12} sm={6} md={4}>
+                        {/*TODO: Display book if not already inside the collection.*/}
+                        {book_list.map((book) => (
+                            <Grid item key={book.book_isbn} xs={12} sm={6} md={4}>
                                 <Card className={classes.card}>
                                     <CardMedia
                                         className={classes.cardMedia}
@@ -230,17 +218,17 @@ const Main: React.FC<Props> = ({userSignedIn} : Props) => {
                                     />
                                     <CardContent className={classes.cardContent}>
                                         <Typography gutterBottom variant="h5" component="h2">
-                                            {card.book_title}
+                                            {book.book_title}
                                         </Typography>
                                         <Typography>
-                                            By Author: {card.book_author}                                            
+                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam molestie pellentesque tortor in rhoncus.
                                         </Typography>
                                     </CardContent>
                                     <CardActions>
-                                        <Button size="small" color="primary" component={Router.Link} to={"/bookdata/metadata?isbn="+card.book_isbn}>
+                                        <Button size="small" color="primary" component={Router.Link} to={"/bookdata/metadata?isbn=" + book.book_isbn}>
                                             View
                                         </Button>
-                                        {(userSignedIn) ? (<Button size="small" color="primary" endIcon={<AddIcon />} onClick={() => addBook(card.book_isbn)}> Add to Libary </Button>)
+                                        {(userSignedIn) ? (<Button size="small" color="primary" onClick={() => addTitleToCollection(book.book_isbn)} endIcon={<AddIcon />}> Add to Collection </Button>)
                                                         : (null)}
                                     </CardActions>
                                 </Card>
@@ -253,4 +241,4 @@ const Main: React.FC<Props> = ({userSignedIn} : Props) => {
     );
 }
 
-export default Main;
+export default AddTitles;

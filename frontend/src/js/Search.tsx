@@ -72,8 +72,8 @@ interface SearchForm {
 }
 
 const Search: React.FC<Props> = ({}) => {
-    
-        
+
+
     let books: Array<any> =[];
     let users: Array<any> =[];
 
@@ -92,19 +92,19 @@ const Search: React.FC<Props> = ({}) => {
     }
 
     function request() {
-        var data = onSearch(function(data){ 
+        var data = onSearch(function(data){
             console.log(data)
             if(data.message == "Got matching books") {
                    books = data.book_list;
-                
-            }else if (data.message == "Got users"){  
+
+            }else if (data.message == "Got users"){
                    users = data.user_list;
 
             }else{
                 alert("No Matched Results!");
                 window.location.href='/';
             }
-            
+
         });
     }
 
@@ -114,7 +114,7 @@ const Search: React.FC<Props> = ({}) => {
     }
 
     function onSearch(callback) {
-        
+
         $.ajax({
             async: false,
             url: api_call,
@@ -125,14 +125,14 @@ const Search: React.FC<Props> = ({}) => {
             success: function (data) {
                 console.log(data);
                 if(data!= null) {
-                    callback(data);                
+                    callback(data);
                 }
                 callback(null);
             },
             error: function () {
                 console.log("server error!");
-                callback(null);    
-            } 
+                callback(null);
+            }
         });
     }
 
@@ -142,14 +142,14 @@ const Search: React.FC<Props> = ({}) => {
 
     function viewUser(data){
         window.location.href="/user/otherusers?userid="+data;
-    }   
-    
+    }
+
     const classes = Style();
     let str = window.location.href.split('?')[1];
     let type = str.split('=')[0];
     str = str.split('=')[1];
     console.log("To find: "+str+ "of type: " + type);
-    
+
     let api_call: string;
     if(type == 'title'){
         api_call= "http://localhost:8000/api/books/search";
@@ -174,7 +174,7 @@ const Search: React.FC<Props> = ({}) => {
                         <Typography component="h1" variant="h3" align="center" color="textSecondary" gutterBottom>
                             "{str}"
                         </Typography>
-                        
+
                         <div className={classes.heroButtons}>
                             <Grid container spacing={2} justify="center">
                                 <Grid item>
@@ -185,7 +185,7 @@ const Search: React.FC<Props> = ({}) => {
                                             name="title"
                                             label="Search ReadRecommend"
                                             onChange={onTextboxChange}
-                                            
+
                                         />
                                         <IconButton type="submit" className={classes.iconButton} aria-label="search" onClick={newSearch}>
                                             <SearchIcon />
@@ -212,7 +212,7 @@ const Search: React.FC<Props> = ({}) => {
                                         </Typography>
                                     </CardContent>
                                     <CardActions>
-                                        <Button size="small" color="primary" onClick={() => viewBook(card.book_id)}>
+                                        <Button size="small" color="primary" onClick={() => viewBook(card.book_isbn)}>
                                             View
                                         </Button>
                                     </CardActions>
@@ -248,7 +248,7 @@ const Search: React.FC<Props> = ({}) => {
 
                     {/* TBD...
                         <IconButton type="submit" component={Router.Link} to="/search" className={classes.iconButton} aria-label="search">
-       
+
                             <SearchIcon/>
                             More Results....
                         </IconButton>
