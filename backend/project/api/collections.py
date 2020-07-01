@@ -10,10 +10,7 @@ from django.contrib.auth.models import User
 @auth_validator
 @input_validator(["collection_name"])
 def create_collection(request): #given user id returns creates empty collection, returns collection_id
-    try: 
-        user = request.user
-    except:
-        return Response({"status": "error", "message": "Invalid user"}, status=status.HTTP_200_OK)
+    user = request.user
     if(len(request.POST["collection_name"])> MAX_STR_LEN):
         return Response({"status": "error", "message": "Name too long"}, status=status.HTTP_200_OK)
     
@@ -21,6 +18,24 @@ def create_collection(request): #given user id returns creates empty collection,
     user.collection_set.add(collection)
     user.save()
     return Response({"status": "ok", "message": "Collection successfully added", "collection_id": collection.collection_id}, status=status.HTTP_200_OK)
+
+@api_view(["POST"])
+@auth_validator
+@input_validator(["collection_id"])
+def delete_collection(request): #given user id returns creates empty collection, returns collection_id
+    user = request.user
+    try:
+        collection = user.collection_set.get(pk = request.POST["collection_id"]) 
+    except:
+        return Response({"status": "error", "message": "invalid collection"}, status=status.HTTP_200_OK)
+
+    if(collection.library):
+        return Response({"status": "error", "message": "Cannot delete library"}, status=status.HTTP_200_OK)
+
+    user.collection_set.filter(pk = request.POST["collection_id"]).delete()
+    user.save()
+    return Response({"status": "ok", "message": "Collection successfully deleted"}, status=status.HTTP_200_OK)
+
 
 @api_view(["GET"])
 @input_validator(["collection_id"])

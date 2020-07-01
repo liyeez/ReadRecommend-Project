@@ -3,6 +3,7 @@ from . import collections
 
 urlpatterns = [
 	path("create_collection", collections.create_collection),
+	path("delete_collection", collections.delete_collection),
     path("view_collection", collections.view_collection),
     path("add_to_library", collections.add_to_library),
     path("add_title", collections.add_title),
