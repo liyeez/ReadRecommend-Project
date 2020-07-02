@@ -3,6 +3,7 @@ import * as Router from 'react-router-dom';
 import $ = require('jquery');
 
 // Material UI
+import CookieService from "../services/CookieService";
 import AddIcon from '@material-ui/icons/Add';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import Button from '@material-ui/core/Button';
@@ -140,6 +141,7 @@ const AddTitles: React.FC<Props> = ({userSignedIn} : Props) => {
             async: false,
             url: 'http://localhost:8000/api/collections/add_title',
             data: {
+                auth: token,
                 collection_id: collectionId,
                 isbn: isbnToAdd,
             },
@@ -157,6 +159,7 @@ const AddTitles: React.FC<Props> = ({userSignedIn} : Props) => {
         });
     }
 
+    const token = CookieService.get('access_token');
     getNewTitles();
 
     return (
