@@ -75,26 +75,19 @@ const SignUp: React.FC<Props> = ({}) => {
         });
     }
 
-    function onSignUp() {
+    function onSignUp(e) {
+        e.preventDefault();
         const password = signUpForm.signUpPassword;
         const confirmPassword = signUpForm.signUpConfirmPassword;
-        console.log("um");
+
         if (password !== confirmPassword) {
-            console.log("inside the if");
             setSignUpForm(prevSignUpForm => {
                 return {
                     ...prevSignUpForm,
                     signUpError: 'Passwords do not match.'
                 }
-            })
+            });
         } else {
-            setSignUpForm(prevSignUpForm => {
-                return {
-                    ...prevSignUpForm,
-                    signUpError: ''
-                }
-            })
-
             $.ajax({
                 url: "http://localhost:8000/api/auth/signup",
                 method: "POST",
@@ -106,27 +99,31 @@ const SignUp: React.FC<Props> = ({}) => {
                 },
                 success: function (data) {
                     // Handle sign up success.
-
+                    setSignUpForm(prevSignUpForm => {
+                        return {
+                            ...prevSignUpForm,
+                            signUpError: 'Signed up.'
+                        }
+                    });
                     // The cookie will be available on all URLs.
                     const options = { path: "/" };
                     // Create a cookie with the token from response.
                     CookieService.set("access_token", data.token, options);
                     window.location.reload();
-                    <Router.Redirect to="/"/>
                 },
-                error: function () {
-                    console.log("Error!");
+                error: function (xhr, status, error) {
+                    console.log(error);
+                    if (error == "Conflict") {
+                        setSignUpForm(prevSignUpForm => {
+                            return {
+                                ...prevSignUpForm,
+                                signUpError: 'The username is already taken. Please try again.'
+                            }
+                        });
+                    }
                 }
             });
-
-            setSignUpForm(prevSignUpForm => {
-                return {
-                    ...prevSignUpForm,
-                    signUpError: 'Signed up.'
-                }
-            })
         }
-
     }
 
     const classes = Style();
@@ -138,6 +135,7 @@ const SignUp: React.FC<Props> = ({}) => {
                 (<Alert severity="success">Successfully signed up! Log in to your account here.</Alert>)
                 : (<Alert severity="error">{signUpForm.signUpError}</Alert>)) : (null)}
                 </div>
+                {(signUpForm.signUpError === "Signed up.") ? (<Router.Redirect to="/"/>) : (null)}
                 <CssBaseline />
 
                 <div className={classes.paper}>
