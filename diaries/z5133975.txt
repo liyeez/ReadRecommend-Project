@@ -6,3 +6,15 @@ Week 2: Simone made progress on setting basic webpage and its server. We are to 
 Week 3: As the proposal is submitted, the sprint has officially started on thursday lab and user stories are allocated. I am responsible for display top 10 recently added books, viewing book details when a book is clicked, viewing titles in other users' collection. 
 
 Week 4: There has been a change of assigned stories throughout the sprint, a sunday standup meeting has also been conducted to allow communication and check up of how each member are doing. Backend members has informed others about difficulties met in implementing databases. Frontend members including me and Monica also had troubles with ajax requests and react coding.  
+
+Week 5: Due to unexpected technical issues on the backend, some user stories are moved to be completed in the next sprint as it requires a restructure of the server database. Apart from that, all fucntionalities are deemed completed as the group managed to satisfy all criteria listed for Progressive Demo A.
+
+Week 6: There is not much progress as week 6 is the flexibility week and all members have to utilize the week to focus on other commitments & subjects. The next sprint is planned to last the whole of week 7 instead. 
+
+Week 7:
+
+Week 8:
+
+Week 9:
+
+Week 10:
