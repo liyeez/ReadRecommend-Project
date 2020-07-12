@@ -58,7 +58,7 @@ def search(request):
 
     book_list = []
     for book in books.all():
-        book_list.append({"book_isbn": book.isbn, "book_title": book.title, "book_author": book.author})
+        book_list.append({"book_isbn": book.isbn, "book_title": book.title, "book_author": book.author, "book_pub_date": book.pub_date})
 
     if len(book_list) > 0:
         message = "Got matching books"
@@ -93,7 +93,7 @@ def random(request):
 
     book_list = []
     for book in books:
-        book_list.append({"book_isbn": book.isbn, "book_title": book.title, "book_author": book.author})
+        book_list.append({"book_isbn": book.isbn, "book_title": book.title, "book_author": book.author, "book_pub_date": book.pub_date})
 
     return Response({"status": "ok", "message": "Got random books", "book_list": book_list}, status=status.HTTP_200_OK)
 
@@ -128,6 +128,6 @@ def random_not_library(request):
 
     book_list = []
     for book in books:
-        book_list.append({"book_isbn": book.isbn, "book_title": book.title, "book_author": book.author})
+        book_list.append({"book_isbn": book.isbn, "book_title": book.title, "book_author": book.author, "book_pub_date": book.pub_date})
 
     return Response({"status": "ok", "message": "Got random books", "book_list": book_list}, status=status.HTTP_200_OK)

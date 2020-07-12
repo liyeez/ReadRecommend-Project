@@ -239,6 +239,9 @@ const Main: React.FC<Props> = ({userSignedIn} : Props) => {
                                         <Typography>
                                             By Author: {card.book_author}
                                         </Typography>
+                                        <Typography>
+                                            Published on: {card.book_pub_date}
+                                        </Typography>
                                     </CardContent>
                                     <CardActions>
                                         <Button size="small" color="primary" component={Router.Link} to={"/bookdata/metadata?isbn="+card.book_isbn}>

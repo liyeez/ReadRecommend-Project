@@ -184,7 +184,12 @@ export default function UserLibrary() {
                                     <Typography gutterBottom variant="h5" component="h2">
                                         {card.book_title}
                                     </Typography>
-
+                                    <Typography>
+                                        By Author: {card.book_author}
+                                    </Typography>
+                                    <Typography>
+                                        Published on: {card.book_pub_date}
+                                    </Typography>
                                 </CardContent>
                                 <CardActions>
                                     <Button size="small" color="primary" onClick={() => viewBook(card.isbn)}>
