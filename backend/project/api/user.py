@@ -31,7 +31,7 @@ def get_library(request):
     collection_id = library.collection_id
     book_list = []
     for book in library.books.all():
-        book_list.append({"isbn": book.isbn, "book_title": book.title})
+        book_list.append({"isbn": book.isbn, "book_title": book.title, "book_author": book.author, "book_pub_date": book.pub_date})
 
     return Response({"status": "ok", "message": "Got user library", "collection_id": collection_id, "book_list": book_list}, status=status.HTTP_200_OK)
 
