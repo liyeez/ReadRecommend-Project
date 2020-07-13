@@ -11,10 +11,14 @@ from django.contrib.auth.models import User
 @input_validator(["collection_name"])
 def create_collection(request): #given user id returns creates empty collection, returns collection_id
     user = request.user
-    if(len(request.POST["collection_name"])> MAX_STR_LEN):
+    collection_name = request.POST["collection_name"]
+    if len(collection_name) > MAX_STR_LEN:
         return Response({"status": "error", "message": "Name too long"}, status=status.HTTP_200_OK)
+
+    if user.collection_set.filter(name=collection_name).exists():
+        return Response({"status": "error", "message": "Collection with the same name already exists"}, status=status.HTTP_226_IM_USED)
     
-    collection = Collection.objects.create_collection(name = request.POST["collection_name"], user = user)
+    collection = Collection.objects.create_collection(name=collection_name, user=user)
 
     return Response({"status": "ok", "message": "Collection successfully added", "collection_id": collection.collection_id}, status=status.HTTP_200_OK)
 
@@ -149,17 +153,25 @@ def delete_title(request): #given collection_id and isbn, removes book from coll
         return Response({"status": "error", "message": "Book is not in collection"}, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
+@auth_validator
 @input_validator(["collection_id", "collection_name"])
 def rename(request): #given collection_id and new collection name, renames collection
                     #returns collection name
+    user = request.user
     try:
-        collection = Collection.objects.get(collection_id=request.POST["collection_id"])
+        collection = user.collection_set.get(collection_id=request.POST["collection_id"])
     except:
         return Response({"status": "error", "message": "Collection not found"}, status=status.HTTP_200_OK)
-    name = request.POST["collection_name"]
-    if(len(name)> MAX_STR_LEN):
+
+    collection_name = request.POST["collection_name"]
+
+    if len(collection_name)> MAX_STR_LEN:
         return Response({"status": "error", "message": "Name too long"}, status=status.HTTP_200_OK)
-    collection.name = name
+
+    if user.collection_set.filter(name=collection_name).exists():
+        return Response({"status": "error", "message": "Collection with the same name already exists"}, status=status.HTTP_226_IM_USED)
+    
+    collection.name = collection_name
     collection.save()
 
     return Response({"status": "ok", "message": "Collection successfully renamed"}, status=status.HTTP_200_OK)
