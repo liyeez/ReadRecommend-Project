@@ -6,6 +6,19 @@ import React, {ChangeEvent, useState} from "react";
 import * as Router from 'react-router-dom';
 import CookieService from "../services/CookieService";
 // Material UI
+import Checkbox from '@material-ui/core/Checkbox';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import Paper from '@material-ui/core/Paper';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import AddIcon from '@material-ui/icons/Add';
 import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
@@ -18,7 +31,6 @@ import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import InputBase from '@material-ui/core/InputBase';
 import Link from '@material-ui/core/Link';
-import Paper from '@material-ui/core/Paper';
 import SearchIcon from '@material-ui/icons/Search';
 import TextField from '@material-ui/core/TextField';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -34,6 +46,9 @@ const Style = makeStyles((theme) => ({
     },
     heroButtons: {
         marginTop: theme.spacing(4),
+    },
+    TableButton: {
+        marginTop: theme.spacing(2),
     },
     input: {
         marginLeft: theme.spacing(1),
@@ -63,6 +78,9 @@ const Style = makeStyles((theme) => ({
         alignItems: 'center',
         width: 400,
     },
+    table: {
+        minWidth: 400,
+  },
 }));
 
 interface SearchForm {
@@ -79,9 +97,20 @@ let flag: boolean;
 const Main: React.FC<Props> = ({userSignedIn} : Props) => {
 
     let cards: any;
+    let col_row: any;
+
     const [SearchForm, setSearchForm] = useState<SearchForm>({
       title: '',
     });
+
+    const [open, setOpen] = useState(false);
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
 
     function addBook(isbn){
         var data = addLib(isbn,function(data){
@@ -169,9 +198,65 @@ const Main: React.FC<Props> = ({userSignedIn} : Props) => {
         });
     }
 
+    function requestMove() {
+        var data = retrieveCollections(function(data){
+            if(data != null) {
+                console.log('get collection_list');
+                console.log(data.collection_list);
+                col_row = data.collection_list;
+                //moveCollection(); //function called to POST request
+            } else{
+                //TO DO: gracefully inform user needs to create a collection first
+                window.location.href='/';
+            }
+        });
+    }
+    //TODO cannot use my profile to get collections as book cannot exist in the collection alrdy
+    function retrieveCollections(callback) {
+        $.ajax({
+            async: false,
+            url: "http://localhost:8000/api/user/my_profile",
+            method: "GET",
+            data:{
+                auth: token
+            },
+            success: function (data) {
+                if (data != null) {
+                    if (data.message == 'Got current user profile data') {
+                        callback(data);
+                    } else {
+                        callback(null);
+                    }
+                }
+            },
+            error: function (error) {
+                callback(error);
+                console.log("Server error!");
+            }
+        });
+    }
+
+    function moveCollection() {
+        handleClose();
+        var data = requestCollectionMove(function(data){
+            if(data != null) {
+                
+            } else{
+                //TO DO: gracefully inform user needs to create a collection first
+                window.location.href='/';
+            }
+        });
+    }
+
+    function requestCollectionMove(callback) {
+        //TODO AFTER API BUILT: POST request to store the book in collection
+    }  
+
     const classes = Style();
     const token = CookieService.get('access_token');
     request();
+    requestMove(); // have to run beforehand due to async
+
     return (
         <React.Fragment>
             <CssBaseline />
@@ -240,7 +325,7 @@ const Main: React.FC<Props> = ({userSignedIn} : Props) => {
                                             By Author: {card.book_author}
                                         </Typography>
                                         <Typography>
-                                            Published on: {card.book_pub_date}
+                                            Published On: {card.book_pub_date}
                                         </Typography>
                                     </CardContent>
                                     <CardActions>
@@ -249,6 +334,40 @@ const Main: React.FC<Props> = ({userSignedIn} : Props) => {
                                         </Button>
                                         {(userSignedIn) ? (<Button size="small" color="primary" endIcon={<AddIcon />} onClick={() => addBook(card.book_isbn)}> Add to Libary </Button>)
                                                         : (null)}
+                                        {(userSignedIn) ? (<Button size="small" color="primary" endIcon={<AddIcon />} onClick={() => handleClickOpen()}> Add to Collection </Button>)
+                                                        : (null)}
+
+                                         <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+                                            <DialogTitle id="form-dialog-title">Specify a collection to move to:</DialogTitle>
+                                            <DialogContent>
+                                                
+                                                <TableContainer>
+                                                    <Table className={classes.table} aria-label="simple table">
+                                                       {/* <TableHead>
+                                                            <TableRow>
+                                                                <TableCell>Collection List</TableCell>
+                                                            </TableRow>
+                                                        </TableHead> */}
+                                                    <TableBody>
+                                                        {col_row.map((row) => (
+                                                            <TableRow key={row.collection_id}>
+                                                                <TableCell component="th" scope="row" >
+                                                                    {row.collection_name}
+                                                                </TableCell>
+                                                                <button className={classes.TableButton} onClick={moveCollection}> Move </button>
+                                                            </TableRow>
+                                                        ))}
+                                                    </TableBody>
+                                                    </Table>
+                                                </TableContainer>
+                                            </DialogContent>
+                                            <DialogActions>
+                                                <Button onClick={handleClose} color="primary">
+                                                    Cancel
+                                                </Button>
+                                                
+                                            </DialogActions>
+                                        </Dialog>               
                                     </CardActions>
                                 </Card>
                             </Grid>
@@ -261,3 +380,26 @@ const Main: React.FC<Props> = ({userSignedIn} : Props) => {
 }
 
 export default Main;
+
+
+
+
+function createData(name, calories, fat, carbs, protein) {
+  return { name, calories, fat, carbs, protein };
+}
+
+const rows = [
+  createData('Cupcake', 305, 3.7, 67, 4.3),
+  createData('Donut', 452, 25.0, 51, 4.9),
+  createData('Eclair', 262, 16.0, 24, 6.0),
+  createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
+  createData('Gingerbread', 356, 16.0, 49, 3.9),
+  createData('Honeycomb', 408, 3.2, 87, 6.5),
+  createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
+  createData('Jelly Bean', 375, 0.0, 94, 0.0),
+  createData('KitKat', 518, 26.0, 65, 7.0),
+  createData('Lollipop', 392, 0.2, 98, 0.0),
+  createData('Marshmallow', 318, 0, 81, 2.0),
+  createData('Nougat', 360, 19.0, 9, 37.0),
+  createData('Oreo', 437, 18.0, 63, 4.0),
+];

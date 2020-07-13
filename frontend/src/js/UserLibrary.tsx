@@ -18,6 +18,7 @@ import CardMedia from '@material-ui/core/CardMedia';
 import Container from '@material-ui/core/Container';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import DeleteIcon from '@material-ui/icons/Delete';
+import ListIcon from '@material-ui/icons/List';
 import Grid from '@material-ui/core/Grid';
 import Link from "@material-ui/core/Link";
 import TextField from '@material-ui/core/TextField';
@@ -66,7 +67,6 @@ export default function UserLibrary() {
 
     let cards: Array<any> =[];
 
-        // TODO AFTER API IMPLEMENTED
     function removeBook(isbn){
         var data = removeLib(isbn,function(data){
             console.log(data)
@@ -195,8 +195,11 @@ export default function UserLibrary() {
                                     <Button size="small" color="primary" onClick={() => viewBook(card.isbn)}>
                                         View
                                     </Button>
-                                    <Button size="small" color="primary" endIcon={<DeleteIcon/>} onClick={() => removeBook(card.isbn)}>
+                                    <Button size="small" color="primary" onClick={() => removeBook(card.isbn)}>
                                         Remove
+                                    </Button>
+                                    <Button size="small" color="primary" >
+                                        Move to Collection
                                     </Button>
                                 </CardActions>
                             </Card>
