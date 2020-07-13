@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import * as Router from 'react-router-dom';
-
 import * as $ from "jquery";
+
 // Material UI
+import Alert from "@material-ui/lab/Alert";
 import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
@@ -42,12 +43,22 @@ function editCollection(data){
 
 export default function Collections(props) {
     const classes = useStyles();
-    const { collection } = props;
+    let { collection } = props;
+
+    const [collectionData, setCollectionData] = useState({
+        collectionError: '',
+    });
 
     function deleteCollection(collectionid, collection_name) {
         var data = deleteCollectionHelper(collectionid, collection_name, function(data){
             if (data != null) {
                 if (data.message == "Collection successfully deleted") {
+                    // Display user feedback to indicate that the collection has been deleted.
+                    setCollectionData(prevCollectionData => {
+                        return {
+                            collectionError: 'Collection successfully deleted!',
+                        }
+                    });
                     window.location.reload();
                 }
             }
@@ -66,7 +77,7 @@ export default function Collections(props) {
             },
             method: "POST",
             success: function (data) {
-                if(data!= null) {
+                if (data!= null) {
                     callback(data);
                 }
                 callback(null);

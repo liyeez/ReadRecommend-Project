@@ -4,9 +4,10 @@
 import React, {ChangeEvent, useState} from "react";
 import * as Router from 'react-router-dom';
 import * as $ from "jquery";
+import CookieService from "../services/CookieService";
 
 // Material UI
-import CookieService from "../services/CookieService";
+import Alert from "@material-ui/lab/Alert";
 import AddIcon from '@material-ui/icons/Add';
 import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
@@ -137,12 +138,11 @@ const EditCollection: React.FC<Props> = ({}) => {
     }
 
     // Collection Data. TODO: Add more fields.
-    const [collectionData, setCollectionData] = useState(
-        {
-            collectionTitle: '',
-            collectionTag: '',
-        }
-    );
+    const [collectionData, setCollectionData] = useState({
+        collectionTitle: '',
+        collectionTag: '',
+        editCollectionError: '',
+    });
 
     // Tags are represented using the Chip Material UI component.
     const [chipData, setChipData] = useState([
@@ -154,16 +154,7 @@ const EditCollection: React.FC<Props> = ({}) => {
 
     //Deletes a tag from the array of the collection's tags.
     const handleDelete = (chipToDelete) => () => {
-        console.log("chip to delete");
-        console.log(chipToDelete);
-        // FIX: Deletes tag on the back-end
         removeTag(chipToDelete.tag_label);
-        //removeTag((chips) => chips.filter((chip) => chip.tag_label));
-        // Deletes tag on the front-end display.
-        //tag_list = tag_list.filter((tag) => tag.key !== chipToDelete.key);
-        //console.log(tag_list)
-        //window.location.reload();
-        // setChipData((chips) => chips.filter((chip) => chip.key !== chipToDelete.key));
     };
 
     function addTag(){
@@ -206,7 +197,6 @@ const EditCollection: React.FC<Props> = ({}) => {
                 }
             }
         });
-
     }
 
     function requestTags(){
@@ -290,12 +280,27 @@ const EditCollection: React.FC<Props> = ({}) => {
             async: false,
             url: 'http://localhost:8000/api/collections/rename',
             data: {
+                auth: token,
                 collection_id: collectionId,
                 collection_name: newTitle,
             },
             method: "POST",
             success: function (data) {
-                console.log("Renamed collection!");
+                if (data.message === 'Collection successfully renamed') {
+                    setCollectionData(prevCollectionData => {
+                        return {
+                            ...prevCollectionData,
+                            editCollectionError: 'Collection successfully renamed!',
+                        };
+                    });
+                } else if (data.message === 'Collection with the same name already exists') {
+                    setCollectionData(prevCollectionData => {
+                        return {
+                            ...prevCollectionData,
+                            editCollectionError: 'Collection with the same name already exists!',
+                        };
+                    });
+                }
             },
             error: function () {
                 console.log("server error!");
@@ -306,7 +311,7 @@ const EditCollection: React.FC<Props> = ({}) => {
 
     // Adds collection tag on both front-end and back-end.
     function setCollectionTag(newTag,callback) {
-                // Change the collection title in the back-end/database.
+        // Change the collection title in the back-end/database.
         $.ajax({
             async: false,
             url: 'http://localhost:8000/api/collections/add_tag',
@@ -343,7 +348,7 @@ const EditCollection: React.FC<Props> = ({}) => {
                 if (data.message == "Tag successfully removed from collection") {
                     console.log(data.message);
                     window.location.reload();
-                }else if(data.message =='Tag not found'){
+                } else if (data.message =='Tag not found') {
                     console.log(data.message);
                 }
             },
@@ -382,7 +387,6 @@ const EditCollection: React.FC<Props> = ({}) => {
         console.log("Get 10 most recently added books!");
     }
 
-
     let collectionId = window.location.href.split('?')[1];
     collectionId = collectionId.split('=')[1];
     const token = CookieService.get('access_token');
@@ -396,8 +400,12 @@ const EditCollection: React.FC<Props> = ({}) => {
                 {/* Hero unit */}
                 <div className={classes.heroContent}>
                     <Container maxWidth="sm">
-                        {/*TODO: Dynamically render the collection's title */}
                         <Grid>
+                            {/*User Feedback*/}
+                            <div>
+                                {(collectionData.editCollectionError === 'Collection with the same name already exists!') ? (<Alert severity="error">{collectionData.editCollectionError}</Alert>) : (null)}
+                                {(collectionData.editCollectionError === 'Collection successfully renamed!') ? (<Alert severity="success">{collectionData.editCollectionError}</Alert>) : (null)}
+                            </div>
                             <Typography component="h1" variant="h2" align="center" color="textPrimary" gutterBottom>
                                 {collection}
                                 <Button variant="outlined" color="secondary" onClick={handleClickOpen} startIcon={<EditIcon />}>

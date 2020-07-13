@@ -9,10 +9,10 @@ import CookieService from "../services/CookieService";
 
 // Page Imports
 import Collections from './Collections';
-//import { CollectionsRetriever } from '../services/DataRetriever';
 
 // Material UI
 import AddIcon from '@material-ui/icons/Add';
+import Alert from "@material-ui/lab/Alert";
 import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -37,9 +37,9 @@ import { makeStyles } from '@material-ui/core/styles';
 import { useTheme } from '@material-ui/core/styles';
 
 export default function UserProfile() {
-    // TODO: Populate user profile data with more fields.
     const [userProfileData, setUserProfileData] = useState({
-        userBookCollections: []
+        userBookCollections: [],
+        collectionError: '',
     });
 
     // Dialog for creating a new book collection.
@@ -61,23 +61,32 @@ export default function UserProfile() {
     }
 
     // Adds collection title on both front-end and back-end.
-    function addCollectionTitle() {
+    function addCollectionTitle(e) {
+        // Prevents React from doing stupid things.
+        e.preventDefault();
         // Closes dialog box.
         handleClose();
-        console.log(newTitle);
+
         var result = addCollection(function(result) {
-            console.log('in callback function now');
-            console.log(result);
-            if(result.message == 'Collection successfully added') {
-                window.location.href="/user/profile";
-                //refresh the page so we can display new collection
-            } else{
-                alert("Sth wrong!");
-                window.location.href='/';
+            if (result.message == 'Collection successfully added') {
+                // Empties any previous error messages.
+                setUserProfileData(prevUserProfileData => {
+                    return {
+                        ...prevUserProfileData,
+                        collectionError: 'Collection successfully added!'
+                    }
+                });
+                // Don't refresh the page, otherwise user feedback disappears.
+            } else if (result.message == 'Collection with the same name already exists') {
+                // Changes the collection error message in the state which displays alert for user feedback.
+                setUserProfileData(prevUserProfileData => {
+                    return {
+                        ...prevUserProfileData,
+                        collectionError: 'Collection with the same name already exists!'
+                    }
+                });
             }
         });
-        // TODO: Change the collection title in the back-end/database.
-        console.log("Add collection title in the backend.");
     }
 
     function retrieveCollections(callback) {
@@ -114,18 +123,13 @@ export default function UserProfile() {
                 collection_name: newTitle,
             },
             success: function (data) {
-                console.log('in success');
-                console.log(data);
                 if (data != null) {
-                    console.log('returning to callback with data');
                     callback(data);
-                } else{
+                } else {
                     callback(null);
                 }
-
             },
             error: function (error) {
-
                 console.log("Server error!");
                 callback(error);
             }
@@ -140,7 +144,7 @@ export default function UserProfile() {
     function request() {
         var result = retrieveCollections(function(result) {
         // Updates the user's collections with the results returned.
-            if(result != null) {
+            if (result != null) {
                 userProfileData.userBookCollections = result.collection_list;
                 Name = result.first_name + ' ' +result.last_name;
             } else{
@@ -149,7 +153,7 @@ export default function UserProfile() {
             }
         });
     }
-    
+
     request();
     return (
         <React.Fragment>
@@ -186,6 +190,7 @@ export default function UserProfile() {
                 </Container>
 
                 {/* User's Book Collections */}
+
                 <Container className={classes.cardGrid} maxWidth="md">
                     <Typography component="h4" variant="h4" align="left" color="textPrimary" gutterBottom>
                         User Collections
@@ -199,6 +204,12 @@ export default function UserProfile() {
                             Create a Collection
                         </Button>
                     </Typography>
+
+                    <div>
+                        {(userProfileData.collectionError === 'Collection with the same name already exists!') ? (<Alert severity="error">{userProfileData.collectionError}</Alert>) : (null)}
+                        {(userProfileData.collectionError === 'Collection successfully added!') ? (<Alert severity="success">{userProfileData.collectionError}</Alert>) : (null)}
+                        {(userProfileData.collectionError === 'Collection successfully deleted!') ? (<Alert severity="success">{userProfileData.collectionError}</Alert>) : (null)}
+                    </div>
 
                     <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
                         <DialogTitle id="form-dialog-title">Create Collection</DialogTitle>
