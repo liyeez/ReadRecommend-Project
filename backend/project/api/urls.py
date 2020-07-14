@@ -7,6 +7,7 @@ urlpatterns = [
     path("books/", include("api.books_urls")),
     path("collections/", include("api.collections_urls")),
     path("user/", include("api.user_urls")),
+    path("reviews/", include("api.reviews_urls")),
     path("hello_world", views.hello_world),
     path("hello_name_get/<str:name>/", views.hello_name_get),
     path("hello_name_post", views.hello_name_post)
