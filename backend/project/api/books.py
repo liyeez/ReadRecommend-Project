@@ -8,8 +8,9 @@ from django.db.models import Q
 from .models import Book
 from .utilities import input_validator, user_validator
 
+
 @api_view(["GET"])
-@input_validator(["isbn"])
+@input_validator(["id"])
 def data(request):
     """
     data
@@ -17,10 +18,10 @@ def data(request):
     Retrieves complete book metadata
 
     Input:
-    isbn (int)
+    id (int)
 
     Returns:
-    book_isbn (int)
+    book_id (int)
     book_title (str)
     book_cover (str): base64 encoded cover
     book_author (str)
@@ -28,11 +29,11 @@ def data(request):
     last_review_id (int) [MAY BE REMOVED IN THE FUTURE]
     """
     try:
-        book = Book.objects.get(isbn=request.GET["isbn"])
+        book = Book.objects.get(id=request.GET["id"])
     except ObjectDoesNotExist:
         return Response({"status": "error", "message": "Book not found"}, status=status.HTTP_204_NO_CONTENT)
 
-    return Response({"status": "ok", "message": "Got book data", "book_title": book.title, "book_isbn": book.isbn, "book_cover": book.cover, "book_author": book.author, "book_pub_date": book.pub_date, "last_review_id": 3}, status=status.HTTP_200_OK)
+    return Response({"status": "ok", "message": "Got book data", "book_title": book.title, "book_id": book.id, "book_cover": book.cover, "book_author": book.author, "book_pub_date": book.pub_date, "last_review_id": 3}, status=status.HTTP_200_OK)
 
 
 @api_view(["GET"])
@@ -48,17 +49,19 @@ def search(request):
 
     Returns:
     book_list (list):
-        book_isbn (int)
+        book_id (int)
         book_title (str)
         book_author (str)
     """
     search = request.GET["search"]
 
-    books = Book.objects.filter(Q(title__icontains=search) | Q(author__contains=search))
+    books = Book.objects.filter(
+        Q(title__icontains=search) | Q(author__contains=search))
 
     book_list = []
     for book in books.all():
-        book_list.append({"book_isbn": book.isbn, "book_title": book.title, "book_author": book.author, "book_pub_date": book.pub_date})
+        book_list.append({"book_id": book.id, "book_title": book.title,
+                          "book_author": book.author, "book_pub_date": book.pub_date})
 
     if len(book_list) > 0:
         message = "Got matching books"
@@ -66,6 +69,7 @@ def search(request):
         message = "No matches found"
 
     return Response({"status": "ok", "message": message, "book_list": book_list}, status=status.HTTP_200_OK)
+
 
 @api_view(["GET"])
 @input_validator(["count"])
@@ -80,7 +84,7 @@ def random(request):
 
     Returns:
     book_list (list):
-        book_isbn (int)
+        book_id (int)
         book_title (str)
         book_author (str)
     """
@@ -93,9 +97,11 @@ def random(request):
 
     book_list = []
     for book in books:
-        book_list.append({"book_isbn": book.isbn, "book_title": book.title, "book_author": book.author, "book_pub_date": book.pub_date})
+        book_list.append({"book_id": book.id, "book_title": book.title,
+                          "book_author": book.author, "book_pub_date": book.pub_date})
 
     return Response({"status": "ok", "message": "Got random books", "book_list": book_list}, status=status.HTTP_200_OK)
+
 
 @api_view(["GET"])
 @input_validator(["count"])
@@ -103,7 +109,7 @@ def random(request):
 def random_not_library(request):
     """
     random not library
-    
+
     Get <13 random books not in a user’s library
 
     Input:
@@ -112,7 +118,7 @@ def random_not_library(request):
 
     Returns:
     book_list (list):
-        book_isbn (int)
+        book_id (int)
         book_title (str)
         book_author (str)
     """
@@ -122,12 +128,13 @@ def random_not_library(request):
         return Response({"status": "error", "message": "Too many books"}, status=status.HTTP_416_REQUESTED_RANGE_NOT_SATISFIABLE)
 
     library = request.user.collection_set.get(library=True)
-    books_in_library = library.books.all().values_list("isbn", flat=True)
+    books_in_library = library.books.all().values_list("id", flat=True)
 
-    books = Book.objects.exclude(isbn__in=books_in_library).order_by('?')[:count]
+    books = Book.objects.exclude(id__in=books_in_library).order_by('?')[:count]
 
     book_list = []
     for book in books:
-        book_list.append({"book_isbn": book.isbn, "book_title": book.title, "book_author": book.author, "book_pub_date": book.pub_date})
+        book_list.append({"book_id": book.id, "book_title": book.title,
+                          "book_author": book.author, "book_pub_date": book.pub_date})
 
     return Response({"status": "ok", "message": "Got random books", "book_list": book_list}, status=status.HTTP_200_OK)

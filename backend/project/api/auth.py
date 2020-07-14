@@ -63,13 +63,15 @@ def signin(request):
     token (str)
     """
     # Try to log in and generate/get a token
-    user = authenticate(request, username=request.POST["email"], password=request.POST["password"])
+    user = authenticate(
+        request, username=request.POST["email"], password=request.POST["password"])
     if user is not None:
         user_id = user.id
         token, _ = Token.objects.get_or_create(user=user)
         return Response({"status": "ok", "message": "User successfully logged in", "user_id": user_id, "token": token.key}, status=status.HTTP_200_OK)
     else:
         return Response({"status": "error", "message": "Could not log in"}, status=status.HTTP_401_UNAUTHORIZED)
+
 
 @api_view(["POST"])
 @auth_validator

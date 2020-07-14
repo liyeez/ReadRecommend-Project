@@ -9,34 +9,43 @@ MAX_STR_LEN = 100
 
 
 class BookManager(models.Manager):
-    def create_book(self, title, author, isbn, pub_date):
-        parent = BookParent.objects.get_or_create(
-            id=BookParent.objects.count()+1, title=title, author=author)
-        book = self.create(title=title, author=author,
-                           isbn=isbn, pub_date=pub_date, parent_id=parent)
+    def create_book(self, title, author, pub_date):
+        book = self.filter(title__startswith='title').filter(author__startswith='author').get_or_create(
+            id=Book.objects.count() + 1, title=title, author=author, pub_date=pub_date)
         return book
-
-    def create_review(self, user, score, text):
-        Review.objects.create_review(self.book, user, score, text)
-
-
-class BookParent(models.Model):
-    id = models.IntegerField(primary_key=True, max_length=10)
-    cover = models.CharField(max_length=128)
-    title = models.CharField(max_length=100)
-    author = models.CharField(max_length=100)
-    objects = BookManager()
 
 
 class Book(models.Model):
-    isbn = models.CharField(primary_key=True, max_length=13)
-    parent_id = models.ForeignKey(BookParent, on_delete=models.CASCADE)
+    id = models.IntegerField(primary_key=True)
     cover = models.CharField(max_length=128)
     title = models.CharField(max_length=100)
     author = models.CharField(max_length=100)
     pub_date = models.DateField()
-
     objects = BookManager()
+
+    # since this review and book instance are compositions of Book, we have these as Model methods rather than table methods
+
+    def create_instance(self, isbn, pub_date):
+        return BookInstance.objects.create_book(self.title, self.author, isbn, pub_date, self)
+
+    def create_review(self, user, score, text):
+        return Review.objects.create_review(self, user, score, text)
+
+
+class BookInstanceManager(models.Manager):
+    def create_book(self, title, author, isbn, pub_date, book):
+        bookInstance = self.create(title=title, author=author,
+                                   isbn=isbn, pub_date=pub_date, book=book)
+        return bookInstance
+
+
+class BookInstance(models.Model):
+    isbn = models.CharField(primary_key=True, max_length=13)
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    cover = models.CharField(max_length=128)
+    title = models.CharField(max_length=100)
+    author = models.CharField(max_length=100)
+    pub_date = models.DateField()
 
 # Book review
 
@@ -49,7 +58,7 @@ class ReviewManager(models.Manager):
 
 class Review(models.Model):
     review_id = models.AutoField(primary_key=True, unique=True)
-    book = models.ForeignKey(BookParent, on_delete=models.CASCADE)
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     score = models.IntegerField()
     text = models.CharField(max_length=1028)
@@ -58,6 +67,7 @@ class Review(models.Model):
 
 
 # User profile
+# Do we want to store bookinstance or Book in the collection?
 class ProfileManager(models.Manager):
     def create_profile(self, user):
         full_name = user.first_name + " " + user.last_name

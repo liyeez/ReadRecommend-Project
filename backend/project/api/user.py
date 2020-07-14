@@ -9,6 +9,7 @@ from .utilities import auth_validator, input_validator, user_validator
 from django.db.models import Q
 from .models import Collection, Profile
 
+
 @api_view(["GET"])
 @auth_validator
 def get_library(request):
@@ -23,17 +24,19 @@ def get_library(request):
     Returns:
     collection_id (int)
     book_list (list):
-        isbn (int)
+        id (int)
         book_name (str)
-    """       
+    """
     library = request.user.collection_set.get(library=True)
 
     collection_id = library.collection_id
     book_list = []
     for book in library.books.all():
-        book_list.append({"isbn": book.isbn, "book_title": book.title, "book_author": book.author, "book_pub_date": book.pub_date})
+        book_list.append({"id": book.id, "book_title": book.title,
+                          "book_author": book.author, "book_pub_date": book.pub_date})
 
     return Response({"status": "ok", "message": "Got user library", "collection_id": collection_id, "book_list": book_list}, status=status.HTTP_200_OK)
+
 
 @api_view(["GET"])
 @user_validator
@@ -55,9 +58,11 @@ def get_collections(request):
 
     collection_list = []
     for collection in collections.all():
-        collection_list.append({"collection_id": collection.collection_id, "collection_name": collection.name})
+        collection_list.append(
+            {"collection_id": collection.collection_id, "collection_name": collection.name})
 
     return Response({"status": "ok", "message": "Got user collections", "collection_list": collection_list}, status=status.HTTP_200_OK)
+
 
 @api_view(["GET"])
 @input_validator(["search"])
@@ -82,7 +87,8 @@ def find_users(request):
 
     user_list = []
     for profile in profiles.all():
-        user_list.append({"user_id": profile.user.id, "first_name": profile.user.first_name, "last_name": profile.user.last_name})
+        user_list.append({"user_id": profile.user.id,
+                          "first_name": profile.user.first_name, "last_name": profile.user.last_name})
 
     if len(user_list) > 0:
         message = "Got users"
@@ -90,6 +96,7 @@ def find_users(request):
         message = "No matches found"
 
     return Response({"status": "ok", "message": message, "user_list": user_list}, status=status.HTTP_200_OK)
+
 
 @api_view(["GET"])
 @user_validator
@@ -121,11 +128,13 @@ def get_profile(request):
     collection_list = []
     for collection in collections.all():
         if not collection.library:
-            collection_list.append({"collection_id": collection.collection_id, "collection_name": collection.name})
+            collection_list.append(
+                {"collection_id": collection.collection_id, "collection_name": collection.name})
         else:
             library_collection_id = collection.collection_id
 
     return Response({"status": "ok", "message": "Got user profile data", "first_name": first_name, "last_name": last_name, "library_collection_id": library_collection_id, "collection_list": collection_list}, status=status.HTTP_200_OK)
+
 
 @api_view(["GET"])
 @auth_validator
@@ -157,7 +166,8 @@ def my_profile(request):
     collection_list = []
     for collection in collections.all():
         if not collection.library:
-            collection_list.append({"collection_id": collection.collection_id, "collection_name": collection.name})
+            collection_list.append(
+                {"collection_id": collection.collection_id, "collection_name": collection.name})
         else:
             library_collection_id = collection.collection_id
 
