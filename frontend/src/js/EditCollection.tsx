@@ -94,7 +94,7 @@ let tag_list: any[] = [];
 let collection: any;
 
 function viewBook(data) {
-  window.location.href = "/bookdata/metadata?id=" + data;
+  window.location.href = "/bookdata/metadata?isbn=" + data;
 }
 
 const EditCollection: React.FC<Props> = ({}) => {
@@ -139,6 +139,7 @@ const EditCollection: React.FC<Props> = ({}) => {
   const [collectionData, setCollectionData] = useState({
     collectionTitle: "",
     collectionTag: "",
+    editCollectionError: "",
   });
 
   // Tags are represented using the Chip Material UI component.
@@ -151,16 +152,7 @@ const EditCollection: React.FC<Props> = ({}) => {
 
   //Deletes a tag from the array of the collection's tags.
   const handleDelete = (chipToDelete) => () => {
-    console.log("chip to delete");
-    console.log(chipToDelete);
-    // FIX: Deletes tag on the back-end
     removeTag(chipToDelete.tag_label);
-    //removeTag((chips) => chips.filter((chip) => chip.tag_label));
-    // Deletes tag on the front-end display.
-    //tag_list = tag_list.filter((tag) => tag.key !== chipToDelete.key);
-    //console.log(tag_list)
-    //window.location.reload();
-    // setChipData((chips) => chips.filter((chip) => chip.key !== chipToDelete.key));
   };
 
   function addTag() {
@@ -285,12 +277,30 @@ const EditCollection: React.FC<Props> = ({}) => {
       async: false,
       url: "http://localhost:8000/api/collections/rename",
       data: {
+        auth: token,
         collection_id: collectionId,
         collection_name: newTitle,
       },
       method: "POST",
       success: function (data) {
-        console.log("Renamed collection!");
+        if (data.message === "Collection successfully renamed") {
+          setCollectionData((prevCollectionData) => {
+            return {
+              ...prevCollectionData,
+              editCollectionError: "Collection successfully renamed!",
+            };
+          });
+        } else if (
+          data.message === "Collection with the same name already exists"
+        ) {
+          setCollectionData((prevCollectionData) => {
+            return {
+              ...prevCollectionData,
+              editCollectionError:
+                "Collection with the same name already exists!",
+            };
+          });
+        }
       },
       error: function () {
         console.log("server error!");
@@ -347,7 +357,7 @@ const EditCollection: React.FC<Props> = ({}) => {
   }
 
   // Removes book from collection on both front-end and back-end.
-  function removeBook(idToRemove) {
+  function removeBook(isbnToRemove) {
     console.log("Remove book from collection.");
     $.ajax({
       async: false,
@@ -355,7 +365,7 @@ const EditCollection: React.FC<Props> = ({}) => {
       data: {
         auth: token,
         collection_id: collectionId,
-        id: idToRemove,
+        isbn: isbnToRemove,
       },
       method: "POST",
       success: function (data) {
@@ -388,8 +398,22 @@ const EditCollection: React.FC<Props> = ({}) => {
         {/* Hero unit */}
         <div className={classes.heroContent}>
           <Container maxWidth="sm">
-            {/*TODO: Dynamically render the collection's title */}
             <Grid>
+              {/*User Feedback*/}
+              <div>
+                {collectionData.editCollectionError ===
+                "Collection with the same name already exists!" ? (
+                  <Alert severity="error">
+                    {collectionData.editCollectionError}
+                  </Alert>
+                ) : null}
+                {collectionData.editCollectionError ===
+                "Collection successfully renamed!" ? (
+                  <Alert severity="success">
+                    {collectionData.editCollectionError}
+                  </Alert>
+                ) : null}
+              </div>
               <Typography
                 component="h1"
                 variant="h2"
@@ -555,7 +579,7 @@ const EditCollection: React.FC<Props> = ({}) => {
         <Container className={classes.cardGrid} maxWidth="md">
           <Grid container spacing={4}>
             {book_list.map((card) => (
-              <Grid item key={card.id} xs={12} sm={6} md={4}>
+              <Grid item key={card.isbn} xs={12} sm={6} md={4}>
                 <Card className={classes.card}>
                   <CardMedia
                     className={classes.cardMedia}
@@ -575,7 +599,7 @@ const EditCollection: React.FC<Props> = ({}) => {
                     <Button
                       size="small"
                       color="primary"
-                      onClick={() => viewBook(card.id)}
+                      onClick={() => viewBook(card.isbn)}
                     >
                       View
                     </Button>
@@ -591,7 +615,7 @@ const EditCollection: React.FC<Props> = ({}) => {
                     <Button
                       size="small"
                       color="primary"
-                      onClick={() => removeBook(card.id)}
+                      onClick={() => removeBook(card.isbn)}
                     >
                       Remove
                     </Button>
