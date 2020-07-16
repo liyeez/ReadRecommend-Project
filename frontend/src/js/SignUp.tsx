@@ -51,6 +51,7 @@ interface SignUpForm {
     signUpLastName: string;
     signUpEmail: string;
     signUpPassword: string;
+    signUpConfirmPassword: string;
 }
 
 const SignUp: React.FC<Props> = ({}) => {
@@ -59,7 +60,8 @@ const SignUp: React.FC<Props> = ({}) => {
         signUpFirstName: '',
         signUpLastName: '',
         signUpEmail: '',
-        signUpPassword: ''
+        signUpPassword: '',
+        signUpConfirmPassword: '',
     });
 
     // Detects value typed into input and loads it on the screen
@@ -73,36 +75,67 @@ const SignUp: React.FC<Props> = ({}) => {
         });
     }
 
-    function onSignUp() {
-        $.ajax({
-            url: "http://localhost:8000/api/auth/signup",
-            method: "POST",
-            data: {
-                email: signUpForm.signUpEmail,
-                password: signUpForm.signUpPassword,
-                first_name: signUpForm.signUpFirstName,
-                last_name: signUpForm.signUpLastName
-            },
-            success: function (data) {
-                // Handle sign up success.
+    function onSignUp(e) {
+        e.preventDefault();
+        const password = signUpForm.signUpPassword;
+        const confirmPassword = signUpForm.signUpConfirmPassword;
 
-                // The cookie will be available on all URLs.
-                const options = { path: "/" };
-                // Create a cookie with the token from response.
-                CookieService.set("access_token", data.token, options);
-                window.location.reload();
-                <Router.Redirect to="/"/>
-            },
-            error: function () {
-                console.log("Error!");
-            }
-        });
+        if (password !== confirmPassword) {
+            setSignUpForm(prevSignUpForm => {
+                return {
+                    ...prevSignUpForm,
+                    signUpError: 'Passwords do not match.'
+                }
+            });
+        } else {
+            $.ajax({
+                url: "http://localhost:8000/api/auth/signup",
+                method: "POST",
+                data: {
+                    email: signUpForm.signUpEmail,
+                    password: signUpForm.signUpPassword,
+                    first_name: signUpForm.signUpFirstName,
+                    last_name: signUpForm.signUpLastName
+                },
+                success: function (data) {
+                    // Handle sign up success.
+                    setSignUpForm(prevSignUpForm => {
+                        return {
+                            ...prevSignUpForm,
+                            signUpError: 'Signed up.'
+                        }
+                    });
+                    // The cookie will be available on all URLs.
+                    const options = { path: "/" };
+                    // Create a cookie with the token from response.
+                    CookieService.set("access_token", data.token, options);
+                    window.location.reload();
+                },
+                error: function (xhr, status, error) {
+                    console.log(error);
+                    if (error == "Conflict") {
+                        setSignUpForm(prevSignUpForm => {
+                            return {
+                                ...prevSignUpForm,
+                                signUpError: 'The username is already taken. Please try again.'
+                            }
+                        });
+                    }
+                }
+            });
+        }
     }
 
     const classes = Style();
     return(
         <div>
             <Container component="main" maxWidth="xs">
+                <div className={classes.root}>
+                {(signUpForm.signUpError !== "") ? ((signUpForm.signUpError === "Signed up.") ?
+                (<Alert severity="success">Successfully signed up! Log in to your account here.</Alert>)
+                : (<Alert severity="error">{signUpForm.signUpError}</Alert>)) : (null)}
+                </div>
+                {(signUpForm.signUpError === "Signed up.") ? (<Router.Redirect to="/"/>) : (null)}
                 <CssBaseline />
 
                 <div className={classes.paper}>
@@ -155,9 +188,20 @@ const SignUp: React.FC<Props> = ({}) => {
                                 onChange={onTextboxChange}
                             />
                         </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                name="signUpConfirmPassword"
+                                variant="outlined"
+                                required
+                                fullWidth
+                                type="password"
+                                label="Confirm Password"
+                                value={signUpForm.signUpConfirmPassword}
+                                onChange={onTextboxChange}
+                            />
+                        </Grid>
                     </Grid>
                     <Button
-                        component={ Router.Link } to="/"
                         type="submit"
                         fullWidth
                         variant="contained"

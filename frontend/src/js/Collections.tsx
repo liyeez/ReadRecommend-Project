@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import * as Router from 'react-router-dom';
-
 import * as $ from "jquery";
+
 // Material UI
+import Alert from "@material-ui/lab/Alert";
 import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
@@ -42,23 +43,29 @@ function editCollection(data){
 
 export default function Collections(props) {
     const classes = useStyles();
-    const { collection } = props;
+    let { collection } = props;
 
-    function request(collectionid, collection_name) {
-        var data = RemoveCollection(  collectionid, collection_name, function(data){
+    const [collectionData, setCollectionData] = useState({
+        collectionError: '',
+    });
+
+    function deleteCollection(collectionid, collection_name) {
+        var data = deleteCollectionHelper(collectionid, collection_name, function(data){
             if (data != null) {
-                console.log(data.message)
-                if (data.message == "Collection successfully removed") {
-                    console.log(data);
-                } else {
-                    alert("No Matched Results!");
-                    window.location.href='/';
+                if (data.message == "Collection successfully deleted") {
+                    // Display user feedback to indicate that the collection has been deleted.
+                    setCollectionData(prevCollectionData => {
+                        return {
+                            collectionError: 'Collection successfully deleted!',
+                        }
+                    });
+                    window.location.reload();
                 }
             }
         });
     }
 
-    function RemoveCollection(id, name, callback) {
+    function deleteCollectionHelper(id, name, callback) {
         const token = CookieService.get('access_token');
         $.ajax({
             async: false,
@@ -70,8 +77,7 @@ export default function Collections(props) {
             },
             method: "POST",
             success: function (data) {
-                if(data!= null) {
-                    console.log("delivering data back to callback");
+                if (data!= null) {
                     callback(data);
                 }
                 callback(null);
@@ -112,7 +118,7 @@ export default function Collections(props) {
                                 Edit
                             </Typography>
                         </Button>
-                        <Button size="small" color="primary"  > {/*onClick={() => request(collection.collection_id, collection.collection_name)}*/}
+                        <Button size="small" color="primary" onClick={() => deleteCollection(collection.collection_id, collection.collection_name)}>
                             <Typography variant="subtitle1" color="primary" >
                                 Remove
                             </Typography>

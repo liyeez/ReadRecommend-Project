@@ -9,10 +9,10 @@ import CookieService from "../services/CookieService";
 
 // Page Imports
 import Collections from "./Collections";
-//import { CollectionsRetriever } from '../services/DataRetriever';
 
 // Material UI
 import AddIcon from "@material-ui/icons/Add";
+import Alert from "@material-ui/lab/Alert";
 import Button from "@material-ui/core/Button";
 import Container from "@material-ui/core/Container";
 import CssBaseline from "@material-ui/core/CssBaseline";
