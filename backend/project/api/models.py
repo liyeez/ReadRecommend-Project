@@ -108,7 +108,6 @@ class Tag(models.Model):
 
 # Collection
 
-
 class CollectionManager(models.Manager):
     def create_collection(self, name, user, library=False):
         collection = self.create(name=name, library=library, user=user)
@@ -124,3 +123,15 @@ class Collection(models.Model):
     tags = models.ManyToManyField(Tag, blank=True)
 
     objects = CollectionManager()
+
+class BookMetadataManager(models.Manager):
+    def create_bookmetadata(self, collection, book, has_read=False):
+        book_metadata = self.create(collection = collection, book = book, has_read = has_read)
+        return book_metadata
+
+class BookMetadata(models.Model):
+    collection = models.ForeignKey(Collection, on_delete = models.CASCADE)
+    time_added = models.DateTimeField(auto_now_add = True)
+    book = models.ForeignKey(Book, on_delete = models.CASCADE)
+    has_read = models.BooleanField()
+    objects = BookMetadataManager()
