@@ -195,5 +195,5 @@ def set_read(request):
         bookdata.save()
     except:
         return Response({"status": "error", "message": "Book is not in library"}, status=status.HTTP_200_OK)
-    return Response({"status": "ok", "is_read": bookdata.has_read}, status=status.HTTP_200_OK)
+    return Response({"status": "ok", "message": "Success", "is_read": bookdata.has_read}, status=status.HTTP_200_OK)
 
