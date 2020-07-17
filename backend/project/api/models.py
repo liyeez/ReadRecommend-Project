@@ -124,14 +124,25 @@ class Collection(models.Model):
 
     objects = CollectionManager()
 
-class BookMetadataManager(models.Manager):
-    def create_bookmetadata(self, collection, book, has_read=False):
-        book_metadata = self.create(collection = collection, book = book, has_read = has_read)
+class CollectionBookMetadataManager(models.Manager):
+    def create_collectionbookmetadata(self, collection, book):
+        book_metadata = self.create(collection = collection, book = book)
         return book_metadata
 
-class BookMetadata(models.Model):
+class CollectionBookMetadata(models.Model):
     collection = models.ForeignKey(Collection, on_delete = models.CASCADE)
     time_added = models.DateTimeField(auto_now_add = True)
     book = models.ForeignKey(Book, on_delete = models.CASCADE)
+    objects = CollectionBookMetadataManager()
+
+class UserBookMetadataManager(models.Manager):
+    def create_userbookmetadata(self, user, book, has_read=False):
+        book_metadata = self.create(user = user, book = book, has_read = has_read)
+        return book_metadata
+
+class UserBookMetadata(models.Model):
+    user = models.ForeignKey(User, on_delete = models.CASCADE)
+    book = models.ForeignKey(Book, on_delete = models.CASCADE)
     has_read = models.BooleanField()
-    objects = BookMetadataManager()
+    time_read = models.DateField(blank = True, null = True)
+    objects = UserBookMetadataManager()
