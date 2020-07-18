@@ -388,7 +388,7 @@ const Main: React.FC<Props> = ({ userSignedIn }: Props) => {
                                                             </TableRow>
                                                         </TableHead> */}
                             <TableBody>
-                              {col_row.map((row) => (
+                              {/*col_row.map((row) => (
                                 <TableRow key={row.collection_id}>
                                   <TableCell component="th" scope="row">
                                     {row.collection_name}
@@ -401,7 +401,7 @@ const Main: React.FC<Props> = ({ userSignedIn }: Props) => {
                                     Move{" "}
                                   </button>
                                 </TableRow>
-                              ))}
+                            ))*/}
                             </TableBody>
                           </Table>
                         </TableContainer>
