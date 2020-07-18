@@ -94,7 +94,7 @@ let tag_list: any[] = [];
 let collection: any;
 
 function viewBook(data) {
-  window.location.href = "/bookdata/metadata?id=" + data;
+  window.location.href = "/bookdata/metadata?isbn=" + data;
 }
 
 const EditCollection: React.FC<Props> = ({}) => {
@@ -357,7 +357,7 @@ const EditCollection: React.FC<Props> = ({}) => {
   }
 
   // Removes book from collection on both front-end and back-end.
-  function removeBook(idToRemove) {
+  function removeBook(isbnToRemove) {
     console.log("Remove book from collection.");
     $.ajax({
       async: false,
@@ -365,7 +365,7 @@ const EditCollection: React.FC<Props> = ({}) => {
       data: {
         auth: token,
         collection_id: collectionId,
-        id: idToRemove,
+        isbn: isbnToRemove,
       },
       method: "POST",
       success: function (data) {
@@ -579,7 +579,7 @@ const EditCollection: React.FC<Props> = ({}) => {
         <Container className={classes.cardGrid} maxWidth="md">
           <Grid container spacing={4}>
             {book_list.map((card) => (
-              <Grid item key={card.id} xs={12} sm={6} md={4}>
+              <Grid item key={card.isbn} xs={12} sm={6} md={4}>
                 <Card className={classes.card}>
                   <CardMedia
                     className={classes.cardMedia}
@@ -599,7 +599,7 @@ const EditCollection: React.FC<Props> = ({}) => {
                     <Button
                       size="small"
                       color="primary"
-                      onClick={() => viewBook(card.id)}
+                      onClick={() => viewBook(card.isbn)}
                     >
                       View
                     </Button>
@@ -615,7 +615,7 @@ const EditCollection: React.FC<Props> = ({}) => {
                     <Button
                       size="small"
                       color="primary"
-                      onClick={() => removeBook(card.id)}
+                      onClick={() => removeBook(card.isbn)}
                     >
                       Remove
                     </Button>
