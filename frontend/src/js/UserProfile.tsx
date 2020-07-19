@@ -404,11 +404,9 @@ function Goal() {
 					My Goals
 				</Typography>
 				<Divider />
-				<Typography component="p" variant="h5">
-					100 Books
-				</Typography>
-				<Typography color="textSecondary" className={classes.depositContext}>
-					By March 2021
+                {/*Display user's current reading goals if any.*/}
+				<Typography component="p">
+					You currently don't have any reading goals.
 				</Typography>
 			</Container>
 			{/*TODO: Implement set user reading goals. */}
@@ -442,7 +440,7 @@ function Goal() {
 						format="MM/dd/yyyy"
 						margin="normal"
 						id="date-picker-inline"
-						label="Reading Deadline"
+						label="Goal Start Date"
 						value={selectedDate}
 						onChange={handleDateChange}
 						KeyboardButtonProps={{
