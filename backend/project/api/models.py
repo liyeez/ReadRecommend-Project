@@ -108,7 +108,6 @@ class Tag(models.Model):
 
 # Collection
 
-
 class CollectionManager(models.Manager):
     def create_collection(self, name, user, library=False):
         collection = self.create(name=name, library=library, user=user)
@@ -124,3 +123,39 @@ class Collection(models.Model):
     tags = models.ManyToManyField(Tag, blank=True)
 
     objects = CollectionManager()
+
+class CollectionBookMetadataManager(models.Manager):
+    def create_collectionbookmetadata(self, collection, book):
+        book_metadata = self.create(collection = collection, book = book)
+        return book_metadata
+
+class CollectionBookMetadata(models.Model):
+    collection = models.ForeignKey(Collection, on_delete = models.CASCADE)
+    time_added = models.DateTimeField(auto_now_add = True)
+    book = models.ForeignKey(Book, on_delete = models.CASCADE)
+    objects = CollectionBookMetadataManager()
+
+class UserBookMetadataManager(models.Manager):
+    def create_userbookmetadata(self, user, book, has_read=False):
+        book_metadata = self.create(user = user, book = book, has_read = has_read)
+        return book_metadata
+
+class UserBookMetadata(models.Model):
+    user = models.ForeignKey(User, on_delete = models.CASCADE)
+    book = models.ForeignKey(Book, on_delete = models.CASCADE)
+    has_read = models.BooleanField()
+    date_read = models.DateField(blank = True, null = True)
+    objects = UserBookMetadataManager()
+
+class GoalManager(models.Manager):
+    def create_goal(self, user, book, date_end):
+        goal = self.create(user = user, book = book, date_end = date_end, complete = False)
+        return book_metadata
+
+class Goal(models.Model):
+    user = models.ForeignKey(User, on_delete = models.CASCADE)
+    books = models.ManyToManyField(UserBookMetadata)
+    complete = models.BooleanField()
+    date_start = models.DateField(auto_now_add = True)
+    date_end = models.DateField()
+    date_complete = models.DateField(blank = True, null = True)

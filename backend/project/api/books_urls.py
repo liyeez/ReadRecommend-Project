@@ -5,5 +5,7 @@ urlpatterns = [
     path("data", books.data),
     path("search", books.search),
     path("random", books.random),
-    path("random_not_library", books.random_not_library)
+    path("random_not_library", books.random_not_library), 
+    path("is_read", books.is_read), 
+    path("set_read", books.set_read)
 ]
