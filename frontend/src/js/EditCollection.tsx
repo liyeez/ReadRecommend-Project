@@ -352,16 +352,15 @@ const EditCollection: React.FC<Props> = ({}) => {
   }
 
   // Removes book from collection on both front-end and back-end.
-  function removeBook(isbnToRemove) {
+  function removeBook(toRemove) {
     console.log("Remove book from collection.");
-    console.log(isbnToRemove);
     $.ajax({
       async: false,
       url: "http://localhost:8000/api/collections/delete_title",
       data: {
         auth: token,
         collection_id: collectionId,
-        isbn: isbnToRemove,
+        id: toRemove,
       },
       method: "POST",
       success: function (data) {
@@ -578,7 +577,7 @@ const EditCollection: React.FC<Props> = ({}) => {
           <Grid container spacing={4}>
             {console.log(book_list)}
             {book_list.map((card) => (
-              <Grid item key={card.book_id} xs={12} sm={6} md={4}>
+              <Grid item key={card.id} xs={12} sm={6} md={4}>
                 <Card className={classes.card}>
                   <CardMedia
                     className={classes.cardMedia}
@@ -598,7 +597,7 @@ const EditCollection: React.FC<Props> = ({}) => {
                     <Button
                       size="small"
                       color="primary"
-                      onClick={() => viewBook(card.book_id)}
+                      onClick={() => viewBook(card.id)}
                     >
                       View
                     </Button>
@@ -614,7 +613,7 @@ const EditCollection: React.FC<Props> = ({}) => {
                     <Button
                       size="small"
                       color="primary"
-                      onClick={() => removeBook(card.book_id)}
+                      onClick={() => removeBook(card.id)}
                     >
                       Remove
                     </Button>
