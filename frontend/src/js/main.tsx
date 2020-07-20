@@ -113,10 +113,7 @@ const Main: React.FC<Props> = ({ userSignedIn }: Props) => {
       if (data != null) {
         console.log(data);
         console.log("added to lib!!");
-      } else {
-        alert("Something Wrong!");
-        window.location.href = "/";
-      }
+      } 
     });
   }
 
