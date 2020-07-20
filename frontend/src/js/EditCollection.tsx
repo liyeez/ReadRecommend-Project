@@ -25,67 +25,61 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import EditIcon from "@material-ui/icons/Edit";
 import Grid from "@material-ui/core/Grid";
 import HistoryIcon from "@material-ui/icons/History";
-import IconButton from "@material-ui/core/IconButton";
 import ImportExportIcon from "@material-ui/icons/ImportExport";
-import InputBase from "@material-ui/core/InputBase";
 import Paper from "@material-ui/core/Paper";
-import SearchIcon from "@material-ui/icons/Search";
 import TextField from "@material-ui/core/TextField";
-import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 
 import { makeStyles } from "@material-ui/core/styles";
 
 const Style = makeStyles((theme) => ({
-  heroContent: {
-    backgroundColor: theme.palette.background.paper,
-    padding: theme.spacing(8, 0, 6),
-  },
-  heroButtons: {
-    marginTop: theme.spacing(4),
-  },
-  input: {
-    marginLeft: theme.spacing(1),
-    flex: 1,
-  },
-  iconButton: {
-    padding: 10,
-  },
-  cardGrid: {
-    paddingTop: theme.spacing(8),
-    paddingBottom: theme.spacing(8),
-  },
-  card: {
-    height: "100%",
-    display: "flex",
-    flexDirection: "column",
-  },
-  cardMedia: {
-    paddingTop: "56.25%", // 16:9
-  },
-  cardContent: {
-    flexGrow: 1,
-  },
-  chip: {
-    margin: theme.spacing(0.5),
-  },
-  chipRoot: {
-    display: "flex",
-    justifyContent: "center",
-    flexWrap: "wrap",
-    listStyle: "none",
-    padding: theme.spacing(0.5),
-    margin: 0,
-  },
-  root: {
-    padding: "2px 4px",
-    display: "flex",
-    alignItems: "center",
-    width: 400,
-  },
+    heroContent: {
+        backgroundColor: theme.palette.background.paper,
+        padding: theme.spacing(8, 0, 6),
+    },
+    heroButtons: {
+        marginTop: theme.spacing(4),
+    },
+    input: {
+        marginLeft: theme.spacing(1),
+        flex: 1,
+    },
+    iconButton: {
+        padding: 10,
+    },
+    cardGrid: {
+        paddingTop: theme.spacing(8),
+        paddingBottom: theme.spacing(8),
+    },
+    card: {
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+    },
+    cardMedia: {
+        paddingTop: "56.25%", // 16:9
+    },
+    cardContent: {
+        flexGrow: 1,
+    },
+    chip: {
+        margin: theme.spacing(0.5),
+    },
+    chipRoot: {
+        display: "flex",
+        justifyContent: "center",
+        flexWrap: "wrap",
+        listStyle: "none",
+        padding: theme.spacing(0.5),
+        margin: 0,
+    },
+    root: {
+        padding: "2px 4px",
+        display: "flex",
+        alignItems: "center",
+        width: 400,
+    },
 }));
-
-const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 interface Props {}
 
@@ -94,7 +88,8 @@ let tag_list: any[] = [];
 let collection: any;
 
 function viewBook(data) {
-  window.location.href = "/bookdata/metadata?isbn=" + data;
+    console.log(data);
+    window.location.href = "/bookdata/metadata?isbn=" + data;
 }
 
 const EditCollection: React.FC<Props> = ({}) => {
@@ -359,6 +354,7 @@ const EditCollection: React.FC<Props> = ({}) => {
   // Removes book from collection on both front-end and back-end.
   function removeBook(isbnToRemove) {
     console.log("Remove book from collection.");
+    console.log(isbnToRemove);
     $.ajax({
       async: false,
       url: "http://localhost:8000/api/collections/delete_title",
@@ -382,6 +378,7 @@ const EditCollection: React.FC<Props> = ({}) => {
 
   // TODO: Implement functionality. Gets the 10 most recently added books to the collection.
   function getRecentlyAddedBooks() {
+    window.location.href = "/user/recent?collectionid=" + collectionId;
     console.log("Get 10 most recently added books!");
   }
 
@@ -548,6 +545,7 @@ const EditCollection: React.FC<Props> = ({}) => {
                     variant="outlined"
                     color="primary"
                     startIcon={<HistoryIcon />}
+                    onClick={getRecentlyAddedBooks}
                   >
                     Recently Added Books
                   </Button>
@@ -578,8 +576,9 @@ const EditCollection: React.FC<Props> = ({}) => {
         </div>
         <Container className={classes.cardGrid} maxWidth="md">
           <Grid container spacing={4}>
+            {console.log(book_list)}
             {book_list.map((card) => (
-              <Grid item key={card.isbn} xs={12} sm={6} md={4}>
+              <Grid item key={card.book_id} xs={12} sm={6} md={4}>
                 <Card className={classes.card}>
                   <CardMedia
                     className={classes.cardMedia}
@@ -599,7 +598,7 @@ const EditCollection: React.FC<Props> = ({}) => {
                     <Button
                       size="small"
                       color="primary"
-                      onClick={() => viewBook(card.isbn)}
+                      onClick={() => viewBook(card.book_id)}
                     >
                       View
                     </Button>
@@ -615,7 +614,7 @@ const EditCollection: React.FC<Props> = ({}) => {
                     <Button
                       size="small"
                       color="primary"
-                      onClick={() => removeBook(card.isbn)}
+                      onClick={() => removeBook(card.book_id)}
                     >
                       Remove
                     </Button>
