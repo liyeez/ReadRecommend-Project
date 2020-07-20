@@ -6,7 +6,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from django.db.models import Q
 from .models import Book
-from .utilities import input_validator, user_validator
+from .utilities import input_validator, auth_validator
 
 
 @api_view(["GET"])
@@ -105,7 +105,7 @@ def random(request):
 
 @api_view(["GET"])
 @input_validator(["count"])
-@user_validator
+@auth_validator
 def random_not_library(request):
     """
     random not library
@@ -141,7 +141,7 @@ def random_not_library(request):
 
 @api_view(["GET"])
 @input_validator(["book_id"])
-@user_validator
+@auth_validator
 def is_read(request):
     """
     is_read
@@ -154,20 +154,21 @@ def is_read(request):
 
     Returns:
     has_read (bool)
-    """
+    """ 
     try:
         book = Book.objects.get(id=request.GET["book_id"])
-    except ObjectDoesNotExist:
-        return Response({"status": "error", "message": "Book not found"}, status=status.HTTP_204_NO_CONTENT)
+    except:
+        return Response({"status": "ok", "message": "Book not found"}, status=status.HTTP_204_NO_CONTENT)
     try:
         bookdata = request.user.userbookmetadata_set.get(book = book)
     except:
         return Response({"status": "ok", "message": "Book not in library", "is_read": False}, status=status.HTTP_200_OK)
     return Response({"status": "ok", "message": "Success", "is_read": bookdata.has_read}, status=status.HTTP_200_OK)
+    #return Response({"status": "ok", "message": "lah", "is_read": False}, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
 @input_validator(["book_id", "has_read"])
-@user_validator
+@auth_validator
 def set_read(request):
     """
     set_read

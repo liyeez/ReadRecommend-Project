@@ -3,23 +3,22 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from django.core.exceptions import ObjectDoesNotExist
-
+from .models import Book, Review
 from django.db.models import Q
-from .models import Review
 from .utilities import input_validator, user_validator,auth_validator
 
 
 @api_view(["GET"])
+@auth_validator
 @input_validator(["id"])
 def get_reviews(request):
 
     book_id = request.GET["id"]
-
     reviews = Review.objects.filter(book=book_id)
 
     review_list = []
     for review in reviews.all():
-        review_list.append({"id": book_id, "review": review.text,
+        review_list.append({"user": review.user.id, "review": review.text,
                             "rating": review.score})
 
     if len(review_list) > 0:
@@ -27,7 +26,7 @@ def get_reviews(request):
     else:
         message = "No matches found"
 
-    return Response({"status": "ok", "message": message, "review_list": review_list}, status=status.HTTP_200_OK)
+    return Response({"status": "ok", "message": message, "review_list": review_list, "currentUser": request.user.id}, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
 @auth_validator
@@ -40,15 +39,13 @@ def new_review(request):
     user = request.user
     
     try:
-        Book.objects.get(id=book_id)
-        
+        book = Book.objects.get(id=book_id)      
     except:
         return Response({"status": "error", "message": "invalid book"}, status=status.HTTP_200_OK)
-        
-    Review.objects.create_review(book_id,user,int(rating),review)
+              
+    Review.objects.create_review(book, user, rating,review)     
     return Response({"status": "ok", "message": "review successfully created"}, status=status.HTTP_200_OK)
     
-
 @api_view(["POST"])
 @auth_validator
 @input_validator(["id"])
@@ -69,6 +66,7 @@ def remove_review(request):
 
 
 @api_view(["GET"])
+@auth_validator
 @input_validator(["id"])
 def user_reviews(request):
 
