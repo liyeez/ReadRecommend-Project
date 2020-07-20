@@ -138,3 +138,62 @@ def random_not_library(request):
                           "book_author": book.author, "book_pub_date": book.pub_date})
 
     return Response({"status": "ok", "message": "Got random books", "book_list": book_list}, status=status.HTTP_200_OK)
+
+@api_view(["GET"])
+@input_validator(["book_id"])
+@user_validator
+def is_read(request):
+    """
+    is_read
+
+    Checks if book has been marked as read by user
+
+    Input:
+    user_id (int)
+    book_id (int)
+
+    Returns:
+    has_read (bool)
+    """
+    try:
+        book = Book.objects.get(id=request.GET["book_id"])
+    except ObjectDoesNotExist:
+        return Response({"status": "error", "message": "Book not found"}, status=status.HTTP_204_NO_CONTENT)
+    try:
+        bookdata = request.user.userbookmetadata_set.get(book = book)
+    except:
+        return Response({"status": "ok", "message": "Book not in library", "is_read": False}, status=status.HTTP_200_OK)
+    return Response({"status": "ok", "message": "Success", "is_read": bookdata.has_read}, status=status.HTTP_200_OK)
+
+@api_view(["POST"])
+@input_validator(["book_id", "has_read"])
+@user_validator
+def set_read(request):
+    """
+    set_read
+
+    Sets book to read or not read
+
+    Input:
+    user_id (int)
+    book_id (int)
+    has_read (bool)
+
+    Returns:
+    None
+    """
+    try:
+        book = Book.objects.get(id=request.POST["book_id"])
+    except ObjectDoesNotExist:
+        return Response({"status": "error", "message": "Book not found"}, status=status.HTTP_204_NO_CONTENT)
+    try:
+        bookdata = request.user.userbookmetadata_set.get(book = book)
+        if request.POST["has_read"].lower() == 'true':
+            bookdata.has_read = True
+        else:
+            bookdata.has_read = False
+        bookdata.save()
+    except:
+        return Response({"status": "error", "message": "Book is not in library"}, status=status.HTTP_200_OK)
+    return Response({"status": "ok", "message": "Success", "is_read": bookdata.has_read}, status=status.HTTP_200_OK)
+

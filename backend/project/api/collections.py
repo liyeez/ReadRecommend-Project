@@ -1,7 +1,7 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from api.models import Collection, Book, Tag, MAX_STR_LEN, User
+from api.models import Collection, Book, Tag, MAX_STR_LEN, User, CollectionBookMetadata, UserBookMetadata
 from django.core import serializers
 from .utilities import auth_validator, input_validator
 from django.contrib.auth.models import User
@@ -84,12 +84,15 @@ def add_title(request):  # given collection_id and id, adds book to collection, 
         collection.books.get(id=id)
         return Response({"status": "error", "message": "Book is already in collection"}, status=status.HTTP_200_OK)
     except:
+        CollectionBookMetadata.objects.create_collectionbookmetadata(collection, book)
         collection.books.add(book)
         collection.save()
 
         # Add to library if it is not in there already
         library = collection.user.collection_set.get(library=True)
         if book not in library.books.all():
+            CollectionBookMetadata.objects.create_collectionbookmetadata(library, book)
+            UserBookMetadata.objects.create_userbookmetadata(request.user, book)
             library.books.add(book)
             library.save()
 
@@ -110,6 +113,8 @@ def add_to_library(request):
         library.books.get(id=id)
         return Response({"status": "error", "message": "Book is already in library"}, status=status.HTTP_200_OK)
     except:
+        CollectionBookMetadata.objects.create_collectionbookmetadata(library, book)
+        UserBookMetadata.objects.create_userbookmetadata(request.user, book)
         library.books.add(book)
         library.save()
     return Response({"status": "ok", "message": "Book added to library"}, status=status.HTTP_200_OK)
@@ -133,9 +138,15 @@ def delete_from_library(request):
             matching_books = collection.books.get(id=request.POST["id"])
             collection.books.remove(matching_books)
             collection.save()
+            collection.collectionbookmetadata_set.filter(book = book).delete()
+            #collection.bookmetadata_set.remove(book_metadata)
             count += 1
         except:
             pass
+    try:
+        request.user.userbookmetadata_set.filter(book = book).delete()
+    except:
+        pass
 
     if count == 0:
         return Response({"status": "error", "message": "Book is not in library"}, status=status.HTTP_204_NO_CONTENT)
@@ -161,6 +172,7 @@ def delete_title(request):  # given collection_id and id, removes book from coll
         collection.books.get(id=id)
         collection.books.remove(book)
         collection.save()
+        collection.collectionbookmetadata_set.filter(book = book).delete()
         return Response({"status": "ok", "message": "Book removed from collection"}, status=status.HTTP_200_OK)
     except:
         return Response({"status": "error", "message": "Book is not in collection"}, status=status.HTTP_200_OK)
@@ -260,3 +272,25 @@ def get_tags(request):
         return Response({"status": "ok", "message": "Collection has no tags"}, status=status.HTTP_200_OK)
     else:
         return Response({"status": "ok", "message": "Got tags", "tag_list": tag_list}, status=status.HTTP_200_OK)
+
+@api_view(["GET"])
+@input_validator(["collection_id"])
+def recent_added(request): # returns ten most recently added books for specified collection
+    try:
+        collection = Collection.objects.get(collection_id=request.GET["collection_id"])
+    except:
+        return Response({"status": "error", "message": "Collection not found"}, status=status.HTTP_200_OK)
+
+    book_list = []
+    order = collection.collectionbookmetadata_set.all().order_by('-time_added')
+    count = 0
+    for metadata in order:
+        if count >= 10:
+            break
+        else:
+            book_list.append({"id": metadata.book.id, "title": metadata.book.title})
+            count += 1
+
+    return Response({"status": "ok", "message": "Got recently added books", "book_list": book_list}, status=status.HTTP_200_OK)
+
+
