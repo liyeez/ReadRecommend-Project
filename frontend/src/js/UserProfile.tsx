@@ -6,6 +6,8 @@ import React, { ChangeEvent, useState, useEffect } from "react";
 import * as Router from "react-router-dom";
 import * as $ from "jquery";
 import CookieService from "../services/CookieService";
+import 'date-fns';
+import DateFnsUtils from '@date-io/date-fns';
 
 // Page Imports
 import Collections from "./Collections";
@@ -23,6 +25,7 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Divider from "@material-ui/core/Divider";
 import Grid from "@material-ui/core/Grid";
+import { MuiPickersUtilsProvider, KeyboardDatePicker,} from '@material-ui/pickers';
 import Link from "@material-ui/core/Link";
 import Paper from "@material-ui/core/Paper";
 import TextField from "@material-ui/core/TextField";
@@ -303,111 +306,178 @@ export default function UserProfile() {
 }
 
 const useStyles = makeStyles((theme) => ({
-  container: {
-    paddingTop: theme.spacing(4),
-    paddingBottom: theme.spacing(4),
-    wrap: "nowrap",
-  },
-  heroContent: {
-    backgroundColor: theme.palette.background.paper,
-    padding: theme.spacing(8, 0, 6),
-  },
-  paper: {
-    padding: theme.spacing(2),
-    display: "flex",
-    overflow: "auto",
-    flexDirection: "column",
-  },
-  fixedHeight: {
-    height: 350,
-  },
-  depositContext: {
-    flex: 1,
-  },
-  cardGrid: {
-    paddingTop: theme.spacing(8),
-    paddingBottom: theme.spacing(8),
-  },
+	container: {
+		paddingTop: theme.spacing(4),
+		paddingBottom: theme.spacing(4),
+		wrap: "nowrap",
+	},
+	heroContent: {
+		backgroundColor: theme.palette.background.paper,
+		padding: theme.spacing(8, 0, 6),
+	},
+	paper: {
+		padding: theme.spacing(2),
+		display: "flex",
+		overflow: "auto",
+		flexDirection: "column",
+	},
+	fixedHeight: {
+		height: 350,
+	},
+	depositContext: {
+		flex: 1,
+	},
+	cardGrid: {
+		paddingTop: theme.spacing(8),
+		paddingBottom: theme.spacing(8),
+	},
 }));
 
 // Generate Sales Data
 function createData(time, amount) {
-  return { time, amount };
+	return { time, amount };
 }
 
 function Chart() {
-  const theme = useTheme();
+	const theme = useTheme();
 
-  return (
-    <React.Fragment>
-      <ResponsiveContainer>
-        <LineChart
-          data={data}
-          margin={{
-            top: 16,
-            right: 16,
-            bottom: 0,
-            left: 24,
-          }}
-        >
-          <XAxis dataKey="time" stroke={theme.palette.text.secondary} />
-          <YAxis stroke={theme.palette.text.secondary}>
-            <Label
-              angle={270}
-              position="left"
-              style={{ textAnchor: "middle", fill: theme.palette.text.primary }}
-            >
-              Books Read
-            </Label>
-          </YAxis>
-          <Line
-            type="monotone"
-            dataKey="amount"
-            stroke={theme.palette.primary.main}
-            dot={false}
-          />
-        </LineChart>
-      </ResponsiveContainer>
-    </React.Fragment>
-  );
+	return (
+		<React.Fragment>
+			<ResponsiveContainer>
+				<LineChart
+					data={data} margin={{ top: 16, right: 16, bottom: 0, left: 24,}}
+				>
+				<XAxis dataKey="time" stroke={theme.palette.text.secondary} />
+				<YAxis stroke={theme.palette.text.secondary}>
+					<Label
+						angle={270}
+						position="left"
+						style={{ textAnchor: "middle", fill: theme.palette.text.primary }}
+					>
+						Books Read
+					</Label>
+				</YAxis>
+				<Line
+					type="monotone"
+					dataKey="amount"
+					stroke={theme.palette.primary.main}
+					dot={false}
+				/>
+				</LineChart>
+			</ResponsiveContainer>
+		</React.Fragment>
+	);
 }
 
 function Goal() {
-  const classes = useStyles();
-  return (
-    <React.Fragment>
-      <Container className={classes.container}>
-        <Typography component="h4" variant="h4" color="textPrimary">
-          My Goals
-        </Typography>
-        <Divider />
-        <Typography component="p" variant="h5">
-          100 Books
-        </Typography>
-        <Typography color="textSecondary" className={classes.depositContext}>
-          By March 2021
-        </Typography>
-      </Container>
-      {/*TODO: Implement set user reading goals. */}
-      <Container className={classes.container}>
-        <Link color="primary" href="#">
-          Set Goal
-        </Link>
-      </Container>
-    </React.Fragment>
-  );
+	// Dialog for setting a new reading goal.
+	const [openGoal, setOpenGoal] = useState(false);
+	const [newAmount, setNewAmount] = useState("");
+
+	const handleClickOpenGoal = () => {
+		setOpenGoal(true);
+	}
+  
+	const handleCloseGoal = () => {
+		setOpenGoal(false);
+	}
+
+	// Detects new value typed into dialog box and loads it on the screen.
+	const onAmountChange = (e: ChangeEvent<HTMLInputElement>) => {
+		const { name, value } = e.target;
+		setNewAmount(value);
+	};
+
+	const [selectedDate, setSelectedDate] = React.useState<Date | null>(
+		new Date('2020-07-18T21:11:54'),
+	);
+
+	const handleDateChange = (date: Date | null) => {
+		setSelectedDate(date);
+	};
+
+	const classes = useStyles();
+	return (
+		<React.Fragment>
+			<Container className={classes.container}>
+				<Typography component="h4" variant="h4" color="textPrimary">
+					My Goals
+				</Typography>
+				<Divider />
+                {/*Display user's current reading goals if any.*/}
+				<Typography component="p">
+					You currently don't have any reading goals.
+				</Typography>
+			</Container>
+			{/*TODO: Implement set user reading goals. */}
+			<Container className={classes.container}>
+				<Link color="primary" onClick={handleClickOpenGoal}>
+					Set Goal
+				</Link>
+				<Dialog
+					open={openGoal}
+					onClose={handleCloseGoal}
+					aria-labelledby="form-dialog-title"
+				>
+				<DialogTitle id="form-dialog-title">📚 Set A New Reading Goal</DialogTitle>
+				<DialogContent>
+				<DialogContentText>
+					How many books would you like to read?
+				</DialogContentText>
+				<TextField
+					autoFocus
+					margin="dense"
+					id="name"
+					label="# Books to Read"
+					type="text"
+					fullWidth
+					onChange={onAmountChange}
+				/>
+				<MuiPickersUtilsProvider utils={DateFnsUtils}>
+					<KeyboardDatePicker
+						disableToolbar
+						variant="inline"
+						format="MM/dd/yyyy"
+						margin="normal"
+						id="date-picker-inline"
+						label="Goal Start Date"
+						value={selectedDate}
+						onChange={handleDateChange}
+						KeyboardButtonProps={{
+						'aria-label': 'change date',
+						}}
+					/>
+				</MuiPickersUtilsProvider>
+
+				</DialogContent>
+				<DialogActions>
+				<Button onClick={handleCloseGoal} color="primary">
+					Cancel
+				</Button>
+				<Button
+                    color="primary"
+                    onClick={handleCloseGoal}
+					variant="contained"
+				>
+				    Add Goal
+				</Button>
+				</DialogActions>
+				</Dialog>
+			</Container>
+		</React.Fragment>
+	);
 }
 
 const data = [
-  createData("Oct 19", 0),
-  createData("Nov 19", 5),
-  createData("Dec 19", 10),
-  createData("Jan 20", 15),
-  createData("Feb 20", 20),
-  createData("Mar 20", 25),
-  createData("Apr 20", 30),
-  createData("May 20", 35),
-  createData("Jun 20", 40),
+	createData("Oct 19", 0),
+	createData("Nov 19", 5),
+	createData("Dec 19", 10),
+	createData("Jan 20", 15),
+	createData("Feb 20", 20),
+	createData("Mar 20", 25),
+	createData("Apr 20", 30),
+	createData("May 20", 35),
+	createData("Jun 20", 40),
 ];
 
 //<FeaturedPost book={book} />

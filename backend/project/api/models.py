@@ -50,7 +50,6 @@ class BookInstance(models.Model):
 
 # Book review
 
-
 class ReviewManager(models.Manager):
     def create_review(self, book, user, score, text):
         review = self.create(book=book, user=user, score=score, text=text)

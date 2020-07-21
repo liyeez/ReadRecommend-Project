@@ -18,6 +18,7 @@ import UserProfile from "./UserProfile";
 import BookDetails from "./BookDetails";
 import ViewCollection from "./ViewCollection";
 import EditCollection from "./EditCollection";
+import RecentlyAddedBooks from "./RecentlyAddedBooks";
 import AddTitles from "./AddTitles";
 import OtherUserProfile from "./OtherUserProfile";
 import FindUser from "./FindUser";
@@ -59,6 +60,9 @@ const Routing: React.FC = ({}) => {
                     </Router.Route>
                     <Router.Route path="/user/editcollection">
                         <EditCollection />
+                    </Router.Route>
+                    <Router.Route path="/user/recent">
+                        <RecentlyAddedBooks />
                     </Router.Route>
                     <Router.Route path="/user/addTitles">
                         <AddTitles userSignedIn={signedInStatus}/>

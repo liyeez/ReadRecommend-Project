@@ -280,7 +280,7 @@ const BookDetails: React.FC<Props> = ({}) => {
             {/*TBD feature*/}
             <Grid item xs={12} md={8} lg={9}>
               <Paper className={classes.paper}>
-                <Reviews />
+                <Reviews book={book}/>
               </Paper>
             </Grid>
             {/*Carousel*/} {/*TBD feature*/}
