@@ -134,11 +134,12 @@ const RecentlyAddedBooks: React.FC<Props> = ({}) => {
                     </Container>
 
                     {/*Top 10 Most Recently Added Books*/}
+                    {console.log(recently_added_books)}
                     <Container className={classes.cardGrid} maxWidth="md">
                         <Grid container spacing={4}>
                             {/*Renders Card For Each Book*/}
                             {recently_added_books.map((book) => (
-                                <Grid item key={book.book_id} xs={12} sm={6} md={4}>
+                                <Grid item key={book.id} xs={12} sm={6} md={4}>
                                     <Card className={classes.card}>
                                         <CardMedia className={classes.cardMedia} image="https://source.unsplash.com/random?book" title="Image Title"/>
                                         <CardContent className={classes.cardContent}>
@@ -151,14 +152,11 @@ const RecentlyAddedBooks: React.FC<Props> = ({}) => {
                                             </Typography>
                                         </CardContent>
                                         <CardActions>
-                                            <Button size="small" color="primary">
+                                            <Button component={Router.Link} to={"/bookdata/metadata?isbn=" + book.id} size="small" color="primary">
                                                 View
                                             </Button>
                                             <Button>
                                                 Edit Status
-                                            </Button>
-                                            <Button>
-                                                Remove
                                             </Button>
                                         </CardActions>
                                     </Card>
