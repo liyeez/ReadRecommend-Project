@@ -197,11 +197,11 @@ def set_goal(request):
     current_goals = request.user.goal_set.filter(current = True)
     has_current = False
     for goal in current_goals:
-        if not goal.is_active():
+        if goal.is_active() or goal.in_future():
+            has_current = True
+        else:
             goal.current = False
             goal.save()
-        else:
-            has_current = True
     if has_current:
         return Response({"status": "error", "message":"current goal still in progress"}, status=status.HTTP_200_OK)
     if int(request.POST["count_goal"]) <= 0:
