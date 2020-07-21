@@ -51,9 +51,13 @@ const Style = makeStyles((theme) => ({
     },
 }));
 
+let readStatus : boolean[] = [];
+
 export default function UserLibrary() {
     const classes = Style();
     const token = CookieService.get("access_token");
+
+    const [libraryReadStatuses, setLibraryReadStatuses] = useState<boolean[]>([]);
 
     let cards: Array<any> = [];
 
@@ -126,7 +130,59 @@ export default function UserLibrary() {
         });
     }
 
+    // Gets the read status of a book in a user's library 
+    function initialiseReadStatus(bookId){
+        console.log("Get read status");
+        var data = getReadStatus(bookId, function (data) {
+            readStatus.push(data.is_read);
+        })
+        // Append all reading statuses to the readStatus array.
+        // Change the state.
+    }
+
+    function getReadStatus(bookId, callback) {
+        $.ajax({
+            async: false,
+            url: "http://localhost:8000/api/books/is_read",
+            data: {
+                auth: token,
+                book_id: bookId
+            }, 
+            method: "GET",
+            success: function (data) {
+                if (data != null) {
+                    callback(data);
+                }
+                callback(null);
+            },
+            error: function() {
+                console.log("server error!");
+                callback(null);
+            }
+        })
+    }
+
+    // Toggles the read status of a book in a user's library between read and unread.
+    function toggleRead() {
+        console.log("Toggle the book's read status.");
+
+        // Change the state.
+    }
+
     request();
+    console.log(cards);
+
+    // For each book in the user library fetch its read status.
+    readStatus = [];
+    cards.forEach(function (libraryBook) {
+        initialiseReadStatus(libraryBook.book_id);
+    });
+
+    console.log("read status");
+    console.log(readStatus);
+
+    //setLibraryReadStatuses(readStatus);
+
     return (
         <React.Fragment>
             <CssBaseline />
@@ -160,7 +216,7 @@ export default function UserLibrary() {
                                         </Typography>
                                         {/* Switch To Display Read Status of Book */}
                                         <FormGroup row>
-                                            <FormControlLabel control={<Switch checked={true} color="primary"/>} label="Read Status"/>
+                                            <FormControlLabel control={<Switch checked={false} onChange={toggleRead} color="primary"/>} label="Read Status"/>
                                         </FormGroup>
                                         <Typography>By Author: {card.book_author}</Typography>
                                         <Typography>Published on: {card.book_pub_date}</Typography>
