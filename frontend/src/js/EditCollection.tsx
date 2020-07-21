@@ -87,11 +87,6 @@ let book_list: any[] = [];
 let tag_list: any[] = [];
 let collection: any;
 
-function viewBook(data) {
-    console.log(data);
-    window.location.href = "/bookdata/metadata?isbn=" + data;
-}
-
 const EditCollection: React.FC<Props> = ({}) => {
     const classes = Style();
     // For editing the collection's title.
@@ -363,12 +358,6 @@ const EditCollection: React.FC<Props> = ({}) => {
         });
     }
 
-    // TODO: Implement functionality. Gets the 10 most recently added books to the collection.
-    function getRecentlyAddedBooks() {
-    window.location.href = "/user/recent?collectionid=" + collectionId;
-    console.log("Get 10 most recently added books!");
-    }
-
     let collectionId = window.location.href.split("?")[1];
     collectionId = collectionId.split("=")[1];
     const token = CookieService.get("access_token");
@@ -447,12 +436,18 @@ const EditCollection: React.FC<Props> = ({}) => {
                                     </Button>
                                 </Grid>
                                 <Grid item>
-                                    <Button component={Router.Link} to={"/user/addTitles?collectionid=" + collectionId} type="submit" variant="outlined" color="primary" startIcon={<AddIcon />}>
+                                    <Button 
+                                        component={Router.Link} to={"/user/addTitles?collectionid=" + collectionId} 
+                                        type="submit" variant="outlined" color="primary" startIcon={<AddIcon />}
+                                    >
                                         Add Books
                                     </Button>
                                 </Grid>
                                 <Grid item>
-                                    <Button type="submit" variant="outlined" color="primary" startIcon={<HistoryIcon />} onClick={getRecentlyAddedBooks}>
+                                    <Button 
+                                        component={Router.Link} to={"/user/recent?collectionid=" + collectionId} 
+                                        type="submit" variant="outlined" color="primary" startIcon={<HistoryIcon />}
+                                    >
                                         Recently Added Books
                                     </Button>
                                 </Grid>
