@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from datetime import datetime
 
 MAX_STR_LEN = 100
 # These should really go in another python file but it works as is
@@ -148,14 +149,36 @@ class UserBookMetadata(models.Model):
     objects = UserBookMetadataManager()
 
 class GoalManager(models.Manager):
-    def create_goal(self, user, book, date_end):
-        goal = self.create(user = user, book = book, date_end = date_end, complete = False)
-        return book_metadata
-
+    def create_goal(self, user, count_goal, date_end, date_start):
+        goal = self.create(user = user, count_goal = count_goal, date_end = date_end, date_start = date_start)
+        return goal
 class Goal(models.Model):
     user = models.ForeignKey(User, on_delete = models.CASCADE)
-    books = models.ManyToManyField(UserBookMetadata)
-    complete = models.BooleanField()
-    date_start = models.DateField(auto_now_add = True)
-    date_end = models.DateField()
-    date_complete = models.DateField(blank = True, null = True)
+    book_count = models.IntegerField(default = 0) #number of books read for this goal so far
+    count_goal = models.IntegerField(default = 0) #users goal for number of books read
+    complete = models.BooleanField(default = False) #goal is complete or not
+    current = models.BooleanField(default = True) #latest goal, only one current goal per user
+    date_start = models.DateField() #start date of goal set by user
+    date_end = models.DateField() #end date of goal set to be 30 days after start date
+    date_complete = models.DateField(blank = True, null = True) #date user read goal number of books
+    objects = GoalManager()
+
+    def is_active(self): #check if today's date is in goal date range
+        if datetime.now().date() <= self.date_end and datetime.now().date() >= self.date_start:
+            return True
+        else:
+            return False
+    def in_future(self):
+        if datetime.now().date() < self.date_start:
+            return True
+        else:
+            return False
+
+    def save(self, *args, **kwargs): 
+        if self.book_count >= self.count_goal:
+            self.complete = True
+            self.date_complete = datetime.now().date()
+        else:
+            self.complete = False
+            self.date_complete = None
+        super(Goal, self).save(*args, **kwargs) 

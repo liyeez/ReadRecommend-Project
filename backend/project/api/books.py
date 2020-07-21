@@ -6,7 +6,8 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from django.db.models import Q
 from .models import Book
-from .utilities import input_validator, user_validator
+from .utilities import input_validator, user_validator, auth_validator
+from datetime import datetime
 
 
 @api_view(["GET"])
@@ -141,7 +142,7 @@ def random_not_library(request):
 
 @api_view(["GET"])
 @input_validator(["book_id"])
-@user_validator
+@auth_validator
 def is_read(request):
     """
     is_read
@@ -166,18 +167,17 @@ def is_read(request):
     return Response({"status": "ok", "message": "Success", "is_read": bookdata.has_read}, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
-@input_validator(["book_id", "has_read"])
-@user_validator
+@input_validator(["book_id"])
+@auth_validator
 def set_read(request):
     """
     set_read
 
-    Sets book to read or not read
+    toggle book has_read variable
 
     Input:
     user_id (int)
     book_id (int)
-    has_read (bool)
 
     Returns:
     None
@@ -188,12 +188,32 @@ def set_read(request):
         return Response({"status": "error", "message": "Book not found"}, status=status.HTTP_204_NO_CONTENT)
     try:
         bookdata = request.user.userbookmetadata_set.get(book = book)
-        if request.POST["has_read"].lower() == 'true':
-            bookdata.has_read = True
-        else:
-            bookdata.has_read = False
-        bookdata.save()
     except:
         return Response({"status": "error", "message": "Book is not in library"}, status=status.HTTP_200_OK)
+    
+    if bookdata.has_read == False: 
+        bookdata.has_read = True
+        bookdata.date_read = datetime.now().date()
+        try:
+            goal = request.user.goal_set.get(current = True)
+            if goal.is_active():
+                goal.book_count += 1
+                goal.save()
+        except:
+            pass
+    elif bookdata.has_read == True:
+        bookdata.has_read = False
+        prev_date = bookdata.date_read
+        bookdata.date_read = None
+        try:
+            goal = request.user.goal_set.get(current = True)
+            if goal.is_active() and goal.date_start<= prev_date and goal.date_end >= prev_date:
+                goal.book_count -= 1
+                goal.save()
+        except:
+            pass
+    bookdata.save()
+    
     return Response({"status": "ok", "message": "Success", "is_read": bookdata.has_read}, status=status.HTTP_200_OK)
+    
 
