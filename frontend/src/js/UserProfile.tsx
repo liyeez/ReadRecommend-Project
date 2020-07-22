@@ -38,6 +38,7 @@ import { useTheme } from "@material-ui/core/styles";
 
 let userGoals : any[] = [];
 let mostRecentGoal : any; 
+let userGoalData : any[] = [];
 
 export default function UserProfile() {
     const [userProfileData, setUserProfileData] = useState({
@@ -177,16 +178,16 @@ export default function UserProfile() {
                 {/* User's Reading Chart and Reading Goals*/}
                 <Container maxWidth="lg" className={classes.container}>
                     <Grid container spacing={3}>
-                        {/* Chart */}
-                        <Grid item xs={12} md={8} lg={9}>
-                            <Paper className={fixedHeightPaper}>
-                                <Chart />
-                            </Paper>
-                        </Grid>
                         {/* Goal */}
                         <Grid item xs={12} md={4} lg={3}>
                             <Paper className={fixedHeightPaper}>
                                 <Goal />
+                            </Paper>
+                        </Grid>
+                        {/* Chart */}
+                        <Grid item xs={12} md={8} lg={9}>
+                            <Paper className={fixedHeightPaper}>
+                                <Chart />
                             </Paper>
                         </Grid>
                     </Grid>
@@ -282,13 +283,22 @@ function createData(time, amount) {
 }
 
 function Chart() {
-	const theme = useTheme();
+    const theme = useTheme();
+    const [userGoalData, setUserGoalData] = useState<any[]>([]);
+    
+    console.log("in chart");
+    // Dynamically create user goals data for graph rendering.
+    userGoals.forEach(function (userGoal) {
+        userGoalData.push(createData(userGoal.date_end, userGoal.books_read));
+    });
+
+    console.log(userGoalData);
 
 	return (
 		<React.Fragment>
 			<ResponsiveContainer>
 				<LineChart
-					data={data} margin={{ top: 16, right: 16, bottom: 0, left: 24,}}
+					data={userGoalData} margin={{ top: 16, right: 16, bottom: 0, left: 24,}}
 				>
 				<XAxis dataKey="time" stroke={theme.palette.text.secondary} />
 				<YAxis stroke={theme.palette.text.secondary}>
@@ -321,9 +331,13 @@ function Goal() {
 
 	const handleClickOpenGoal = () => {
 		setOpenGoal(true);
-	}
+    }
+    
+    const handleCloseGoal = () => {
+        setOpenGoal(false);
+    }
   
-	const handleCloseGoal = () => {
+	const handleCreateGoal = () => {
         setOpenGoal(false);
         requestNewGoal();
 	}
@@ -438,7 +452,6 @@ function Goal() {
                 }
 				
 			</Container>
-			{/*TODO: Implement set user reading goals. */}
 			<Container className={classes.container}>
 				<Link color="primary" onClick={handleClickOpenGoal}>Set Goal</Link>
 
@@ -466,7 +479,7 @@ function Goal() {
                         <Button onClick={handleCloseGoal} color="primary">
                             Cancel
                         </Button>
-                        <Button color="primary" onClick={handleCloseGoal} variant="contained">
+                        <Button color="primary" onClick={handleCreateGoal} variant="contained">
                             Add Goal
                         </Button>
                     </DialogActions>
@@ -475,17 +488,5 @@ function Goal() {
 		</React.Fragment>
 	);
 }
-
-const data = [
-	createData("Oct 19", 0),
-	createData("Nov 19", 5),
-	createData("Dec 19", 10),
-	createData("Jan 20", 15),
-	createData("Feb 20", 20),
-	createData("Mar 20", 25),
-	createData("Apr 20", 30),
-	createData("May 20", 35),
-	createData("Jun 20", 40),
-];
 
 //<FeaturedPost book={book} />
