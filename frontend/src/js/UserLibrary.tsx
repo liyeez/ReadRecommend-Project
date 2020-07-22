@@ -51,9 +51,14 @@ const Style = makeStyles((theme) => ({
     },
 }));
 
+let readStatus : any[] = [];
+
 export default function UserLibrary() {
     const classes = Style();
     const token = CookieService.get("access_token");
+
+    const [libraryReadStatuses, setLibraryReadStatuses] = useState<boolean[]>([]);
+    const [statusChanged, setStatusChanged] = useState<boolean>(false);
 
     let cards: Array<any> = [];
 
@@ -126,7 +131,69 @@ export default function UserLibrary() {
         });
     }
 
+    function initialiseReadStatus(bookId) : boolean {
+        let status = false;
+        var data = getReadStatus(bookId, function (data) {
+            status = data.is_read;
+        });
+        return status;
+    }
+
+    function getReadStatus(bookId, callback) {
+        $.ajax({
+            async: false,
+            url: "http://localhost:8000/api/books/is_read",
+            data: {
+                auth: token,
+                book_id: bookId
+            }, 
+            method: "GET",
+            success: function (data) {
+                if (data != null) {
+                    callback(data);
+                } else {
+                    callback(null);
+                }
+            },
+            error: function() {
+                console.log("server error!");
+                callback(null);
+            }
+        })
+    }
+
+    // Toggles the read status of a book in a user's library between read and unread.
+    function toggleRead(bookId) {
+        var data = setReadStatus(bookId, function (data) {
+            setStatusChanged(!statusChanged);
+        });
+    }
+
+    function setReadStatus(bookId, callback) {
+        $.ajax({
+            async: false,
+            url: "http://localhost:8000/api/books/set_read",
+            data: {
+                auth: token,
+                book_id: bookId,
+            },
+            method: "POST",
+            success: function (data) {
+                if (data != null) {
+                    callback(data);
+                } else {
+                    callback(null);
+                }
+            },
+            error: function() {
+                console.log("server error!");
+                callback(null);
+            }
+        })
+    }
+
     request();
+
     return (
         <React.Fragment>
             <CssBaseline />
@@ -160,7 +227,7 @@ export default function UserLibrary() {
                                         </Typography>
                                         {/* Switch To Display Read Status of Book */}
                                         <FormGroup row>
-                                            <FormControlLabel control={<Switch checked={true} color="primary"/>} label="Read Status"/>
+                                            <FormControlLabel control={<Switch checked={initialiseReadStatus(card.id)} onChange={() => toggleRead(card.id)} color="primary"/>} label="Read Status"/>
                                         </FormGroup>
                                         <Typography>By Author: {card.book_author}</Typography>
                                         <Typography>Published on: {card.book_pub_date}</Typography>
