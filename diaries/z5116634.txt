@@ -15,3 +15,9 @@ Made a few consistency changes to the api and added some extra common functions/
 
 Week 5
 GPU died for my PC :(. Helped Monica out with a weird React form issue where the POST request was appearing in the URL.
+
+Week 6
+Quiet flex week catching up on other courses.
+
+Week 7
+Worked on book data scraping from external apis. Currently obtaining data from Google books api.
