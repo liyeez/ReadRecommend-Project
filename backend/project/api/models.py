@@ -18,7 +18,7 @@ class BookManager(models.Manager):
 
 class Book(models.Model):
     id = models.IntegerField(primary_key=True)
-    cover = models.CharField(max_length=128)
+    cover = models.CharField(max_length=300000)
     title = models.CharField(max_length=100)
     author = models.CharField(max_length=100)
     pub_date = models.DateField()
@@ -43,7 +43,7 @@ class BookInstanceManager(models.Manager):
 class BookInstance(models.Model):
     isbn = models.CharField(primary_key=True, max_length=13)
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
-    cover = models.CharField(max_length=128)
+    cover = models.CharField(max_length=300000)
     title = models.CharField(max_length=100)
     author = models.CharField(max_length=100)
     pub_date = models.DateField()
