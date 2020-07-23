@@ -258,6 +258,7 @@ def search_book(request):
         book["cover"] = base64.b64encode(cover.content)
         book["book_pub_date"] = match["volumeInfo"]["publishedDate"]
         results.append(book)
+        
     if len(results) > 0:
         return Response({"status": "ok", "message": "Success", "results": results}, status=status.HTTP_200_OK)
     else:
