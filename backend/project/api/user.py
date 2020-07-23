@@ -227,7 +227,7 @@ def is_goal_met(request):
     """
     try:
         current_goal = request.user.goal_set.get(current = True)
-        if current_goal.is_active():
+        if current_goal.is_active() or current_goal.in_future():
             return Response({"status": "ok", "message":"Goal retrieved", "is_met": current_goal.complete}, status=status.HTTP_200_OK)
     except:
         return Response({"status": "error", "message":"no current goals"}, status=status.HTTP_200_OK)
