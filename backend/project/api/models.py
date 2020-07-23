@@ -37,6 +37,7 @@ class BookInstanceManager(models.Manager):
     def create_book(self, title, author, isbn, pub_date, book):
         bookInstance = self.create(title=title, author=author,
                                    isbn=isbn, pub_date=pub_date, book=book)
+        Book.Objects.create_book(title=title,author=author,pub_date=pub_date)
         return bookInstance
 
 
