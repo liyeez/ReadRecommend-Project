@@ -240,8 +240,6 @@ def add_book(request):
     Returns:
 
     """
-    library = request.user.collection_set.get(library=True)
-
     if request.POST["book_isbn"] in BookInstance.objects.all():
         return Response({"status": "error", "message": "Book already exists"}, status=status.HTTP_200_OK)
 
