@@ -5,7 +5,7 @@ from rest_framework import status
 from django.core.exceptions import ObjectDoesNotExist
 
 from django.db.models import Q
-from .models import Book
+from .models import Book, BookInstance
 from .utilities import input_validator, auth_validator
 from datetime import datetime
 import requests
@@ -163,7 +163,7 @@ def is_read(request):
     except:
         return Response({"status": "ok", "message": "Book not found"}, status=status.HTTP_204_NO_CONTENT)
     try:
-        bookdata = request.user.userbookmetadata_set.get(book = book)
+        bookdata = request.user.userbookmetadata_set.get(book=book)
     except:
         return Response({"status": "ok", "message": "Book not in library", "is_read": False}, status=status.HTTP_200_OK)
     return Response({"status": "ok", "message": "Success", "is_read": bookdata.has_read}, status=status.HTTP_200_OK)
@@ -190,7 +190,7 @@ def set_read(request):
     except ObjectDoesNotExist:
         return Response({"status": "error", "message": "Book not found"}, status=status.HTTP_204_NO_CONTENT)
     try:
-        bookdata = request.user.userbookmetadata_set.get(book = book)
+        bookdata = request.user.userbookmetadata_set.get(book=book)
     except:
         return Response({"status": "error", "message": "Book is not in library"}, status=status.HTTP_200_OK)
     
@@ -218,6 +218,37 @@ def set_read(request):
     bookdata.save()
     
     return Response({"status": "ok", "message": "Success", "is_read": bookdata.has_read}, status=status.HTTP_200_OK)
+
+
+@api_view(["POST"])
+@input_validator(["book_title", "book_isbn", "book_author", "book_cover", "book_pub_date"])
+@auth_validator
+def add_book(request):
+    """
+    add_book
+
+    Adds a book instance and book (if necessary) to the system.
+
+    Input:
+    auth (str)
+    book_title (str)
+    book_isbn (str)
+    book_author (str)
+    book_cover (str)
+    book_pub_date (datetime)
+
+    Returns:
+
+    """
+    library = request.user.collection_set.get(library=True)
+
+    if request.POST["book_isbn"] in BookInstance.objects.all():
+        return Response({"status": "error", "message": "Book already exists"}, status=status.HTTP_200_OK)
+
+    BookInstance.objects.create_book(request.POST["book_title"], request.POST["book_author"], request.POST["book_isbn"], request.POST["book_pub_date"], request.POST["book_cover"])
+
+    return Response({"status": "ok", "message": "Book added to system"}, status=status.HTTP_200_OK)
+
     
 @api_view(["GET"])
 @input_validator(["search"])

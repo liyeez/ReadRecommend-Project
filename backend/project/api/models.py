@@ -10,14 +10,13 @@ MAX_STR_LEN = 100
 
 
 class BookManager(models.Manager):
-    def create_book(self, title, author, pub_date):
-        book = self.filter(title__startswith='title').filter(author__startswith='author').get_or_create(
-            id=Book.objects.count() + 1, title=title, author=author, pub_date=pub_date)
+    def create_book(self, title, author, pub_date, cover):
+        book = self.get_or_create(title=title, author=author, defaults={"pub_date": pub_date, "cover": cover})
         return book
 
 
 class Book(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True, unique=True)
     cover = models.CharField(max_length=300000)
     title = models.CharField(max_length=100)
     author = models.CharField(max_length=100)
@@ -26,18 +25,18 @@ class Book(models.Model):
 
     # since this review and book instance are compositions of Book, we have these as Model methods rather than table methods
 
-    def create_instance(self, isbn, pub_date):
-        return BookInstance.objects.create_book(self.title, self.author, isbn, pub_date, self)
+    def create_instance(self, isbn, pub_date, cover):
+        return BookInstance.objects.create_book(self.title, self.author, isbn, pub_date, cover)
 
     def create_review(self, user, score, text):
         return Review.objects.create_review(self, user, score, text)
 
 
 class BookInstanceManager(models.Manager):
-    def create_book(self, title, author, isbn, pub_date, book):
-        bookInstance = self.create(title=title, author=author,
-                                   isbn=isbn, pub_date=pub_date, book=book)
-        Book.Objects.create_book(title=title,author=author,pub_date=pub_date)
+    def create_book(self, title, author, isbn, pub_date, cover):
+        book = Book.objects.create_book(title=title, author=author, pub_date=pub_date, cover=cover)
+        bookInstance = self.create(book=book[0], title=title, author=author,
+                                   isbn=isbn, pub_date=pub_date, cover=cover)
         return bookInstance
 
 
@@ -48,6 +47,7 @@ class BookInstance(models.Model):
     title = models.CharField(max_length=100)
     author = models.CharField(max_length=100)
     pub_date = models.DateField()
+    objects = BookInstanceManager()
 
 # Book review
 
