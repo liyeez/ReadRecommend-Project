@@ -26,10 +26,10 @@ def data(request):
     Returns:
     book_id (int)
     book_title (str)
-    book_cover (str): base64 encoded cover
+    book_cover (str)
     book_author (str)
     book_pub_date (datetime)
-    last_review_id (int) [MAY BE REMOVED IN THE FUTURE]
+    book_genre (str)
     """
     try:
         book = Book.objects.get(id=request.GET["id"])
@@ -221,7 +221,7 @@ def set_read(request):
 
 
 @api_view(["POST"])
-@input_validator(["book_title", "book_isbn", "book_author", "book_cover", "book_pub_date"])
+@input_validator(["book_title", "book_author", "book_genre", "book_description", "book_isbn", "book_cover", "book_pub_date"])
 @auth_validator
 def add_book(request):
     """
@@ -232,8 +232,10 @@ def add_book(request):
     Input:
     auth (str)
     book_title (str)
-    book_isbn (str)
     book_author (str)
+    book_genre (str)
+    book_description (str)
+    book_isbn (str)
     book_cover (str)
     book_pub_date (datetime)
 
@@ -243,7 +245,7 @@ def add_book(request):
     if request.POST["book_isbn"] in BookInstance.objects.all():
         return Response({"status": "error", "message": "Book already exists"}, status=status.HTTP_200_OK)
 
-    BookInstance.objects.create_book(request.POST["book_title"], request.POST["book_author"], request.POST["book_isbn"], request.POST["book_pub_date"], request.POST["book_cover"])
+    BookInstance.objects.create_book(request.POST["book_title"], request.POST["book_author"], request.POST["book_genre"], request.POST["book_description"], request.POST["book_isbn"], request.POST["book_pub_date"], request.POST["book_cover"])
 
     return Response({"status": "ok", "message": "Book added to system"}, status=status.HTTP_200_OK)
 
@@ -264,7 +266,10 @@ def search_book(request):
     book_list (list):
         book_title (str)
         book_author (str)
+        book_genre (str)
+        book_description (str)
         book_isbn (str)
+        book_cover (str)
         book_pub_date (datetime)
     """
     API_ENDPOINT = "https://www.googleapis.com/books/v1/volumes"
@@ -276,6 +281,14 @@ def search_book(request):
         book = {}
         book["book_title"] = match["volumeInfo"]["title"]
         book["book_author"] = match["volumeInfo"]["authors"][0]
+        book["book_description"] = ""
+        book["book_genre"] = ""
+        # Sometimes these fields are missing
+        try:
+            book["book_description"] = match["volumeInfo"]["description"]
+            book["book_genre"] = ",".join(match["volumeInfo"]["categories"])
+        except:
+            pass
         # Look for isbn
         # json doesnt guarantee list order so loop through the possibilities
         book["book_isbn"] = "0000000000"
