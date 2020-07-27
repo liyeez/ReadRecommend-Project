@@ -28,15 +28,16 @@ def data(request):
     book_title (str)
     book_cover (str)
     book_author (str)
-    book_pub_date (datetime)
     book_genre (str)
+    book_description (str)
+    book_pub_date (datetime)
     """
     try:
         book = Book.objects.get(id=request.GET["id"])
     except ObjectDoesNotExist:
         return Response({"status": "error", "message": "Book not found"}, status=status.HTTP_204_NO_CONTENT)
 
-    return Response({"status": "ok", "message": "Got book data", "book_title": book.title, "book_id": book.id, "book_cover": book.cover, "book_author": book.author, "book_pub_date": book.pub_date, "last_review_id": 3}, status=status.HTTP_200_OK)
+    return Response({"status": "ok", "message": "Got book data", "book_id": book.id, "book_title": book.title, "book_cover": book.cover, "book_author": book.author, "book_genre": book.genre, "book_description": book.description, "book_pub_date": book.pub_date, "last_review_id": 3}, status=status.HTTP_200_OK)
 
 
 @api_view(["GET"])
