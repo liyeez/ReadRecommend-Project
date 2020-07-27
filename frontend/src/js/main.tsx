@@ -94,30 +94,49 @@ let flag: boolean;
 const Main: React.FC<Props> = ({ userSignedIn }: Props) => {
   let cards: any;
   let col_row: any;
+  let collections : any = [];
 
   const [SearchForm, setSearchForm] = useState<SearchForm>({
     title: "",
   });
 
   const [open, setOpen] = useState(false);
-  const handleClickOpen = () => {
+  const handleClickOpen = (book_id) => {
+
     setOpen(true);
   };
 
   const handleClose = () => {
     setOpen(false);
   };
+  
 
-  function addBook(id) {
-    var data = addLib(id, function (data) {
-      if (data != null) {
-        console.log(data);
-        console.log("added to lib!!");
-      } 
-    });
+  function getCollections(){
+      $.ajax({
+            async: false,
+            url: "http://localhost:8000/api/user/my_profile",
+            method: "GET",
+            data: {
+                auth: token,
+            },
+            success: function (data) {
+                if (data != null) {
+                    if (data.message == "Got current user profile data") {
+                        collections = data.collection_list;
+                    }else{
+                        alert(data.message);
+                    }
+                }
+            },
+            error: function (error) {
+                console.log("Server error!");
+            },
+        });
   }
 
-  function addLib(id, callback) {
+
+
+  function addLib(id) {
     console.log(id);
     $.ajax({
       async: false,
@@ -130,14 +149,15 @@ const Main: React.FC<Props> = ({ userSignedIn }: Props) => {
       success: function (data) {
         console.log(data);
         if (data.message == "Book added to library") {
-          callback(data);
+         
+          alert("Book Successfully added to library");
         } else {
-          callback(null);
+          alert(data.message);
         }
       },
       error: function () {
         console.log("server error!");
-        callback(null);
+       
       },
     });
   }
@@ -347,23 +367,23 @@ const Main: React.FC<Props> = ({ userSignedIn }: Props) => {
                         size="small"
                         color="primary"
                         endIcon={<AddIcon />}
-                        onClick={() => addBook(card.book_id)}
+                        onClick={() => addLib(card.book_id)}
                       >
                         {" "}
                         Add to Libary{" "}
                       </Button>
                     ) : null}
-                    {userSignedIn ? (
+                    {/*userSignedIn ? (
                       <Button
                         size="small"
                         color="primary"
                         endIcon={<AddIcon />}
-                        onClick={() => handleClickOpen()}
+                        onClick={() => handleClickOpen(card.book_id)}
                       >
                         {" "}
                         Add to Collection{" "}
                       </Button>
-                    ) : null}
+                    ) : null*/}
 
                     <Dialog
                       open={open}

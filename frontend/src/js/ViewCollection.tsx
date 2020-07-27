@@ -74,11 +74,16 @@ function viewBook(data) {
 const ViewCollection: React.FC<Props> = ({}) => {
   const classes = Style();
 
-  let book_list: any;
+  let book_list: any = [];
   let collection: any;
   let str = window.location.href.split("?")[1];
-  str = str.split("=")[1];
-  console.log("To find: " + str);
+  //if(str != null && str != ''){
+    str = str.split("=")[1];
+    console.log("To find: " + str);
+  //}else{
+    //window.location.href = "/";
+  //}  
+  
 
   // Retrieves collection data from the back-end/database.
   function request() {

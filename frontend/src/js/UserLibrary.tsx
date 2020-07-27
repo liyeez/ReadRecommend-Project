@@ -150,6 +150,7 @@ export default function UserLibrary() {
             method: "GET",
             success: function (data) {
                 if (data != null) {
+                    console.log(data.is_read);
                     callback(data);
                 } else {
                     callback(null);
@@ -180,6 +181,7 @@ export default function UserLibrary() {
             method: "POST",
             success: function (data) {
                 if (data != null) {
+                    console.log(data.message);
                     callback(data);
                 } else {
                     callback(null);

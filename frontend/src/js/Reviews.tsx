@@ -55,6 +55,7 @@ export default function Reviews(props) {
   let {book} = props;
   let read = false;
   let currentUserID: any;
+  let reviewFlag = false;
 
   const token = CookieService.get("access_token");
   const [openReview, setOpenReview] = useState(false);
@@ -62,17 +63,24 @@ export default function Reviews(props) {
   const [newRating, setRating] = useState(2);
   const [hover, setHover] = React.useState(-1);
 
-  const handleClickOpen = () => {
-    let flag = false;
-    for (var rev of reviews) {
-        if(parseInt(rev.user) == currentUserID){
-            flag = true; //just to prevent user from writing >1 review
+  function isReviewed(){
+      getReviews();
+      for (var rev of reviews) {
+        console.log(rev.user + " " +currentUserID);
+        if(rev.user == currentUserID){
+
+            reviewFlag = true; //just to prevent user from writing >1 review
         }
-    }
-    if(!flag){
+      } 
+  }
+  
+  const handleClickOpen = () => {
+    readFlag();
+    console.log("reviewFlag & read: " + reviewFlag + read);
+    if(!reviewFlag && read){ // if the user not commented and has read book
       setOpenReview(true);
     }else{
-      alert("You have already reviewed this book!");
+      alert("Please mark the book as read in your library before reviewing!");  
     }
   }
   
@@ -99,14 +107,11 @@ export default function Reviews(props) {
       }
     });
   }
-  //fix after jiayi free
+
   function readFlag(){
-    console.log("checking if user read it, book_id: " + book.book_id);
-    
     var res = isRead(function (res) {
       if (res != null && res.message == "Success") {
-        console.log(res);
-        res = true;
+        read = res.is_read;
       } 
     });
   }
@@ -198,9 +203,35 @@ export default function Reviews(props) {
     });
   }
 
+  function removeReview(callback) {
+    $.ajax({
+      async: false,
+      url: "http://localhost:8000/api/reviews/remove_review",
+      data: {
+        auth: token,
+        id: book.book_id,
+      },
+      method: "POST",
+      success: function (data) {
+        if (data != null && data.message == "review successfully deleted") {
+          console.log("removeReview: " + data.message);
+          alert("You've removed your review!");
+          window.location.reload();
+        }else{
+          alert(data.message);
+        }
+      },
+      error: function () {
+        console.log("server error in removeReview!");
+      },
+    });
+  }
+
   const classes = useStyles();
-  getReviews();
-  readFlag();
+  
+  isReviewed(); //check is user commented alrdy (get all reviews as well)
+  readFlag(); //check if user read the book in library
+  console.log("checking reviewed; "+reviewFlag);
   return (
     <React.Fragment>
       <Typography component="h2" variant="h6" color="primary" gutterBottom>
@@ -209,6 +240,7 @@ export default function Reviews(props) {
       <Table size="small">
         <TableHead>
           <TableRow>
+            <TableCell>Reader</TableCell>
             <TableCell>Comments</TableCell>
             <TableCell align="right">Rating</TableCell>
           </TableRow>
@@ -216,6 +248,7 @@ export default function Reviews(props) {
         <TableBody>
           {reviews.map((row) => (
             <TableRow key={row.id}>
+              <TableCell>{row.user}</TableCell>
               <TableCell>{row.review}</TableCell>
               <TableCell align="right">
                    
@@ -232,12 +265,15 @@ export default function Reviews(props) {
         </TableBody>
       </Table>
       <div className={classes.seeMore}>
-        <Button color="primary" href="#" onClick={preventDefault}>
-          More reviews...
-        </Button>
-        <Button color="primary" href="#" onClick={handleClickOpen}>
-          Write a review
-        </Button>
+        
+        { reviewFlag
+          ?( <Button color="primary" href="#" onClick={removeReview}>
+              Remove your review
+            </Button>)
+          :( <Button color="primary" href="#" onClick={handleClickOpen}>
+              Write a review
+            </Button>)
+        }  
 
         <Dialog
           open={openReview}

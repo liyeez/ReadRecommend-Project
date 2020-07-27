@@ -13,6 +13,7 @@ import DateFnsUtils from '@date-io/date-fns';
 import Collections from "./Collections";
 
 // Material UI
+
 import AddIcon from "@material-ui/icons/Add";
 import Alert from "@material-ui/lab/Alert";
 import Button from "@material-ui/core/Button";
@@ -39,6 +40,31 @@ import { useTheme } from "@material-ui/core/styles";
 let userGoals : any[] = [];
 let mostRecentGoal : any; 
 let userGoalData : any[] = [];
+let active = false;
+const token = CookieService.get("access_token");
+
+function goalMet(){
+    $.ajax({
+        async: false,
+        url: "http://localhost:8000/api/user/is_goal_met",
+        data: {
+            auth: token,
+        },
+        method: "GET",
+        success: function (data) {
+            if (data != null) {
+                console.log("goalMet is called: "+data.message);
+                if(data.message == "Goal retrieved" && !data.is_met){
+                    active = true; //check if user can create new goal
+                    console.log("active is set as true");
+                }
+            }
+        },
+        error: function () {
+            console.log("is goal met server error!");
+        }
+    })
+}
 
 export default function UserProfile() {
     const [userProfileData, setUserProfileData] = useState({
@@ -63,7 +89,7 @@ export default function UserProfile() {
         const { name, value } = e.target;
         setNewTitle(value);
     };
-
+  
     // Adds collection title on both front-end and back-end.
     function addCollectionTitle(e) {
         // Prevents React from doing stupid things.
@@ -144,7 +170,7 @@ export default function UserProfile() {
     const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
     let Name: string = "";
-    const token = CookieService.get("access_token");
+    
     function request() {
         var result = retrieveCollections(function (result) {
             // Updates the user's collections with the results returned.
@@ -157,7 +183,8 @@ export default function UserProfile() {
             }
         });
     }
-
+    
+    goalMet();
     request();
     return (
         <React.Fragment>
@@ -185,11 +212,13 @@ export default function UserProfile() {
                             </Paper>
                         </Grid>
                         {/* Chart */}
+                        
                         <Grid item xs={12} md={8} lg={9}>
                             <Paper className={fixedHeightPaper}>
                                 <Chart />
                             </Paper>
                         </Grid>
+                        
                     </Grid>
                 </Container>
 
@@ -289,6 +318,9 @@ function Chart() {
     console.log("in chart");
     // Dynamically create user goals data for graph rendering.
     userGoals.forEach(function (userGoal) {
+        if(userGoal.books_read < 0){
+            userGoal.books_read = 0; // need to find out why backend can give a negative value??
+        }
         userGoalData.push(createData(userGoal.date_end, userGoal.books_read));
     });
 
@@ -314,7 +346,7 @@ function Chart() {
 					type="monotone"
 					dataKey="amount"
 					stroke={theme.palette.primary.main}
-					dot={false}
+					dot={true}
 				/>
 				</LineChart>
 			</ResponsiveContainer>
@@ -324,7 +356,7 @@ function Chart() {
 
 function Goal() {
     const token = CookieService.get("access_token");
-
+    
 	// Dialog for setting a new reading goal.
 	const [openGoal, setOpenGoal] = useState(false);
 	const [newAmount, setNewAmount] = useState("");
@@ -376,13 +408,14 @@ function Goal() {
             method: "GET",
             success: function (data) {
                 if (data != null) {
+                    console.log("read books "+data.read);
                     callback(data);
                 } else {
                     callback(null);
                 }
             },
             error: function () {
-                console.log('server error!');
+                console.log('user goals server error!');
                 callback(null);
             }
         })
@@ -396,12 +429,13 @@ function Goal() {
         if (dateParts != null && dateParts.length == 3) {
             formattedDateString = dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0];
         }
-
+        console.log("in request goal callback");
         var data = setNewGoal(formattedDateString, function (data) {
             if (data != null) {
                 if (data.message === "Goal created") {
                     console.log(data);
                     console.log("gOaL cReAtEd");
+                    window.location.href = "/user/profile";
                 }
             }
         })
@@ -419,20 +453,50 @@ function Goal() {
             method: "POST",
             success: function (data) {
                 if (data != null) {
+                    console.log(data.message);
                     callback(data);
                 } else {
                     callback(null);
                 }
             },
             error: function () {
-                console.log("server error!");
+                console.log("set goal server error!");
                 callback(null);
+            }
+        })
+    }
+
+    function handleEndGoal(){
+        $.ajax({
+            async: false,
+            url: "http://localhost:8000/api/user/delete_goal",
+            data: {
+                auth: token,
+            },
+            method: "POST",
+            success: function (data) {
+                if (data != null) {
+                    console.log(data.message);
+                    if(data.message == "Goal deleted"){
+                        alert("Current Goal ended!");
+                        active = false;
+                        window.location.reload();
+                    }
+                }else{
+                    alert("End Goal failed!");
+                }
+            },
+            error: function () {
+                console.log("delete goal server error!");
+                alert("End Goal failed!");
             }
         })
     }
 
     const classes = useStyles();
     requestUserGoals();
+    goalMet();
+    console.log("activeL " + active);
     console.log(userGoals);
     if (userGoals.length >= 1) {
         mostRecentGoal = userGoals[userGoals.length - 1];
@@ -453,7 +517,14 @@ function Goal() {
 				
 			</Container>
 			<Container className={classes.container}>
-				<Link color="primary" onClick={handleClickOpenGoal}>Set Goal</Link>
+                { active 
+                     ?(<Button color="primary" onClick={handleEndGoal} variant="contained">
+                        End Current Goal
+                      </Button>)
+                     :(<Button color="primary" onClick={handleClickOpenGoal} variant="contained">Set Goal</Button>)
+
+                }
+				
 
                 {/* Dialog For Goal Setting */}
 				<Dialog open={openGoal} onClose={handleCloseGoal} aria-labelledby="form-dialog-title">
@@ -482,6 +553,7 @@ function Goal() {
                         <Button color="primary" onClick={handleCreateGoal} variant="contained">
                             Add Goal
                         </Button>
+                        
                     </DialogActions>
 				</Dialog>
 			</Container>

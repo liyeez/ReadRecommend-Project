@@ -6,20 +6,18 @@ import * as $ from "jquery";
 
 // Material UI
 import CollectionsBookmarkIcon from '@material-ui/icons/CollectionsBookmark';
-import Drawer from '@material-ui/core/Drawer';
-import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
 import LocalLibraryIcon from '@material-ui/icons/LocalLibrary';
 import HomeIcon from '@material-ui/icons/Home';
 import PeopleIcon from '@material-ui/icons/People';
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
-
 import CookieService from "../services/CookieService";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
 
 const drawerWidth = 240;
 
@@ -36,45 +34,37 @@ const Style = makeStyles((theme) => ({
     },
 }));
 
-
+// 
 const Sidebar: React.FC = ({}) => {
-    const classes = Style();
+    const classes = Style();    
+    const theme = useTheme();
     return (
-        <div>
-            <Drawer
-                className={classes.drawer}
-                variant="permanent"
-                classes={{
-                  paper: classes.drawerPaper,
-                }}
-            >
-            <Toolbar />
-                <div className={classes.drawerContainer}>
-                    <List>
-                        <ListItem button key={'Home Page'} component={Router.Link} to="/">
-                        <ListItemIcon><HomeIcon /></ListItemIcon>
-                        <ListItemText primary={'Home Page'} />
-                        </ListItem>
+        
+        <div className={classes.drawerContainer}>
+            <List>
+                <ListItem button key={'Home Page'} component={Router.Link} to="/">
+                <ListItemIcon><HomeIcon /></ListItemIcon>
+                <ListItemText primary={'Home Page'} />
+                </ListItem>
 
-                        <ListItem button key={'My Library'} component={Router.Link} to="/user/userlibrary">
-                        <ListItemIcon><LocalLibraryIcon /></ListItemIcon>
-                        <ListItemText primary={'My Library'} />
-                        </ListItem>
+                <ListItem button key={'My Library'} component={Router.Link} to="/user/userlibrary">
+                <ListItemIcon><LocalLibraryIcon /></ListItemIcon>
+                <ListItemText primary={'My Library'} />
+                </ListItem>
 
-                        <ListItem button key={'Find Users'} component={Router.Link} to="/user/findusers">
-                        <ListItemIcon><PeopleIcon /></ListItemIcon>
-                        <ListItemText primary={'Find Users'} />
-                        </ListItem>
+                <ListItem button key={'Find Users'} component={Router.Link} to="/user/findusers">
+                <ListItemIcon><PeopleIcon /></ListItemIcon>
+                <ListItemText primary={'Find Users'} />
+                </ListItem>
 
-                        <ListItem button key={"My Profile"} component={Router.Link} to="/user/profile">
-                        <ListItemIcon><LibraryBooksIcon /></ListItemIcon>
-                        <ListItemText primary={'My Profile'} />
-                        </ListItem>
+                <ListItem button key={"My Profile"} component={Router.Link} to="/user/profile">
+                <ListItemIcon><LibraryBooksIcon /></ListItemIcon>
+                <ListItemText primary={'My Profile'} />
+                </ListItem>
 
-                    </List>
-                </div>
-            </Drawer>
+            </List>
         </div>
+            
     );
 }
 

@@ -71,7 +71,7 @@ interface Props {
 const AddTitles: React.FC<Props> = ({ userSignedIn }: Props) => {
   const classes = Style();
 
-  let book_list: any;
+  let book_list: any = [];
 
   let collectionId = window.location.href.split("?")[1];
   collectionId = collectionId.split("=")[1];
@@ -114,7 +114,8 @@ const AddTitles: React.FC<Props> = ({ userSignedIn }: Props) => {
       async: false,
       url: "http://localhost:8000/api/books/random",
       data: {
-        count: 3,
+        auth: token,
+        count: 12,
       },
       method: "GET",
       success: function (data) {
@@ -125,7 +126,7 @@ const AddTitles: React.FC<Props> = ({ userSignedIn }: Props) => {
         callback(null);
       },
       error: function () {
-        console.log("server error!");
+        console.log("random server error!");
         callback(null);
       },
     });
