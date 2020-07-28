@@ -75,29 +75,29 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function Slides(props) {
-  // Made ID fields so that the compiler shuts up.
-  var items = [
-    {
-      id: 1,
-      name: "Random Name #1",
-      description: "Probably the most random thing you have ever seen!",
-    },
-    {
-      id: 2,
-      name: "Random Name #2",
-      description: "Hello World!",
-    },
-  ];
-  // todo: multi slides Carousel? too mcuh work for sprint 1 ;-;
-  return (
-    <Carousel>
-      {items.map((item) => (
-        <Item key={item.id} item={item} />
-      ))}
-    </Carousel>
-  );
-}
+// function Slides(props) {
+//   // Made ID fields so that the compiler shuts up.
+//   var items = [
+//     {
+//       id: 1,
+//       name: "Random Name #1",
+//       description: "Probably the most random thing you have ever seen!",
+//     },
+//     {
+//       id: 2,
+//       name: "Random Name #2",
+//       description: "Hello World!",
+//     },
+//   ];
+ 
+//   return (
+//     <Carousel>
+//       {items.map((item) => (
+//         <Item key={item.id} item={item} />
+//       ))}
+//     </Carousel>
+//   );
+// }
 
 function Item(props) {
   const classes = useStyles();
@@ -294,7 +294,7 @@ const BookDetails: React.FC<Props> = ({}) => {
               >
                 More Books like this:
               </Typography>
-              <Slides />
+              
             </Grid>
           </Grid>
         </Container>

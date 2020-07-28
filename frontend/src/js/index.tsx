@@ -23,6 +23,7 @@ import AddTitles from "./AddTitles";
 import OtherUserProfile from "./OtherUserProfile";
 import FindUser from "./FindUser";
 import Search from "./Search";
+import ExtSearch from "./ExternalSearch";
 
 
 let signedInStatus = true;
@@ -78,6 +79,9 @@ const Routing: React.FC = ({}) => {
                     </Router.Route>
                     <Router.Route path="/search">
                         <Search />
+                    </Router.Route>
+                    <Router.Route path="/extsearch">
+                        <ExtSearch />
                     </Router.Route>
                     <Router.Route path="/">
                         <Main userSignedIn={signedInStatus}/>

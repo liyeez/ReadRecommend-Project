@@ -243,12 +243,14 @@ def add_book(request):
     Returns:
 
     """
-    if request.POST["book_isbn"] in BookInstance.objects.all():
-        return Response({"status": "error", "message": "Book already exists"}, status=status.HTTP_200_OK)
+    try:
+        if request.POST["book_isbn"] in BookInstance.objects.all():
+            return Response({"status": "error", "message": "Book already exists"}, status=status.HTTP_200_OK)
 
-    book_instance = BookInstance.objects.create_book(request.POST["book_title"], request.POST["book_author"], request.POST["book_genre"], request.POST["book_description"], request.POST["book_isbn"], request.POST["book_pub_date"], request.POST["book_cover"])
-
-    return Response({"status": "ok", "message": "Book added to system", "book_id": book_instance.book.id}, status=status.HTTP_200_OK)
+        book_instance = BookInstance.objects.create_book(request.POST["book_title"], request.POST["book_author"], request.POST["book_genre"], request.POST["book_description"], request.POST["book_isbn"], request.POST["book_pub_date"], request.POST["book_cover"])
+        return Response({"status": "ok", "message": "Book added to system", "book_id": book_instance.book.id}, status=status.HTTP_200_OK)
+    except:
+        return Response({"status": "error", "message": "Fail to create book in system", "book_id": book_instance.book.id}, status=status.HTTP_200_OK)
 
     
 @api_view(["GET"])

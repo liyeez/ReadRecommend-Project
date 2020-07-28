@@ -1,7 +1,8 @@
+
 import $ = require("jquery");
 import React, { ChangeEvent, useState } from "react";
 import * as Router from "react-router-dom";
-
+import CookieService from "../services/CookieService";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import Card from "@material-ui/core/Card";
@@ -21,6 +22,7 @@ import Typography from "@material-ui/core/Typography";
 import LanguageIcon from '@material-ui/icons/Language';
 import { makeStyles } from "@material-ui/core/styles";
 
+const token = CookieService.get("access_token");
 const Style = makeStyles((theme) => ({
   heroContent: {
     backgroundColor: theme.palette.background.paper,
@@ -57,7 +59,12 @@ const Style = makeStyles((theme) => ({
     alignItems: "center",
     width: 400,
   },
+  button: {
+    paddingTop: '10%', 
+    
+  },
 }));
+
 
 interface Props {}
 
@@ -66,11 +73,11 @@ interface SearchForm {
 }
 
 const Search: React.FC<Props> = ({}) => {
-  let books: Array<any> = [];
-  let users: Array<any> = [];
+  let extBooks: Array<any> = [];
 
+  const classes = Style();
   const [SearchForm, setSearchForm] = useState<SearchForm>({
-    title: "",
+      title: "",
   });
 
   const onTextboxChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -84,20 +91,68 @@ const Search: React.FC<Props> = ({}) => {
   };
 
   function request() {
-    var data = onSearch(function (data) {
-      console.log(data);
-      if (data.message == "Got matching books") {
-        books = data.book_list;
-      } else if (data.message == "Got users") {
-        users = data.user_list;
-      } else {
-        alert("No Matched Results!");
-        window.location.href = "/";
-      }
+
+    var res = extSearch(function (res) {
+      console.log(res);
+      if (res!= null && res.message == "Success") {
+        extBooks = res.results;
+      } 
     });
   }
 
-  function newSearch(event) {
+  function extSearch(callback) {
+    $.ajax({
+      async: false,
+      url: "http://localhost:8000/api/books/search_book",
+      data: {
+        auth: token,
+        search: str,
+      },
+      method: "GET",
+      success: function (data) {
+        if (data != null) {
+          console.log(data);
+          callback(data);
+        }
+        callback(null);
+      },
+      error: function () {
+        console.log("external search server error!");
+        callback(null);
+      },
+    });
+  }
+
+  function storeBook(book) {
+    console.log("In storeBook");
+    console.log(book);
+    $.ajax({
+      async: false,
+      url: "http://localhost:8000/api/books/add_book",
+      data: {
+        auth: token,
+        book_title: book.book_title,
+        book_author: book.book_author,
+        book_genre: book.book_genre,
+        book_description: book.book_description,
+        book_isbn: book.book_isbn,
+        book_cover: book.cover,
+        book_pub_date: book.book_pub_date,
+      },
+      method: "POST",
+      success: function (data) {
+        if (data != null) {
+            console.log("added book to library");
+            window.location.href = "/bookdata/metadata?id=" + data.book_id;
+        }
+      },
+      error: function () {
+        console.log("storeBook server error!");
+      },
+    });
+  }
+
+  function localSearch(event) {
     event.preventDefault();
     window.location.href = "/search?title=" + SearchForm.title;
   }
@@ -107,51 +162,12 @@ const Search: React.FC<Props> = ({}) => {
     window.location.href = "/extsearch?title=" + SearchForm.title;
   }
 
-  function onSearch(callback) {
-    $.ajax({
-      async: false,
-      url: api_call,
-      data: {
-        search: str,
-      },
-      method: "GET",
-      success: function (data) {
-        console.log(data);
-        if (data != null) {
-          callback(data);
-        }
-        callback(null);
-      },
-      error: function () {
-        console.log("server error!");
-        callback(null);
-      },
-    });
-  }
-
-  function viewBook(data) {
-    window.location.href = "/bookdata/metadata?id=" + data;
-  }
-
-  function viewUser(data) {
-    window.location.href = "/user/otherusers?userid=" + data;
-  }
-
-  const classes = Style();
   let str = window.location.href.split("?")[1];
   let type = str.split("=")[0];
   str = str.split("=")[1];
-  console.log("To find: " + str + "of type: " + type);
+  console.log("To find ext: " + str + " of type: " + type);
 
-  let api_call: string;
-  if (type == "title") {
-    api_call = "http://localhost:8000/api/books/search";
-  } else if (type == "finduser") {
-    api_call = "http://localhost:8000/api/user/find_users";
-  }
-
-  onSearch(request);
-
+  request();
   return (
     <React.Fragment>
       <CssBaseline />
@@ -167,7 +183,7 @@ const Search: React.FC<Props> = ({}) => {
               color="textPrimary"
               gutterBottom
             >
-              Local Search Results
+              External Search Results for
             </Typography>
             <Typography
               component="h1"
@@ -194,7 +210,7 @@ const Search: React.FC<Props> = ({}) => {
                       type="submit"
                       className={classes.iconButton}
                       aria-label="search"
-                      onClick={newSearch}
+                      onClick={localSearch}
                     >
                       <SearchIcon />
                     </IconButton>
@@ -212,69 +228,38 @@ const Search: React.FC<Props> = ({}) => {
             </div>
           </Container>
         </div>
+       
         <Container className={classes.cardGrid} maxWidth="md">
-          <Grid container spacing={4}>
-            {books.map((card) => (
-              <Grid item key={card} xs={12} sm={6} md={4}>
-                <Card className={classes.card}>
-                  <CardMedia
-                    className={classes.cardMedia}
-                    image="https://source.unsplash.com/random?book"
-                    title="Image title"
-                  />
-                  <CardContent className={classes.cardContent}>
-                    <Typography gutterBottom variant="h5" component="h2">
-                      {card.book_title}
-                    </Typography>
-                    <Typography>By Author: {card.book_author}</Typography>
-                    <Typography>Published on: {card.book_pub_date}</Typography>
-                  </CardContent>
-                  <CardActions>
-                    <Button
-                      size="small"
-                      color="primary"
-                      onClick={() => viewBook(card.book_id)}
-                    >
-                      View
-                    </Button>
-                  </CardActions>
-                </Card>
-              </Grid>
-            ))}
-
-            {users.map((card) => (
-              <Grid item key={card} xs={12} sm={6} md={4}>
-                <Card className={classes.card}>
-                  <CardMedia
-                    className={classes.cardMedia}
-                    image="https://source.unsplash.com/random?book"
-                    title="Image title"
-                  />
-                  <CardContent className={classes.cardContent}>
-                    <Typography gutterBottom variant="h5" component="h2">
-                      {card.first_name + " " + card.last_name}
-                    </Typography>
-                  </CardContent>
-                  <CardActions>
-                    <Button
-                      size="small"
-                      color="primary"
-                      onClick={() => viewUser(card.user_id)}
-                    >
-                      View
-                    </Button>
-                  </CardActions>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
-
-          {/* TBD...
-                        <IconButton type="submit" component={Router.Link} to="/search" className={classes.iconButton} aria-label="search">
-                            <SearchIcon/>
-                            More Results....
-                        </IconButton>
-                    */}
+            <Grid container spacing={4}>
+                {extBooks.map((card) => (
+                    <Grid item key={card} xs={12} sm={6} md={4}>
+                        <Card className={classes.card}>
+                        <CardMedia
+                          className={classes.cardMedia}
+                          image="https://source.unsplash.com/random?book"
+                          title="Image title"
+                        />
+                        
+                        <CardContent className={classes.cardContent}>
+                          <Typography gutterBottom variant="h5" component="h2">
+                            {card.book_title}
+                          </Typography>
+                          <Typography>By Author: {card.book_author}</Typography>
+                          <Typography>Published on: {card.book_pub_date}</Typography>
+                        </CardContent>
+                        <CardActions>
+                            <Button
+                              size="small"
+                              color="primary"
+                              onClick={() => storeBook(card)}
+                            >
+                              View
+                            </Button>
+                        </CardActions>
+                        </Card>
+                    </Grid>
+                ))}
+            </Grid>
         </Container>
       </main>
     </React.Fragment>

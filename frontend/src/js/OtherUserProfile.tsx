@@ -53,6 +53,7 @@ const useStyles = makeStyles((theme) => ({
       paddingLeft: theme.spacing(16),
    
   },
+  
 }))
 
 interface userForm {
@@ -98,6 +99,7 @@ export default function Profile() {
             method: "GET",
             success: function (data) {
                 if(data!= null) {
+                    console.log(data);
                     callback(data);                
                 }
                 callback(null);

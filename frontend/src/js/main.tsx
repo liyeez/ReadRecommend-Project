@@ -32,6 +32,7 @@ import IconButton from "@material-ui/core/IconButton";
 import InputBase from "@material-ui/core/InputBase";
 import Link from "@material-ui/core/Link";
 import SearchIcon from "@material-ui/icons/Search";
+import LanguageIcon from '@material-ui/icons/Language';
 import TextField from "@material-ui/core/TextField";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
@@ -172,8 +173,12 @@ const Main: React.FC<Props> = ({ userSignedIn }: Props) => {
     });
   };
 
-  function preventDefault(event) {
+  function searchLocal(event) {
     window.location.href = "/search?title=" + SearchForm.title;
+  }
+
+  function searchWeb(event) {
+    window.location.href = "/extsearch?title=" + SearchForm.title;
   }
 
   function request() {
@@ -324,11 +329,20 @@ const Main: React.FC<Props> = ({ userSignedIn }: Props) => {
                     />
                     <IconButton
                       type="submit"
-                      onClick={preventDefault}
+                      onClick={searchLocal}
                       className={classes.iconButton}
                       aria-label="search"
                     >
                       <SearchIcon />
+                    </IconButton>
+
+                    <IconButton
+                      type="submit"
+                      onClick={searchWeb}
+                      className={classes.iconButton}
+                      aria-label="search"
+                    >
+                      <LanguageIcon />
                     </IconButton>
                   </Paper>
                 </Grid>

@@ -49,7 +49,7 @@ module.exports = {
         ]
     },
     resolve: {
-        extensions: [".tsx", ".ts", ".js"]
+        extensions: [".tsx", ".ts", ".js",'.json']
     },
     // fs error: https://github.com/webpack-contrib/css-loader/issues/447
     node: {
