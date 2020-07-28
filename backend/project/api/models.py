@@ -10,8 +10,8 @@ MAX_STR_LEN = 100
 
 
 class BookManager(models.Manager):
-    def create_book(self, title, author, pub_date, cover):
-        book = self.get_or_create(title=title, author=author, defaults={"pub_date": pub_date, "cover": cover})
+    def create_book(self, title, author, genre, description, pub_date, cover):
+        book = self.get_or_create(title=title, author=author, defaults={"pub_date": pub_date, "cover": cover, "genre": genre, "description": description})
         return book
 
 
@@ -20,21 +20,23 @@ class Book(models.Model):
     cover = models.CharField(max_length=300000)
     title = models.CharField(max_length=100)
     author = models.CharField(max_length=100)
+    genre = models.CharField(max_length=100)
+    description = models.CharField(max_length=1024)
     pub_date = models.DateField()
     objects = BookManager()
 
     # since this review and book instance are compositions of Book, we have these as Model methods rather than table methods
 
     def create_instance(self, isbn, pub_date, cover):
-        return BookInstance.objects.create_book(self.title, self.author, isbn, pub_date, cover)
+        return BookInstance.objects.create_book(self.title, self.author, self.genre, self.description, isbn, pub_date, cover)
 
     def create_review(self, user, score, text):
         return Review.objects.create_review(self, user, score, text)
 
 
 class BookInstanceManager(models.Manager):
-    def create_book(self, title, author, isbn, pub_date, cover):
-        book = Book.objects.create_book(title=title, author=author, pub_date=pub_date, cover=cover)
+    def create_book(self, title, author, genre, description, isbn, pub_date, cover):
+        book = Book.objects.create_book(title=title, author=author, genre=genre, description=description, pub_date=pub_date, cover=cover)
         bookInstance = self.create(book=book[0], title=title, author=author,
                                    isbn=isbn, pub_date=pub_date, cover=cover)
         return bookInstance
