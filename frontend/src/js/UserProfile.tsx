@@ -30,7 +30,7 @@ import Link from "@material-ui/core/Link";
 import Paper from "@material-ui/core/Paper";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
-import {LineChart, Line, XAxis, YAxis, Label, ResponsiveContainer,} from "recharts";
+import {LineChart, Line, XAxis, YAxis, Label, ResponsiveContainer, Tooltip, Legend} from "recharts";
 
 import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
@@ -201,7 +201,7 @@ export default function UserProfile() {
                             type="submit" variant="outlined" color="primary" startIcon={<AddIcon />}
                             onClick={handleClickOpen}
                         >
-                            Create a Collection
+                            Create
                         </Button>
                     </Typography>
 
@@ -277,45 +277,40 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-// Generate Sales Data
-function createData(time, amount) {
-	return { time, amount };
+// Generate reading data for user goals graph.
+function createData(goalDate, amountRead, goalToRead) {
+	return { goalDate, amountRead, goalToRead };
 }
 
 function Chart() {
     const theme = useTheme();
     const [userGoalData, setUserGoalData] = useState<any[]>([]);
     
-    console.log("in chart");
     // Dynamically create user goals data for graph rendering.
     userGoals.forEach(function (userGoal) {
-        userGoalData.push(createData(userGoal.date_end, userGoal.books_read));
+        userGoalData.push(createData(userGoal.date_end, userGoal.books_read, userGoal.goal));
     });
-
-    console.log(userGoalData);
 
 	return (
 		<React.Fragment>
 			<ResponsiveContainer>
-				<LineChart
-					data={userGoalData} margin={{ top: 16, right: 16, bottom: 0, left: 24,}}
-				>
-				<XAxis dataKey="time" stroke={theme.palette.text.secondary} />
-				<YAxis stroke={theme.palette.text.secondary}>
-					<Label
-						angle={270}
-						position="left"
-						style={{ textAnchor: "middle", fill: theme.palette.text.primary }}
-					>
-						Books Read
-					</Label>
-				</YAxis>
-				<Line
-					type="monotone"
-					dataKey="amount"
-					stroke={theme.palette.primary.main}
-					dot={false}
-				/>
+				<LineChart data={userGoalData} margin={{ top: 16, right: 16, bottom: 36, left: 24,}}>
+                    <XAxis dataKey="goalDate" stroke={theme.palette.text.secondary}>
+                        <Label position="bottom" style={{ textAnchor: "middle", fill: theme.palette.text.primary }}>
+                            Goal Deadlines
+                        </Label>
+                    </XAxis>
+                    <YAxis stroke={theme.palette.text.secondary}>
+                        <Label angle={270} position="left" style={{ textAnchor: "middle", fill: theme.palette.text.primary }}>
+                            Books
+                        </Label>
+                    </YAxis>
+                    <Tooltip />
+
+                    <Line name="Books To Read" type="monotone" dataKey="goalToRead" stroke="#82ca9d"/>
+                    <Line name="Books Read" type="monotone" dataKey="amountRead" stroke={theme.palette.primary.main}/>
+
+                    <Legend verticalAlign="top" align="right"></Legend>
 				</LineChart>
 			</ResponsiveContainer>
 		</React.Fragment>
@@ -442,12 +437,15 @@ function Goal() {
 		<React.Fragment>
 			<Container className={classes.container}>
 				<Typography component="h4" variant="h4" color="textPrimary">
-					My Goals
+					Reading Goal
 				</Typography>
 				<Divider />
                 {/*Display user's current reading goal if any.*/}
                 {(typeof mostRecentGoal !== "undefined") ? 
-                    (<Typography>Read {mostRecentGoal.goal} books by {mostRecentGoal.date_end} 🌱</Typography>) : 
+                    (<div>
+                        <Typography component="h6" variant="h6"># Books To Read: {mostRecentGoal.goal}</Typography> 
+                        <Typography component="h6" variant="h6">Deadline: {mostRecentGoal.date_end}</Typography>
+                    </div>) : 
                     (<Typography component="p">You currently don't have any reading goals.</Typography>)
                 }
 				
@@ -488,5 +486,3 @@ function Goal() {
 		</React.Fragment>
 	);
 }
-
-//<FeaturedPost book={book} />
