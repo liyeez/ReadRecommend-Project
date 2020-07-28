@@ -134,7 +134,14 @@ def get_profile(request):
         else:
             library_collection_id = collection.collection_id
 
-    return Response({"status": "ok", "message": "Got user profile data", "first_name": first_name, "last_name": last_name, "library_collection_id": library_collection_id, "collection_list": collection_list}, status=status.HTTP_200_OK)
+    goals = request.user.goal_set.all().order_by('date_start')
+    goals_list = []
+    for goal in goals:
+        goals_list.append({"date_start": goal.date_start, "date_end": goal.date_end, 
+            "goal": goal.count_goal, "books_read": goal.book_count, "complete": goal.complete, 
+            "date_complete": goal.date_complete})
+
+    return Response({"status": "ok", "message": "Got user profile data", "first_name": first_name, "last_name": last_name, "library_collection_id": library_collection_id, "collection_list": collection_list, "goals_list": goals_list}, status=status.HTTP_200_OK)
 
 
 @api_view(["GET"])
@@ -172,7 +179,13 @@ def my_profile(request):
         else:
             library_collection_id = collection.collection_id
 
-    return Response({"status": "ok", "message": "Got current user profile data", "first_name": first_name, "last_name": last_name, "library_collection_id": library_collection_id, "collection_list": collection_list}, status=status.HTTP_200_OK)
+    goals = request.user.goal_set.all().order_by('date_start')
+    goals_list = []
+    for goal in goals:
+        goals_list.append({"date_start": goal.date_start, "date_end": goal.date_end, 
+            "goal": goal.count_goal, "books_read": goal.book_count, "complete": goal.complete, 
+            "date_complete": goal.date_complete})
+    return Response({"status": "ok", "message": "Got current user profile data", "first_name": first_name, "last_name": last_name, "library_collection_id": library_collection_id, "collection_list": collection_list, "goals_list": goals_list}, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
 @auth_validator

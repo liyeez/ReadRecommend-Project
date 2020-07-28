@@ -13,7 +13,6 @@ import DateFnsUtils from '@date-io/date-fns';
 import Collections from "./Collections";
 
 // Material UI
-
 import AddIcon from "@material-ui/icons/Add";
 import Alert from "@material-ui/lab/Alert";
 import Button from "@material-ui/core/Button";
@@ -31,7 +30,7 @@ import Link from "@material-ui/core/Link";
 import Paper from "@material-ui/core/Paper";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
-import {LineChart, Line, XAxis, YAxis, Label, ResponsiveContainer,} from "recharts";
+import {LineChart, Line, XAxis, YAxis, Label, ResponsiveContainer, Tooltip, Legend} from "recharts";
 
 import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
@@ -40,31 +39,6 @@ import { useTheme } from "@material-ui/core/styles";
 let userGoals : any[] = [];
 let mostRecentGoal : any; 
 let userGoalData : any[] = [];
-let active = false;
-const token = CookieService.get("access_token");
-
-function goalMet(){
-    $.ajax({
-        async: false,
-        url: "http://localhost:8000/api/user/is_goal_met",
-        data: {
-            auth: token,
-        },
-        method: "GET",
-        success: function (data) {
-            if (data != null) {
-                console.log("goalMet is called: "+data.message);
-                if(data.message == "Goal retrieved" && !data.is_met){
-                    active = true; //check if user can create new goal
-                    console.log("active is set as true");
-                }
-            }
-        },
-        error: function () {
-            console.log("is goal met server error!");
-        }
-    })
-}
 
 export default function UserProfile() {
     const [userProfileData, setUserProfileData] = useState({
@@ -89,7 +63,7 @@ export default function UserProfile() {
         const { name, value } = e.target;
         setNewTitle(value);
     };
-  
+
     // Adds collection title on both front-end and back-end.
     function addCollectionTitle(e) {
         // Prevents React from doing stupid things.
@@ -170,7 +144,7 @@ export default function UserProfile() {
     const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
     let Name: string = "";
-    
+    const token = CookieService.get("access_token");
     function request() {
         var result = retrieveCollections(function (result) {
             // Updates the user's collections with the results returned.
@@ -183,8 +157,7 @@ export default function UserProfile() {
             }
         });
     }
-    
-    goalMet();
+
     request();
     return (
         <React.Fragment>
@@ -212,13 +185,11 @@ export default function UserProfile() {
                             </Paper>
                         </Grid>
                         {/* Chart */}
-                        
                         <Grid item xs={12} md={8} lg={9}>
                             <Paper className={fixedHeightPaper}>
                                 <Chart />
                             </Paper>
                         </Grid>
-                        
                     </Grid>
                 </Container>
 
@@ -230,7 +201,7 @@ export default function UserProfile() {
                             type="submit" variant="outlined" color="primary" startIcon={<AddIcon />}
                             onClick={handleClickOpen}
                         >
-                            Create a Collection
+                            Create
                         </Button>
                     </Typography>
 
@@ -279,113 +250,105 @@ export default function UserProfile() {
 }
 
 const useStyles = makeStyles((theme) => ({
-	container: {
-		paddingTop: theme.spacing(4),
-		paddingBottom: theme.spacing(4),
-		wrap: "nowrap",
-	},
-	heroContent: {
-		backgroundColor: theme.palette.background.paper,
-		padding: theme.spacing(8, 0, 6),
-	},
-	paper: {
-		padding: theme.spacing(2),
-		display: "flex",
-		overflow: "auto",
-		flexDirection: "column",
-	},
-	fixedHeight: {
-		height: 350,
-	},
-	depositContext: {
-		flex: 1,
-	},
-	cardGrid: {
-		paddingTop: theme.spacing(8),
-		paddingBottom: theme.spacing(8),
-	},
+    container: {
+        paddingTop: theme.spacing(4),
+        paddingBottom: theme.spacing(4),
+        wrap: "nowrap",
+    },
+    heroContent: {
+        backgroundColor: theme.palette.background.paper,
+        padding: theme.spacing(8, 0, 6),
+    },
+    paper: {
+        padding: theme.spacing(2),
+        display: "flex",
+        overflow: "auto",
+        flexDirection: "column",
+    },
+    fixedHeight: {
+        height: 350,
+    },
+    depositContext: {
+        flex: 1,
+    },
+    cardGrid: {
+        paddingTop: theme.spacing(8),
+        paddingBottom: theme.spacing(8),
+    },
 }));
 
-// Generate Sales Data
-function createData(time, amount) {
-	return { time, amount };
+// Generate reading data for user goals graph.
+function createData(goalDate, amountRead, goalToRead) {
+    return { goalDate, amountRead, goalToRead };
 }
 
 function Chart() {
     const theme = useTheme();
     const [userGoalData, setUserGoalData] = useState<any[]>([]);
     
-    console.log("in chart");
     // Dynamically create user goals data for graph rendering.
     userGoals.forEach(function (userGoal) {
-        if(userGoal.books_read < 0){
-            userGoal.books_read = 0; // need to find out why backend can give a negative value??
-        }
-        userGoalData.push(createData(userGoal.date_end, userGoal.books_read));
+        userGoalData.push(createData(userGoal.date_end, userGoal.books_read, userGoal.goal));
     });
 
-    console.log(userGoalData);
+    return (
+        <React.Fragment>
+            <ResponsiveContainer>
+                <LineChart data={userGoalData} margin={{ top: 16, right: 16, bottom: 36, left: 24,}}>
+                    <XAxis dataKey="goalDate" stroke={theme.palette.text.secondary}>
+                        <Label position="bottom" style={{ textAnchor: "middle", fill: theme.palette.text.primary }}>
+                            Goal Deadlines
+                        </Label>
+                    </XAxis>
+                    <YAxis stroke={theme.palette.text.secondary}>
+                        <Label angle={270} position="left" style={{ textAnchor: "middle", fill: theme.palette.text.primary }}>
+                            Books
+                        </Label>
+                    </YAxis>
+                    <Tooltip />
 
-	return (
-		<React.Fragment>
-			<ResponsiveContainer>
-				<LineChart
-					data={userGoalData} margin={{ top: 16, right: 16, bottom: 0, left: 24,}}
-				>
-				<XAxis dataKey="time" stroke={theme.palette.text.secondary} />
-				<YAxis stroke={theme.palette.text.secondary}>
-					<Label
-						angle={270}
-						position="left"
-						style={{ textAnchor: "middle", fill: theme.palette.text.primary }}
-					>
-						Books Read
-					</Label>
-				</YAxis>
-				<Line
-					type="monotone"
-					dataKey="amount"
-					stroke={theme.palette.primary.main}
-					dot={true}
-				/>
-				</LineChart>
-			</ResponsiveContainer>
-		</React.Fragment>
-	);
+                    <Line name="Books To Read" type="monotone" dataKey="goalToRead" stroke="#82ca9d"/>
+                    <Line name="Books Read" type="monotone" dataKey="amountRead" stroke={theme.palette.primary.main}/>
+
+                    <Legend verticalAlign="top" align="right"></Legend>
+                </LineChart>
+            </ResponsiveContainer>
+        </React.Fragment>
+    );
 }
 
 function Goal() {
     const token = CookieService.get("access_token");
-    
-	// Dialog for setting a new reading goal.
-	const [openGoal, setOpenGoal] = useState(false);
-	const [newAmount, setNewAmount] = useState("");
 
-	const handleClickOpenGoal = () => {
-		setOpenGoal(true);
+    // Dialog for setting a new reading goal.
+    const [openGoal, setOpenGoal] = useState(false);
+    const [newAmount, setNewAmount] = useState("");
+
+    const handleClickOpenGoal = () => {
+        setOpenGoal(true);
     }
     
     const handleCloseGoal = () => {
         setOpenGoal(false);
     }
   
-	const handleCreateGoal = () => {
+    const handleCreateGoal = () => {
         setOpenGoal(false);
         requestNewGoal();
-	}
+    }
 
-	// Detects new value typed into dialog box and loads it on the screen.
-	const onAmountChange = (e: ChangeEvent<HTMLInputElement>) => {
-		const { name, value } = e.target;
-		setNewAmount(value);
-	};
+    // Detects new value typed into dialog box and loads it on the screen.
+    const onAmountChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setNewAmount(value);
+    };
 
-	const [selectedDate, setSelectedDate] = React.useState<Date | null>(
-		new Date(),
-	);
+    const [selectedDate, setSelectedDate] = React.useState<Date | null>(
+        new Date(),
+    );
 
-	const handleDateChange = (date: Date | null) => {
-		setSelectedDate(date);
+    const handleDateChange = (date: Date | null) => {
+        setSelectedDate(date);
     };
 
     function requestUserGoals() {
@@ -408,14 +371,13 @@ function Goal() {
             method: "GET",
             success: function (data) {
                 if (data != null) {
-                    console.log("read books "+data.read);
                     callback(data);
                 } else {
                     callback(null);
                 }
             },
             error: function () {
-                console.log('user goals server error!');
+                console.log('server error!');
                 callback(null);
             }
         })
@@ -429,13 +391,12 @@ function Goal() {
         if (dateParts != null && dateParts.length == 3) {
             formattedDateString = dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0];
         }
-        console.log("in request goal callback");
+
         var data = setNewGoal(formattedDateString, function (data) {
             if (data != null) {
                 if (data.message === "Goal created") {
                     console.log(data);
                     console.log("gOaL cReAtEd");
-                    window.location.href = "/user/profile";
                 }
             }
         })
@@ -453,81 +414,47 @@ function Goal() {
             method: "POST",
             success: function (data) {
                 if (data != null) {
-                    console.log(data.message);
                     callback(data);
                 } else {
                     callback(null);
                 }
             },
             error: function () {
-                console.log("set goal server error!");
+                console.log("server error!");
                 callback(null);
-            }
-        })
-    }
-
-    function handleEndGoal(){
-        $.ajax({
-            async: false,
-            url: "http://localhost:8000/api/user/delete_goal",
-            data: {
-                auth: token,
-            },
-            method: "POST",
-            success: function (data) {
-                if (data != null) {
-                    console.log(data.message);
-                    if(data.message == "Goal deleted"){
-                        alert("Current Goal ended!");
-                        active = false;
-                        window.location.reload();
-                    }
-                }else{
-                    alert("End Goal failed!");
-                }
-            },
-            error: function () {
-                console.log("delete goal server error!");
-                alert("End Goal failed!");
             }
         })
     }
 
     const classes = useStyles();
     requestUserGoals();
-    goalMet();
-    console.log("activeL " + active);
     console.log(userGoals);
     if (userGoals.length >= 1) {
         mostRecentGoal = userGoals[userGoals.length - 1];
     }
 
-	return (
-		<React.Fragment>
-			<Container className={classes.container}>
-				<Typography component="h4" variant="h4" color="textPrimary">
-					My Goals
-				</Typography>
-				<Divider />
+    return (
+        <React.Fragment>
+            <Container className={classes.container}>
+                <Typography component="h4" variant="h4" color="textPrimary">
+                    Reading Goal
+                </Typography>
+                <Divider />
                 {/*Display user's current reading goal if any.*/}
                 {(typeof mostRecentGoal !== "undefined") ? 
-                    (<Typography>Read {mostRecentGoal.goal} books by {mostRecentGoal.date_end} 🌱</Typography>) : 
+                    (<div>
+                        <Typography component="h6" variant="h6"># Books To Read: {mostRecentGoal.goal}</Typography> 
+                        <Typography component="h6" variant="h6">Deadline: {mostRecentGoal.date_end}</Typography>
+                    </div>) : 
                     (<Typography component="p">You currently don't have any reading goals.</Typography>)
                 }
-				
-			</Container>
-			<Container className={classes.container}>
-                { active 
-                     ?(<Button color="primary" onClick={handleEndGoal} variant="contained">
-                        End Current Goal
-                      </Button>)
-                     :(<Button color="primary" onClick={handleClickOpenGoal} variant="contained">Set Goal</Button>)
-
-                }
-				
+                
+            </Container>
+            <Container className={classes.container}>
+                <Link color="primary" onClick={handleClickOpenGoal}>Set Goal</Link>
 
                 {/* Dialog For Goal Setting */}
-				<Dialog open={openGoal} onClose={handleCloseGoal} aria-labelledby="form-dialog-title">
+                <Dialog open={openGoal} onClose={handleCloseGoal} aria-labelledby="form-dialog-title">
                     <DialogTitle id="form-dialog-title">📚 Set A New Reading Goal</DialogTitle>
                     <DialogContent>
                         <DialogContentText>How many books would you like to read?</DialogContentText>
@@ -553,12 +480,9 @@ function Goal() {
                         <Button color="primary" onClick={handleCreateGoal} variant="contained">
                             Add Goal
                         </Button>
-                        
                     </DialogActions>
-				</Dialog>
-			</Container>
-		</React.Fragment>
-	);
+                </Dialog>
+            </Container>
+        </React.Fragment>
+    );
 }
-
-//<FeaturedPost book={book} />
