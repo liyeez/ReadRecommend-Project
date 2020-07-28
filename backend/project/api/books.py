@@ -168,7 +168,6 @@ def is_read(request):
     except:
         return Response({"status": "ok", "message": "Book not in library", "is_read": False}, status=status.HTTP_200_OK)
     return Response({"status": "ok", "message": "Success", "is_read": bookdata.has_read}, status=status.HTTP_200_OK)
-    #return Response({"status": "ok", "message": "lah", "is_read": False}, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
 @input_validator(["book_id"])
@@ -299,8 +298,7 @@ def search_book(request):
             if identifier["type"] == "ISBN_10":
                 book["book_isbn"] = identifier["identifier"]
         # Get the cover
-        cover = requests.get(match["volumeInfo"]["imageLinks"]["thumbnail"])
-        book["cover"] = base64.b64encode(cover.content)
+        book["cover"] = match["volumeInfo"]["imageLinks"]["thumbnail"]
         book["book_pub_date"] = match["volumeInfo"]["publishedDate"]
         results.append(book)
         

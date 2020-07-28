@@ -17,7 +17,7 @@ class BookManager(models.Manager):
 
 class Book(models.Model):
     id = models.AutoField(primary_key=True, unique=True)
-    cover = models.CharField(max_length=300000)
+    cover = models.CharField(max_length=256)
     title = models.CharField(max_length=100)
     author = models.CharField(max_length=100)
     genre = models.CharField(max_length=100)
