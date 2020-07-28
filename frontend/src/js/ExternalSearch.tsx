@@ -106,7 +106,7 @@ const Search: React.FC<Props> = ({}) => {
       url: "http://localhost:8000/api/books/search_book",
       data: {
         auth: token,
-        search: str,
+        search: txt,
       },
       method: "GET",
       success: function (data) {
@@ -144,7 +144,7 @@ const Search: React.FC<Props> = ({}) => {
         if (data != null) {
             console.log("added book to library");
             if(data.message == "Book already exists"){
-                window.location.href = "/bookdata/metadata?id=" + book.book_isbn;
+                window.location.href = "/bookdata/metadata?id=" + data.book_id;
             }else if(data.message == "Book added to system"){
                 window.location.href = "/bookdata/metadata?id=" + data.book_id;
             }
@@ -169,7 +169,16 @@ const Search: React.FC<Props> = ({}) => {
   let str = window.location.href.split("?")[1];
   let type = str.split("=")[0];
   str = str.split("=")[1];
-  console.log("To find ext: " + str + " of type: " + type);
+  let array = str.split("%20");
+  console.log(array);
+  var txt = "";
+  for(let i=0; i < array.length; i++ ){
+      txt = txt.concat(array[i]);
+      if(i != array.length-1){
+        txt = txt.concat(" ");
+      }  
+  }
+  console.log("To find ext: " + txt + " of type: " + type);
 
   request();
   return (
@@ -196,7 +205,7 @@ const Search: React.FC<Props> = ({}) => {
               color="textSecondary"
               gutterBottom
             >
-              "{str}"
+              "{txt}"
             </Typography>
 
             <div className={classes.heroButtons}>
