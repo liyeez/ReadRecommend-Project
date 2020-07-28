@@ -143,8 +143,12 @@ const Search: React.FC<Props> = ({}) => {
       success: function (data) {
         if (data != null) {
             console.log("added book to library");
-            window.location.href = "/bookdata/metadata?id=" + data.book_id;
-        }
+            if(data.message == "Book already exists"){
+                window.location.href = "/bookdata/metadata?id=" + book.book_isbn;
+            }else if(data.message == "Book added to system"){
+                window.location.href = "/bookdata/metadata?id=" + data.book_id;
+            }
+        }    
       },
       error: function () {
         console.log("storeBook server error!");

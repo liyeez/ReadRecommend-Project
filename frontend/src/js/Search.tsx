@@ -90,10 +90,7 @@ const Search: React.FC<Props> = ({}) => {
         books = data.book_list;
       } else if (data.message == "Got users") {
         users = data.user_list;
-      } else {
-        alert("No Matched Results!");
-        window.location.href = "/";
-      }
+      } 
     });
   }
 
@@ -112,7 +109,7 @@ const Search: React.FC<Props> = ({}) => {
       async: false,
       url: api_call,
       data: {
-        search: str,
+        search: txt,
       },
       method: "GET",
       success: function (data) {
@@ -141,7 +138,16 @@ const Search: React.FC<Props> = ({}) => {
   let str = window.location.href.split("?")[1];
   let type = str.split("=")[0];
   str = str.split("=")[1];
-  console.log("To find: " + str + "of type: " + type);
+  let array = str.split("%20");
+  console.log(array);
+  var txt = "";
+  for(let i=0; i < array.length; i++ ){
+      txt = txt.concat(array[i]);
+      txt = txt.concat(" ");
+      console.log(txt);
+  }
+  
+  console.log("To find: " + txt + " of type: " + type);
 
   let api_call: string;
   if (type == "title") {
@@ -176,7 +182,7 @@ const Search: React.FC<Props> = ({}) => {
               color="textSecondary"
               gutterBottom
             >
-              "{str}"
+              "{txt}"
             </Typography>
 
             <div className={classes.heroButtons}>
