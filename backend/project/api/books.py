@@ -281,25 +281,28 @@ def search_book(request):
     results = []
     for match in r.json()["items"]:
         book = {}
-        book["book_title"] = match["volumeInfo"]["title"]
-        book["book_author"] = match["volumeInfo"]["authors"][0]
+        book["book_title"] = ""
+        book["book_author"] = ""
         book["book_description"] = ""
         book["book_genre"] = ""
+        book["book_isbn"] = "0000000000"
+        book["cover"] = ""
+        book["book_pub_date"] = ""
         # Sometimes these fields are missing
         try:
+            book["book_title"] = match["volumeInfo"]["title"]
+            book["book_author"] = match["volumeInfo"]["authors"][0]
             book["book_description"] = match["volumeInfo"]["description"]
             book["book_genre"] = ",".join(match["volumeInfo"]["categories"])
+            book["cover"] = match["volumeInfo"]["imageLinks"]["thumbnail"]
+            book["book_pub_date"] = match["volumeInfo"]["publishedDate"]
         except:
             pass
         # Look for isbn
         # json doesnt guarantee list order so loop through the possibilities
-        book["book_isbn"] = "0000000000"
         for identifier in match["volumeInfo"]["industryIdentifiers"]:
             if identifier["type"] == "ISBN_10":
                 book["book_isbn"] = identifier["identifier"]
-        # Get the cover
-        book["cover"] = match["volumeInfo"]["imageLinks"]["thumbnail"]
-        book["book_pub_date"] = match["volumeInfo"]["publishedDate"]
         results.append(book)
         
     if len(results) > 0:
