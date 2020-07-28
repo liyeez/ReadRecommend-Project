@@ -263,6 +263,7 @@ def search_book(request):
 
     Input:
     search (str)
+    (opt) index (int)
 
     Returns:
     book_list (list):
@@ -273,9 +274,15 @@ def search_book(request):
         book_isbn (str)
         book_cover (str)
         book_pub_date (datetime)
+    current_index (int) [the index for the next search result]
     """
+    try:
+        index = int(request.GET["index"])
+    except:
+        index = 0
+
     API_ENDPOINT = "https://www.googleapis.com/books/v1/volumes"
-    payload = {"q": request.GET["search"]}
+    payload = {"q": request.GET["search"], "startIndex": index}
     r = requests.get(API_ENDPOINT, params=payload)
 
     results = []
@@ -306,8 +313,8 @@ def search_book(request):
         results.append(book)
         
     if len(results) > 0:
-        return Response({"status": "ok", "message": "Success", "results": results}, status=status.HTTP_200_OK)
+        return Response({"status": "ok", "message": "Success", "results": results, "current_index": index + len(results)}, status=status.HTTP_200_OK)
     else:
-        return Response({"status": "ok", "message": "No matches", "results": []}, status=status.HTTP_200_OK)
+        return Response({"status": "ok", "message": "No matches", "results": [], "current_index": index}, status=status.HTTP_200_OK)
 
 
