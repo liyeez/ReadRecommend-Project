@@ -5,7 +5,7 @@ from rest_framework import status
 from django.core.exceptions import ObjectDoesNotExist
 
 from django.db.models import Q
-from .models import Book, BookInstance, BookStats, Review, BookStats
+from .models import Book, BookInstance, BookStats, Review
 from .utilities import input_validator, auth_validator
 from datetime import datetime
 import requests

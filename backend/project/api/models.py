@@ -12,7 +12,7 @@ MAX_STR_LEN = 100
 class BookManager(models.Manager):
     def create_book(self, title, author, genre, description, pub_date, cover):
         book = self.get_or_create(title=title, author=author, defaults={"pub_date": pub_date, "cover": cover, "genre": genre, "description": description})
-        BookStatsManager.create_book_stats(book=book)
+        BookStats.objects.create_book_stats(book=book)
         return book
 
 
@@ -59,7 +59,7 @@ class BookStatsManager(models.Manager):
         return bookStats
 
     def update_all(self):
-        for book in self.objects.all():
+        for book in self.all():
             book.update_book()
             
 
