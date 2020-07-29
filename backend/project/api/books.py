@@ -67,16 +67,8 @@ def search(request):
         print (f)
         for b in books:
             book_stat = BookStats.objects.get(book=b)
-            print(book_stat.average_rating)
-            print(int(request.GET[f]))
-            print(b.id)
-            
             if book_stat and getattr(book_stat,f) <= int(request.GET[f]):                    
                 books = books.exclude(id=b.id)
-
-   
-
-    
 
     book_list = []
     for book in books.all():
