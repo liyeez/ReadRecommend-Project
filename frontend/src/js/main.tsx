@@ -8,6 +8,7 @@ import CookieService from "../services/CookieService";
 
 // Material UI
 import AddIcon from "@material-ui/icons/Add";
+import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
@@ -413,36 +414,41 @@ const Main: React.FC<Props> = ({ userSignedIn }: Props) => {
                   </Paper>
                     <Grid>
                         <Collapse in={expanded} timeout="auto" unmountOnExit>
-                            <Typography>Filter By Minimum Rating</Typography>
                             <Grid item>
-                                <Slider 
-                                    value={typeof minimumRating === 'number' ? minimumRating : 0}
-                                    onChange={handleSliderChange}
-                                    aria-labelledby="input-slider"
-                                    min={0} max={5} step={0.1}
-                                    marks={marks}
-                                />
-                                <Input 
-                                    className={classes.input} 
-                                    value={minimumRating} 
-                                    margin="dense"
-                                    onChange={handleInputChange}
-                                    onBlur={handleBlur}
-                                    inputProps={{step: 0.1, min: 0, max: 5, type: 'number', 'aria-labelledby': 'input-slider'}}
-                                />
+                                <Box m={2}>
+                                    <Typography gutterBottom>Filter By Minimum Rating</Typography>
+                                    <Slider 
+                                        value={typeof minimumRating === 'number' ? minimumRating : 0}
+                                        onChange={handleSliderChange}
+                                        aria-labelledby="input-slider"
+                                        min={0} max={5} step={0.1}
+                                        marks={marks}
+                                    />
+                                    <Input 
+                                        className={classes.input} 
+                                        value={minimumRating} 
+                                        margin="dense"
+                                        onChange={handleInputChange}
+                                        onBlur={handleBlur}
+                                        inputProps={{step: 0.1, min: 0, max: 5, type: 'number', 'aria-labelledby': 'input-slider'}}
+                                    />
+                                </Box>
+                                <Box m={1}>
+                                    <FormControlLabel 
+                                        control={
+                                            <Checkbox
+                                                checked={checked}
+                                                onChange={handleCheckedChange}
+                                                color="default"
+                                                inputProps={{'aria-label': 'checkbox with default color'}}
+                                            />
+                                        }
+                                        label="Apply Minimum Average Rating"
+                                    />
+                                </Box>
                             </Grid>
                             <Grid item>
-                                <FormControlLabel 
-                                    control={
-                                        <Checkbox
-                                            checked={checked}
-                                            onChange={handleCheckedChange}
-                                            color="default"
-                                            inputProps={{'aria-label': 'checkbox with default color'}}
-                                        />
-                                    }
-                                    label="Apply Minimum Average Rating"
-                                />
+                                
                             </Grid>
                         </Collapse>
 
