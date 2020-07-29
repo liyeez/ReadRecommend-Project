@@ -12,5 +12,6 @@ urlpatterns = [
     path("get_goals", user.get_goals),
     path("delete_goal", user.delete_goal),
     path("change_count_goal", user.change_count_goal),
-    path("change_start_date", user.change_start_date)
+    path("change_start_date", user.change_start_date),
+    path("in_library", user.in_library)
 ]
