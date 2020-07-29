@@ -125,6 +125,7 @@ def get_profile(request):
     first_name = request.user.first_name
     last_name = request.user.last_name
     library_collection_id = 0
+    library_books = []
 
     collection_list = []
     for collection in collections.all():
@@ -133,6 +134,10 @@ def get_profile(request):
                 {"collection_id": collection.collection_id, "collection_name": collection.name})
         else:
             library_collection_id = collection.collection_id
+    library = request.user.collection_set.get(library=True)
+    for book in library.books.all():
+        library_books.append({"id": book.id, "book_title": book.title,
+                          "book_author": book.author, "book_pub_date": book.pub_date})
 
     goals = request.user.goal_set.all().order_by('date_start')
     goals_list = []
@@ -141,7 +146,7 @@ def get_profile(request):
             "goal": goal.count_goal, "books_read": goal.book_count, "complete": goal.complete, 
             "date_complete": goal.date_complete})
 
-    return Response({"status": "ok", "message": "Got user profile data", "first_name": first_name, "last_name": last_name, "library_collection_id": library_collection_id, "collection_list": collection_list, "goals_list": goals_list}, status=status.HTTP_200_OK)
+    return Response({"status": "ok", "message": "Got user profile data", "first_name": first_name, "last_name": last_name, "library_collection_id": library_collection_id, "library_books": library_books, "collection_list": collection_list, "goals_list": goals_list}, status=status.HTTP_200_OK)
 
 
 @api_view(["GET"])
