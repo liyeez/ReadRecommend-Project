@@ -62,6 +62,7 @@ def search(request):
         Q(title__icontains=search) | Q(author__contains=search))
 
     filters = ['average_rating','total_ratings','read_count','collection_count']
+    BookStats.objects.update_all()
 
     for f in [x for x in filters if x in request.GET]:
         print (f)
