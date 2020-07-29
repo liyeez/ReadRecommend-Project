@@ -20,6 +20,7 @@ import SearchIcon from "@material-ui/icons/Search";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import LanguageIcon from '@material-ui/icons/Language';
+import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import { makeStyles } from "@material-ui/core/styles";
 
 const token = CookieService.get("access_token");
@@ -72,6 +73,8 @@ interface SearchForm {
   title: any;
 }
 
+var index= 0;
+
 const Search: React.FC<Props> = ({}) => {
   let extBooks: Array<any> = [];
 
@@ -90,39 +93,29 @@ const Search: React.FC<Props> = ({}) => {
     });
   };
 
-  function request() {
-
-    var res = extSearch(function (res) {
-      console.log(res);
-      if (res!= null && res.message == "Success") {
-        extBooks = res.results;
-      } 
-    });
-  }
-
-  function extSearch(callback) {
+  function extSearch() {
     $.ajax({
       async: false,
       url: "http://localhost:8000/api/books/search_book",
       data: {
         auth: token,
         search: txt,
+        index: index,
       },
       method: "GET",
       success: function (data) {
-        if (data != null) {
-          console.log(data);
-          callback(data);
+        if (data != null && data.message == "Success") {
+          extBooks = data.results;
+          index = data.current_index;
         }
-        callback(null);
+       
       },
       error: function () {
         console.log("external search server error!");
-        callback(null);
       },
     });
   }
-
+ 
   function storeBook(book) {
     console.log("In storeBook");
     console.log(book);
@@ -142,7 +135,8 @@ const Search: React.FC<Props> = ({}) => {
       method: "POST",
       success: function (data) {
         if (data != null) {
-            console.log("added book to library");
+            console.log(data);
+            index = data.current_index;
             if(data.message == "Book already exists"){
                 window.location.href = "/bookdata/metadata?id=" + data.book_id;
             }else if(data.message == "Book added to system"){
@@ -166,11 +160,13 @@ const Search: React.FC<Props> = ({}) => {
     window.location.href = "/extsearch?title=" + SearchForm.title;
   }
 
-  let str = window.location.href.split("?")[1];
-  let type = str.split("=")[0];
-  str = str.split("=")[1];
-  let array = str.split("%20");
+  let type = (window.location.href.split("?")[1]).split("=")[0];
+  let index = (window.location.href.split("?")[2]).split("=")[1];
+  let array = ((window.location.href.split("?")[1]).split("=")[1]).split("%20");
+
+  console.log(index);
   console.log(array);
+
   var txt = "";
   for(let i=0; i < array.length; i++ ){
       txt = txt.concat(array[i]);
@@ -180,7 +176,12 @@ const Search: React.FC<Props> = ({}) => {
   }
   console.log("To find ext: " + txt + " of type: " + type);
 
-  request();
+  function moreResults() {
+    console.log("more results with: " + index);
+    window.location.href = "/extsearch?title=" + txt + "?index=" + index;
+  }
+
+  extSearch();
   return (
     <React.Fragment>
       <CssBaseline />
@@ -273,6 +274,18 @@ const Search: React.FC<Props> = ({}) => {
                     </Grid>
                 ))}
             </Grid>
+
+            <IconButton
+              type="submit"
+              className={classes.iconButton}
+              aria-label="search"
+              onClick={moreResults}
+            > 
+              More Results 
+              <MoreHorizIcon/>
+            
+            </IconButton>
+
         </Container>
       </main>
     </React.Fragment>

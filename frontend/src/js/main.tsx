@@ -173,12 +173,12 @@ const Main: React.FC<Props> = ({ userSignedIn }: Props) => {
     });
   };
 
-  function searchLocal(event) {
+  function searchLocal(event) { 
     window.location.href = "/search?title=" + SearchForm.title;
   }
 
   function searchWeb(event) {
-    window.location.href = "/extsearch?title=" + SearchForm.title;
+    window.location.href = "/extsearch?title=" + SearchForm.title + "?index=0";
   }
 
   function request() {

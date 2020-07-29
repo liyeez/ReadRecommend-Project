@@ -101,7 +101,7 @@ const Search: React.FC<Props> = ({}) => {
 
   function externalSearch(event) {
     event.preventDefault();
-    window.location.href = "/extsearch?title=" + SearchForm.title;
+    window.location.href = "/extsearch?title=" + SearchForm.title + "?index=0";
   }
 
   function onSearch(callback) {
