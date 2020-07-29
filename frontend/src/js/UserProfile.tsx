@@ -322,6 +322,7 @@ function Goal() {
 
     // Dialog for setting a new reading goal.
     const [openGoal, setOpenGoal] = useState(false);
+    const [openEditGoal, setOpenEditGoal] = useState(false);
     const [newAmount, setNewAmount] = useState("");
 
     const handleClickOpenGoal = () => {
@@ -335,6 +336,14 @@ function Goal() {
     const handleCreateGoal = () => {
         setOpenGoal(false);
         requestNewGoal();
+    }
+
+    const handleClickEditOpenGoal = () => {
+        setOpenEditGoal(true);
+    }
+
+    const handleCloseEditGoal = () => {
+        setOpenEditGoal(false);
     }
 
     // Detects new value typed into dialog box and loads it on the screen.
@@ -381,25 +390,29 @@ function Goal() {
                 callback(null);
             }
         })
-    } 
+    }
     
-    function requestNewGoal() {
-        // Format the requested date into string for backend query.
+    // Format the requested date into string for backend query.
+    function formatDate() {
         let dateString = selectedDate?.toISOString().split('T')[0];
         let dateParts = dateString?.split("-");
         let formattedDateString = "";
         if (dateParts != null && dateParts.length == 3) {
             formattedDateString = dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0];
         }
+        return formattedDateString;
+    }
+    
+    function requestNewGoal() {
+        let formattedDateString = formatDate();
 
         var data = setNewGoal(formattedDateString, function (data) {
             if (data != null) {
                 if (data.message === "Goal created") {
                     console.log(data);
-                    console.log("gOaL cReAtEd");
                 }
             }
-        })
+        });
     }
 
     function setNewGoal(formattedDate, callback) {
@@ -425,10 +438,81 @@ function Goal() {
             }
         })
     }
+    
+    function requestEditGoal() {
+        var data = editGoal(function(data) {
+            if (data != null) {
+                console.log(data);
+            }
+        });
+    }
+
+    function requestEditGoalDate() {
+        let formattedDateString = formatDate();
+        console.log("test date");
+        console.log(formattedDateString);
+        var data = editGoalDate(formattedDateString, function(data) {
+            if (data != null) {
+                console.log(data);
+            }
+        });
+    }
+
+    function editGoal(callback) {
+        $.ajax({
+            async: false,
+            url: "http://localhost:8000/api/user/change_count_goal",
+            data: {
+                auth: token,
+                count_goal: parseInt(newAmount)
+            },
+            method: "POST",
+            success: function (data) {
+                if (data != null) {
+                    callback(data);
+                } else {
+                    callback(null);
+                }
+            },
+            error: function () {
+                console.log("Server error!");
+                callback(null);
+            }
+        });
+    }
+
+    function editGoalDate(formattedDateString, callback) {
+        $.ajax({
+            async: false,
+            url: "http://localhost:8000/api/user/change_start_date",
+            data: {
+                auth: token,
+                date_start: formattedDateString,
+            },
+            method: "POST",
+            success: function (data) {
+                if (data != null) {
+                    callback(data);
+                } else {
+                    callback(null);
+                }
+            },
+            error: function () {
+                console.log("Server error!");
+                callback(null);
+            }           
+        });
+    }
+
+    function handleEditGoal() {
+        handleCloseEditGoal();
+        requestEditGoal();
+        requestEditGoalDate();
+    }
 
     const classes = useStyles();
     requestUserGoals();
-    console.log(userGoals);
+
     if (userGoals.length >= 1) {
         mostRecentGoal = userGoals[userGoals.length - 1];
     }
@@ -451,14 +535,14 @@ function Goal() {
                 
             </Container>
             <Container className={classes.container}>
-                <Link color="primary" onClick={handleClickOpenGoal}>Set Goal</Link>
-
+                {(userGoals.length >= 1) ? (<Link onClick={handleClickEditOpenGoal}>Edit Goal</Link>) : (<Link onClick={handleClickOpenGoal}>Set Goal</Link>)}
+                
                 {/* Dialog For Goal Setting */}
                 <Dialog open={openGoal} onClose={handleCloseGoal} aria-labelledby="form-dialog-title">
                     <DialogTitle id="form-dialog-title">📚 Set A New Reading Goal</DialogTitle>
                     <DialogContent>
                         <DialogContentText>How many books would you like to read?</DialogContentText>
-                        <TextField autoFocus margin="dense" id="numBooks" label="# Books to Read" type="text" fullWidth onChange={onAmountChange}/>
+                        <TextField autoFocus margin="dense" id="numBooks" label="# Books to Read" type="number" fullWidth onChange={onAmountChange}/>
                         <MuiPickersUtilsProvider utils={DateFnsUtils}>
                             <KeyboardDatePicker
                                 disableToolbar
@@ -480,6 +564,43 @@ function Goal() {
                         <Button color="primary" onClick={handleCreateGoal} variant="contained">
                             Add Goal
                         </Button>
+                    </DialogActions>
+                </Dialog>
+
+                {/*Dialog For Goal Editing*/}
+                <Dialog open={openEditGoal} onClose={handleCloseEditGoal} aria-labelledby="form-dialog-title">
+                    <DialogTitle>Edit Current Reading Goal</DialogTitle>
+                    <DialogContent>
+                        {(mostRecentGoal !== undefined) ? 
+                            (<div>
+                                <Typography>Books to read this period: {mostRecentGoal.goal}</Typography>
+                                <Typography>Current Start Date: {mostRecentGoal.date_start}</Typography>
+                                <Typography>Current End Date: {mostRecentGoal.date_end}</Typography>
+                                <div>
+                                    <TextField id="new-goal" label="New Goal" type="number" fullWidth onChange={onAmountChange} InputLabelProps={{shrink: true}}/>
+                                </div>
+                                <div>
+                                    <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                                        <KeyboardDatePicker
+                                            disableToolbar
+                                            variant="inline"
+                                            format="dd-MM-yyyy"
+                                            margin="normal"
+                                            id="date-picker-inline"
+                                            label="Edit Start Date"
+                                            value={selectedDate}
+                                            onChange={handleDateChange}
+                                            KeyboardButtonProps={{'aria-label': 'change date',}}
+                                        />
+                                    </MuiPickersUtilsProvider>
+                                </div>
+                            </div>) : (null)
+                        }
+
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleCloseEditGoal} color="primary">Cancel</Button>
+                        <Button onClick={handleEditGoal} color="primary" variant="contained">Save Changes</Button>
                     </DialogActions>
                 </Dialog>
             </Container>
