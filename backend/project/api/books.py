@@ -1,11 +1,11 @@
-
+import json
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from django.core.exceptions import ObjectDoesNotExist
 
 from django.db.models import Q
-from .models import Book, BookInstance, BookStats
+from .models import Book, BookInstance, BookStats, Review, BookStats
 from .utilities import input_validator, auth_validator
 from datetime import datetime
 import requests
@@ -50,7 +50,7 @@ def search(request):
 
     Input:
     search (str)
-
+    opt filter (str)
     Returns:
     book_list (list):
         book_id (int)
@@ -58,9 +58,25 @@ def search(request):
         book_author (str)
     """
     search = request.GET["search"]
-
     books = Book.objects.filter(
         Q(title__icontains=search) | Q(author__contains=search))
+
+    filters = ['average_rating','total_ratings','read_count','collection_count']
+
+    for f in [x for x in filters if x in request.GET]:
+        print (f)
+        for b in books:
+            book_stat = BookStats.objects.get(book=b)
+            print(book_stat.average_rating)
+            print(int(request.GET[f]))
+            print(b.id)
+            
+            if book_stat and getattr(book_stat,f) <= int(request.GET[f]):                    
+                books = books.exclude(id=b.id)
+
+   
+
+    
 
     book_list = []
     for book in books.all():
@@ -289,9 +305,9 @@ def search_book(request):
     except:
         index = 0
 
-  #  API_ENDPOINT = "https://www.googleapis.com/books/v1/volumes"
-  #  payload = {"q": request.GET["search"], "startIndex": index}
-  #  r = requests.get(API_ENDPOINT, params=payload)
+    API_ENDPOINT = "https://www.googleapis.com/books/v1/volumes"
+    payload = {"q": request.GET["search"], "startIndex": index}
+    r = requests.get(API_ENDPOINT, params=payload)
 
     results = []
     for match in r.json()["items"]:
