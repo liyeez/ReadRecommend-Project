@@ -160,7 +160,9 @@ const BookDetails: React.FC<Props> = ({}) => {
     var data = addLib(id, function (data) {
       if (data != null) {
         console.log(data);
-        console.log("added to lib!!");
+        if(data.message == "Book added to library"){
+          window.location.href='/bookdata/metadata?id=' + id;
+        } 
       } else {
         alert(data.message);
       }
@@ -191,7 +193,6 @@ const BookDetails: React.FC<Props> = ({}) => {
   }
 
   function removeBook(id) {
-    console.log(id);
     $.ajax({
       async: false,
       url: "http://localhost:8000/api/collections/delete_from_library",
@@ -203,7 +204,7 @@ const BookDetails: React.FC<Props> = ({}) => {
       success: function (data) {
         console.log(data);
         if (data.message == "Book removed from library") {
-            alert("This Book is removed from your library!");
+            window.location.href='/bookdata/metadata?id=' + id;
         }else{
             alert(data.message);
         }  
@@ -223,12 +224,13 @@ const BookDetails: React.FC<Props> = ({}) => {
       url: "http://localhost:8000/api/user/in_library",
       data: {
         auth: token,
-        id: str,
+        book_id: str,
       },
       method: "GET",
       success: function (data) {
         console.log(data);
-        inLibFlag =data.In_library;
+        inLibFlag =data.in_library;
+        console.log(inLibFlag);
       },
       error: function () {
         console.log("server error!");
