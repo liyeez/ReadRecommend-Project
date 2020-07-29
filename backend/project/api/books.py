@@ -5,7 +5,7 @@ from rest_framework import status
 from django.core.exceptions import ObjectDoesNotExist
 
 from django.db.models import Q
-from .models import Book, BookInstance
+from .models import Book, BookInstance, BookStats
 from .utilities import input_validator, auth_validator
 from datetime import datetime
 import requests
@@ -289,9 +289,9 @@ def search_book(request):
     except:
         index = 0
 
-    API_ENDPOINT = "https://www.googleapis.com/books/v1/volumes"
-    payload = {"q": request.GET["search"], "startIndex": index}
-    r = requests.get(API_ENDPOINT, params=payload)
+  #  API_ENDPOINT = "https://www.googleapis.com/books/v1/volumes"
+  #  payload = {"q": request.GET["search"], "startIndex": index}
+  #  r = requests.get(API_ENDPOINT, params=payload)
 
     results = []
     for match in r.json()["items"]:
@@ -325,4 +325,35 @@ def search_book(request):
     else:
         return Response({"status": "ok", "message": "No matches", "results": [], "current_index": index}, status=status.HTTP_200_OK)
 
+
+
+
+
+@api_view(["GET"])
+@input_validator(["id"])
+def stats(request):
+    """
+    data
+
+    Retrieves complete book stats
+
+    Input:
+    id (int)
+
+    Returns:
+
+    """
+    try:
+        book = Book.objects.get(id=request.GET["id"])
+    except ObjectDoesNotExist:
+        return Response({"status": "error", "message": "Book not found"}, status=status.HTTP_204_NO_CONTENT)
+
+    try:
+        book_stats = BookStats.objects.get(book=book)
+    except ObjectDoesNotExist:
+        return Response({"status": "error", "message": "Book stats not found"}, status=status.HTTP_204_NO_CONTENT)
+
+    BookStats.objects.update_all()
+
+    return Response({"status": "ok", "message": "Got book stats", "book_average": book_stats.average_rating, "book_total_ratings": book_stats.total_ratings, "book_read_count": book_stats.read_count, "book_collection_count": book_stats.collection_count}, status=status.HTTP_200_OK)
 
