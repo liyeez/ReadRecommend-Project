@@ -9,5 +9,6 @@ urlpatterns = [
     path("is_read", books.is_read), 
     path("set_read", books.set_read),
     path("add_book", books.add_book),
-    path("search_book", books.search_book)
+    path("search_book", books.search_book),
+   # path("stats", books.stats)
 ]

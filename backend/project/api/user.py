@@ -7,7 +7,7 @@ from rest_framework import status
 from .utilities import auth_validator, input_validator, user_validator
 
 from django.db.models import Q
-from .models import Collection, Profile, Goal
+from .models import Collection, Profile, Goal, Book
 from datetime import datetime, timedelta
 
 
@@ -378,3 +378,21 @@ def change_start_date(request):
 
     except:
         return Response({"status": "error", "message":"Cannot edit past goals"}, status=status.HTTP_200_OK)
+
+@api_view(["GET"])
+@auth_validator
+@input_validator(["book_id"])
+def in_library(request):
+    library = request.user.collection_set.get(library=True)
+    try:  # check book exists
+        book_id = request.GET["book_id"]
+        book=Book.objects.get(id=book_id)
+    except:
+        return Response({"status": "error", "message": "Book not found", "in_library": False}, status=status.HTTP_200_OK)
+    
+    try:
+        library.books.get(id = book_id)
+        return Response({"status": "ok", "message": "Retrieved", "in_library": True}, status=status.HTTP_200_OK)
+    except:
+        return Response({"status": "ok", "message": "Retrieved", "in_library": False}, status=status.HTTP_200_OK)
+    

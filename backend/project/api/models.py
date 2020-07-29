@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from datetime import datetime
-
+from django.db.models import Avg, Sum
 MAX_STR_LEN = 100
 # These should really go in another python file but it works as is
 # The ordering is messed up because of the relationships between the tables
@@ -12,6 +12,7 @@ MAX_STR_LEN = 100
 class BookManager(models.Manager):
     def create_book(self, title, author, genre, description, pub_date, cover):
         book = self.get_or_create(title=title, author=author, defaults={"pub_date": pub_date, "cover": cover, "genre": genre, "description": description})
+        BookStats.objects.create_book_stats(book=book)
         return book
 
 
@@ -50,6 +51,38 @@ class BookInstance(models.Model):
     author = models.CharField(max_length=100)
     pub_date = models.DateField()
     objects = BookInstanceManager()
+
+# book aggregate stats
+class BookStatsManager(models.Manager):
+    def create_book_stats(self, book):
+        bookStats = self.get_or_create(book = book[0])
+        return bookStats
+
+    def update_all(self):
+        for book in self.all():
+            book.update_book()
+            
+
+
+
+
+class BookStats(models.Model):
+    id = models.AutoField(primary_key=True, unique=True)
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    average_rating = models.IntegerField(default = 0)
+    total_ratings = models.IntegerField(default = 0)
+    read_count = models.IntegerField(default = 0)
+    collection_count = models.IntegerField(default = 0)
+
+    objects = BookStatsManager()
+    
+    def update_book(self):            
+        self.average_rating = Review.objects.filter(book=self.book).aggregate(Avg('score'))
+        self.total_ratings = Review.objects.filter(book=self.book).count()
+        self.read_count = UserBookMetadata.objects.filter(book=self.book,has_read=True).count()
+        self.collection_count = CollectionBookMetadata.objects.filter(book=self.book).count()
+
+
 
 # Book review
 

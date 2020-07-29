@@ -127,11 +127,11 @@ const Search: React.FC<Props> = ({}) => {
   }
 
   function viewBook(data) {
-    window.location.href = "/bookdata/metadata?id=" + data;
+      window.location.href = "/bookdata/metadata?id=" + data;
   }
 
   function viewUser(data) {
-    window.location.href = "/user/otherusers?userid=" + data;
+      window.location.href = "/user/otherusers?userid=" + data;
   }
 
   const classes = Style();
@@ -143,7 +143,9 @@ const Search: React.FC<Props> = ({}) => {
   var txt = "";
   for(let i=0; i < array.length; i++ ){
       txt = txt.concat(array[i]);
-      txt = txt.concat(" ");
+      if(i != array.length-1){
+          txt = txt.concat(" ");
+      }
       console.log(txt);
   }
   
