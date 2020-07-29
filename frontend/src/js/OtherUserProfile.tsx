@@ -19,7 +19,10 @@ import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
+import BookmarksIcon from '@material-ui/icons/Bookmarks';
 import Toolbar from '@material-ui/core/Toolbar';
+import SentimentVeryDissatisfiedIcon from '@material-ui/icons/SentimentVeryDissatisfied';
+import ImportContactsIcon from '@material-ui/icons/ImportContacts';
 import * as $ from "jquery";
 
 const useStyles = makeStyles((theme) => ({
@@ -64,9 +67,10 @@ interface userForm {
 export default function Profile() {
   const classes = useStyles();
   let cards: any;
+  let lib: any;
   let str = window.location.href.split('?')[1];
   str = str.split('=')[1];
-  console.log("To find: "+str);
+  console.log("To find user id : "+str);
 
   const [userForm, setUserForm] = useState<userForm>({
     firstName: '',
@@ -74,12 +78,13 @@ export default function Profile() {
   });
 
   function request() {
-
+    
     var data = onSearch(function(data){ 
         if(data.message == "Got user profile data") {
             cards = data.collection_list;
             userForm.firstName = data.first_name;
             userForm.lastName = data.last_name;
+            lib = data.library_books;
         }else{
             alert("No Matched Results!");
             window.location.href='/';
@@ -114,10 +119,13 @@ export default function Profile() {
     function viewCollection(data){
         window.location.href="/user/viewcollection?collectionid="+data;
     }
-   
-  
+
+    function viewBook(data) {
+        window.location.href = "/bookdata/metadata?id=" + data;
+    }
 
   request();
+
   return (
     <React.Fragment>
       <CssBaseline />
@@ -125,7 +133,7 @@ export default function Profile() {
       <main>
         {/* Hero unit */}
         <div className={classes.heroContent} >
-          <Container maxWidth="md">
+          <Container>
           <Grid container spacing={3} className={classes.container}>
            <Grid item xs={12} md={8} lg={9}>
               <Typography component="h1" variant="h2" align="left" color="textPrimary" >
@@ -142,7 +150,25 @@ export default function Profile() {
         </div>
 
         <Container className={classes.cardGrid} maxWidth="md">
-          {/* End hero unit */}
+            <Typography
+              variant="h4"
+              align="center"
+              color="textPrimary"
+              gutterBottom
+            >
+              Collections <IconButton><BookmarksIcon/></IconButton>
+            </Typography>
+            { cards.length
+              ? (null)
+              : (<Typography 
+                  align='center'
+                  component="h5"
+                  color="textSecondary"
+                 > 
+                 <IconButton> <SentimentVeryDissatisfiedIcon/></IconButton>
+                 {userForm.firstName + " " + userForm.lastName} have no collections yet
+                 </Typography>)
+            }
           <Grid container spacing={4}>
             {cards.map((card) => (
               <Grid item key={card} xs={12} sm={6} md={4}>
@@ -172,6 +198,59 @@ export default function Profile() {
             ))}
           </Grid>
         </Container>
+
+        <Container className={classes.cardGrid} maxWidth="md">
+          <Typography
+              variant="h4"
+              align="center"
+              color="textPrimary"
+              gutterBottom
+            >
+              Books read <IconButton><ImportContactsIcon/></IconButton>
+            </Typography>
+            { lib.length
+              ? (null)
+              : (<Typography 
+                  align='center'
+                  component="h5"
+                  color="textSecondary"
+                 > 
+                 <IconButton> <SentimentVeryDissatisfiedIcon/></IconButton>
+                 No books in {userForm.firstName + " " + userForm.lastName}'s library 
+                 </Typography>)
+            }
+          <Grid container spacing={4}>
+
+            {lib.map((book) => (
+              <Grid item key={book} xs={12} sm={6} md={4}>
+                <Card className={classes.card}>
+                  <CardMedia
+                    className={classes.cardMedia}
+                    image="https://source.unsplash.com/random?book"
+                    title="Image title"
+                  />
+                  <CardContent className={classes.cardContent}>
+                    <Typography gutterBottom variant="h5" component="h2">
+                      {book.book_title}
+                    </Typography>
+                    <Typography>By Author: {book.book_author}</Typography>
+                    <Typography>Published on: {book.book_pub_date}</Typography>
+                  </CardContent>
+                  <CardActions>
+                    <Button
+                      size="small"
+                      color="primary"
+                      onClick={() => viewBook(book.book_id)}
+                    >
+                      View
+                    </Button>
+                  </CardActions>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        </Container>   
+        
       </main>
       
     </React.Fragment>
