@@ -75,8 +75,6 @@ export default function Reviews(props) {
   const [openReview, setOpenReview] = useState(false);
   const [newReview, setReview] = useState("");
   const [newRating, setRating] = useState(2);
-  const [oldReview, recordReview] = useState("");
-  const [oldRating, recordRating] = useState(2);
   const [hover, setHover] = React.useState(-1);
 
   const handleClickOpen = () => {

@@ -30,13 +30,13 @@ const useStyles = makeStyles((theme) => ({
   image: {
     backgroundImage: "url(https://source.unsplash.com/random)",
     backgroundRepeat: "no-repeat",
-    backgroundColor:
-      theme.palette.type === "light"
-        ? theme.palette.grey[50]
-        : theme.palette.grey[900],
-    backgroundSize: "cover",
+    // backgroundColor:
+    //   theme.palette.type === "light"
+    //     ? theme.palette.grey[50]
+    //     : theme.palette.grey[900],
+    // backgroundSize: "cover",
     height: 500,
-    width: 250,
+    width: 700,
     justify: "center",
     backgroundPosition: "center",
   },
@@ -64,7 +64,8 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "column",
   },
   fixedHeight: {
-    height: 350,
+    align: 'center',
+    height: 500,
   },
   blockSpacing: {
     paddingTop: theme.spacing(4),
@@ -140,6 +141,8 @@ const BookDetails: React.FC<Props> = ({}) => {
   str = str.split("=")[1];
   console.log("To find: " + str + " of type: " + type);
   let book: any;
+  let inLibFlag =false; 
+
 
   function request() {
     var data = onSearch(function (data) {
@@ -147,7 +150,7 @@ const BookDetails: React.FC<Props> = ({}) => {
         console.log(data);
         book = data;
       } else {
-        alert("Something Wrong!");
+        alert("Failed to get book data!");
         window.location.href = "/";
       }
     });
@@ -157,10 +160,11 @@ const BookDetails: React.FC<Props> = ({}) => {
     var data = addLib(id, function (data) {
       if (data != null) {
         console.log(data);
-        console.log("added to lib!!");
+        if(data.message == "Book added to library"){
+          window.location.href='/bookdata/metadata?id=' + id;
+        } 
       } else {
-        alert("Something Wrong!");
-        window.location.href = "/";
+        alert(data.message);
       }
     });
   }
@@ -179,9 +183,7 @@ const BookDetails: React.FC<Props> = ({}) => {
         console.log(data);
         if (data.message == "Book added to library") {
           callback(data);
-        } else {
-          callback(null);
-        }
+        } 
       },
       error: function () {
         console.log("server error!");
@@ -190,10 +192,56 @@ const BookDetails: React.FC<Props> = ({}) => {
     });
   }
 
+  function removeBook(id) {
+    $.ajax({
+      async: false,
+      url: "http://localhost:8000/api/collections/delete_from_library",
+      data: {
+        auth: token,
+        id: id,
+      },
+      method: "POST",
+      success: function (data) {
+        console.log(data);
+        if (data.message == "Book removed from library") {
+            window.location.href='/bookdata/metadata?id=' + id;
+        }else{
+            alert(data.message);
+        }  
+      },
+      error: function () {
+        console.log("server error!");
+      },
+    });
+  }
+
+  function inLib() {
+    let str = window.location.href.split("?")[1];
+    str = str.split("=")[1];
+
+    $.ajax({
+      async: false,
+      url: "http://localhost:8000/api/user/in_library",
+      data: {
+        auth: token,
+        book_id: str,
+      },
+      method: "GET",
+      success: function (data) {
+        console.log(data);
+        inLibFlag =data.in_library;
+        console.log(inLibFlag);
+      },
+      error: function () {
+        console.log("server error!");
+      },
+    });
+  }
+
   function onSearch(callback) {
     let str = window.location.href.split("?")[1];
     str = str.split("=")[1];
-    console.log(str);
+    console.log("getting data for bookID: " + str);
 
     $.ajax({
       async: false,
@@ -217,20 +265,22 @@ const BookDetails: React.FC<Props> = ({}) => {
     });
   }
 
+  inLib();
   request();
 
-  console.log("hello " + book);
   return (
     <React.Fragment>
       <CssBaseline />
       <main>
-        <Container maxWidth="xl">
+         <Container maxWidth="xl">
           <Grid container spacing={3} className={classes.container}>
             {/*Book Cover*/}
-            <Grid item xs={false} md={5} lg={6} className={classes.image} />
+            <Grid item xs={12} md={8} lg={9} className={classes.image} />
             {/*Book Metadata*/}
-            <Grid item xs={12} md={6} lg={3}>
-              <Paper className={fixedHeightPaper}>
+            <Grid item xs={12} md={8} lg={9}>
+              
+              <Paper className={classes.paper}>
+              
                 <Grid>
                   <Typography variant="h4" align="center" color="textPrimary">
                     {book.book_title}
@@ -241,43 +291,50 @@ const BookDetails: React.FC<Props> = ({}) => {
                   <Typography
                     component="p"
                     align="center"
-                    className={classes.blockSpacing}
                   >
                     Published by {book.book_pub_date}
                   </Typography>
+                  <Typography
+                    component="p"
+                    align="center"
+                    className={classes.blockSpacing}
+                  >
+                   {book.book_description}
+                  </Typography>
 
                   <Grid container justify="center">
-                    <Button
-                      onClick={() => addBook(book.book_id)}
-                      type="submit"
-                      variant="contained"
-                      color="primary"
-                    >
-                      Add to Library
-                    </Button>
+                    { inLibFlag
+                      ? (<Button
+                          onClick={() => removeBook(book.book_id)}
+                          type="submit"
+                          variant="contained"
+                          color="primary"
+                        >
+                          Remove from Library
+                        </Button>)
+                      : (<Button
+                          onClick={() => addBook(book.book_id)}
+                          type="submit"
+                          variant="contained"
+                          color="primary"
+                        >
+                          Add to Library
+                        </Button>)
+                    }
+
+                    
                   </Grid>
                 </Grid>
               </Paper>
 
-              {/*TBD feature*/}
-              <Grid item className={classes.heroButtons}>
-                <Button
-                  component={Router.Link}
-                  to="/auth/signup"
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                >
-                  Report False Book Details
-                </Button>
-              </Grid>
+              
             </Grid>
           </Grid>
         </Container>
 
         <Container maxWidth="xl">
           <Grid container spacing={3} className={classes.container}>
-            {/*TBD feature*/}
+          
             <Grid item xs={12} md={8} lg={9}>
               <Paper className={classes.paper}>
                 <Reviews book={book}/>

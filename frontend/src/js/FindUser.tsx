@@ -1,4 +1,5 @@
 import React, {ChangeEvent, useState} from "react";
+import $ = require("jquery");
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
@@ -11,8 +12,13 @@ import IconButton from '@material-ui/core/IconButton';
 import { makeStyles, createStyles, Theme, withStyles, WithStyles } from '@material-ui/core/styles';
 import SearchIcon from '@material-ui/icons/Search';
 import RefreshIcon from '@material-ui/icons/Refresh';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Container from '@material-ui/core/Container';
+import Card from "@material-ui/core/Card";
+import CardActions from "@material-ui/core/CardActions";
+import CardContent from "@material-ui/core/CardContent";
+import CardMedia from "@material-ui/core/CardMedia";
+import CssBaseline from "@material-ui/core/CssBaseline";
+import Container from "@material-ui/core/Container";
+import SentimentVeryDissatisfiedIcon from '@material-ui/icons/SentimentVeryDissatisfied';
 import * as Router from 'react-router-dom';
 
 const styles= makeStyles((theme) => ({
@@ -90,10 +96,58 @@ const FindUser: React.FC<Props> = ({}) => {
 
     function preventDefault(event) {
         event.preventDefault
-        window.location.href="/search?finduser="+SearchForm.title;
+        window.location.href="/user/findusers?"+SearchForm.title;
     }
 
+    let results = false;
+    let txt = "";
+    let users: any= [];
+    function onSearch() {
+      $.ajax({
+        async: false,
+        url: "http://localhost:8000/api/user/find_users",
+        data: {
+          search: txt,
+        },
+        method: "GET",
+        success: function (data) {
+          console.log(data);
+          if (data != null) {
+              if(data.message != "No matches found"){
+                 results = true;
+                 console.log(data);
+                 users = data.user_list;
+              }
+          }
+        },
+        error: function () {
+          console.log("server error!");
+         
+        },
+      });
+    }
+
+    let array = window.location.href.split("?");
+    if(array.length > 1){
+        console.log("looking for user: " + array[1]);
+        let searchstr = array[1].split("%20");
+        if(searchstr.length > 0){
+            for(let i=0; i < searchstr.length; i++ ){
+                txt = txt.concat(searchstr[i]);
+                if(i != array.length-1){
+                    txt = txt.concat(" ");
+                }
+            }
+        }else{
+            txt = array[1];
+        }
+        onSearch();
+    }
     
+    function viewUser(id){
+        window.location.href = "/user/otherusers?userid=" + id;
+    }
+
     return (
     <React.Fragment>
           <CssBaseline />
@@ -103,9 +157,7 @@ const FindUser: React.FC<Props> = ({}) => {
                   <AppBar className={classes.searchBar} position="static" color="default" elevation={0}>
                     <Toolbar>
                       <Grid container spacing={2} alignItems="center">
-                        <Grid item>
-                          <SearchIcon className={classes.block} color="inherit" />
-                        </Grid>
+                        
                         <Grid item xs={12}>
                           <TextField
                             fullWidth
@@ -123,19 +175,59 @@ const FindUser: React.FC<Props> = ({}) => {
                           <Button variant="contained" color="primary" className={classes.addUser} onClick={preventDefault}>
                             Search
                           </Button>
-                          
                         </Grid>
+
                       </Grid>
                     </Toolbar>
                   </AppBar>       
                 </Paper>
             </Grid>
+            <Container className={classes.cardGrid} maxWidth="md">
+              { results
+                  ? (null)
+                  : (<Typography 
+                      align='center'
+                      component="h5"
+                      color="textSecondary"
+                     > 
+                     <IconButton> <SentimentVeryDissatisfiedIcon/></IconButton>
+                     No matches found 
+                     </Typography>)
 
-  
+              }
+              <Grid container spacing={4}>
+                {users.map((card) => (
+                  <Grid item key={card} xs={12} sm={6} md={4}>
+                    <Card className={classes.card}>
+                      <CardMedia
+                        className={classes.cardMedia}
+                        image="https://source.unsplash.com/random?book"
+                        title="Image title"
+                      />
+                      <CardContent className={classes.cardContent}>
+                        <Typography gutterBottom variant="h5" component="h2">
+                          {card.first_name + " " + card.last_name}
+                        </Typography>
+                      </CardContent>
+                      <CardActions>
+                        <Button
+                          size="small"
+                          color="primary"
+                          onClick={() => viewUser(card.user_id)}
+                        >
+                          View
+                        </Button>
+                      </CardActions>
+                    </Card>
+                  </Grid>
+                ))}
+              </Grid>
+            </Container>
             
     </React.Fragment>
 
     );
+    
 }
 
 export default FindUser;

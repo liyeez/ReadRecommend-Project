@@ -238,8 +238,7 @@ const AddTitles: React.FC<Props> = ({ userSignedIn }: Props) => {
                       {book.book_title}
                     </Typography>
                     <Typography>
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                      Nullam molestie pellentesque tortor in rhoncus.
+                      {book.book_description}
                     </Typography>
                   </CardContent>
                   <CardActions>
