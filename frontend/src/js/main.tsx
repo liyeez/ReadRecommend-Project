@@ -5,39 +5,57 @@ import $ = require("jquery");
 import React, { ChangeEvent, useState } from "react";
 import * as Router from "react-router-dom";
 import CookieService from "../services/CookieService";
+
 // Material UI
+import AddIcon from "@material-ui/icons/Add";
+import Box from "@material-ui/core/Box";
+import Button from "@material-ui/core/Button";
+import Card from "@material-ui/core/Card";
+import CardActions from "@material-ui/core/CardActions";
+import CardContent from "@material-ui/core/CardContent";
+import CardMedia from "@material-ui/core/CardMedia";
 import Checkbox from "@material-ui/core/Checkbox";
+import Collapse from "@material-ui/core/Collapse";
+import Container from "@material-ui/core/Container";
+import CssBaseline from "@material-ui/core/CssBaseline";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import FormControl from '@material-ui/core/FormControl';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import Grid from "@material-ui/core/Grid";
+import IconButton from "@material-ui/core/IconButton";
+import Input from "@material-ui/core/Input";
+import InputAdornment from '@material-ui/core/InputAdornment';
+import LanguageIcon from '@material-ui/icons/Language';
+import OutlinedInput from '@material-ui/core/OutlinedInput';
+import Paper from "@material-ui/core/Paper";
+import SearchIcon from "@material-ui/icons/Search";
+import Slider from "@material-ui/core/Slider";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import Paper from "@material-ui/core/Paper";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import AddIcon from "@material-ui/icons/Add";
-import Button from "@material-ui/core/Button";
-import Card from "@material-ui/core/Card";
-import CardActions from "@material-ui/core/CardActions";
-import CardContent from "@material-ui/core/CardContent";
-import CardMedia from "@material-ui/core/CardMedia";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import Container from "@material-ui/core/Container";
-import Grid from "@material-ui/core/Grid";
-import IconButton from "@material-ui/core/IconButton";
-import InputBase from "@material-ui/core/InputBase";
-import Link from "@material-ui/core/Link";
-import SearchIcon from "@material-ui/icons/Search";
-import LanguageIcon from '@material-ui/icons/Language';
 import TextField from "@material-ui/core/TextField";
-import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 
+import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
+import { FormControlLabel } from "@material-ui/core";
+
+const marks = [
+    {value: 0, label: '0'},
+    {value: 1, label: '1'},
+    {value: 2, label: '2'},
+    {value: 3, label: '3'},
+    {value: 4, label: '4'},
+    {value: 5, label: '5'},
+];
 
 const Style = makeStyles((theme) => ({
   heroContent: {
@@ -49,6 +67,16 @@ const Style = makeStyles((theme) => ({
   },
   TableButton: {
     marginTop: theme.spacing(2),
+  },
+  expand: {
+    transform: 'rotate(0deg)',
+    marginLeft: 'auto',
+    transition: theme.transitions.create('transform', {
+      duration: theme.transitions.duration.shortest,
+    }),
+  },
+  expandOpen: {
+    transform: 'rotate(180deg)',
   },
   input: {
     marginLeft: theme.spacing(1),
@@ -271,6 +299,37 @@ const Main: React.FC<Props> = ({ userSignedIn }: Props) => {
 
   const classes = Style();
   const token = CookieService.get("access_token");
+
+  // State for the expandable search menu.
+  const [expanded, setExpanded] = useState(false);
+  const handleExpandClick = () => {
+      setExpanded(!expanded);
+  };
+
+  const [minimumRating, setMinimumRating] = React.useState<number | string | Array<number | string>>(0);
+
+  const handleSliderChange = (event: any, newValue: number | number[]) => {
+    setMinimumRating(newValue);
+  };
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setMinimumRating(event.target.value === '' ? '' : Number(event.target.value));
+  };
+
+  const handleBlur = () => {
+    if (minimumRating < 0) {
+      setMinimumRating(0);
+    } else if (minimumRating > 5) {
+      setMinimumRating(5);
+    }
+  };
+
+  const [checked, setChecked ] = useState(true);
+
+  const handleCheckedChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      setChecked(event.target.checked);
+  }
+
   request();
   requestMove(); // have to run beforehand due to async
 
@@ -282,19 +341,19 @@ const Main: React.FC<Props> = ({ userSignedIn }: Props) => {
         <div className={classes.heroContent}>
           <Container maxWidth="sm">
             <Typography
-              component="h1"
-              variant="h2"
-              align="center"
-              color="textPrimary"
-              gutterBottom
+                component="h1"
+                variant="h2"
+                align="center"
+                color="textPrimary"
+                gutterBottom
             >
               ReadRecommend
             </Typography>
             <Typography
-              variant="h5"
-              align="center"
-              color="textSecondary"
-              paragraph
+                variant="h5"
+                align="center"
+                color="textSecondary"
+                paragraph
             >
               A seamless platform for book lovers to explore personalized book
               recommendations.
@@ -320,32 +379,82 @@ const Main: React.FC<Props> = ({ userSignedIn }: Props) => {
                 <Grid item>
                   <Paper className={classes.root}>
                     <TextField
-                      className={classes.input}
-                      placeholder="Find a Book"
-                      value={SearchForm.title}
-                      name="title"
-                      label="Search ReadRecommend"
-                      onChange={onTextboxChange}
+                        className={classes.input}
+                        placeholder="Find a Book"
+                        value={SearchForm.title}
+                        name="title"
+                        label="Search ReadRecommend"
+                        onChange={onTextboxChange}
                     />
                     <IconButton
-                      type="submit"
-                      onClick={searchLocal}
-                      className={classes.iconButton}
-                      aria-label="search"
+                        type="submit"
+                        onClick={searchLocal}
+                        className={classes.iconButton}
+                        aria-label="search"
                     >
                       <SearchIcon />
                     </IconButton>
 
                     <IconButton
-                      type="submit"
-                      onClick={searchWeb}
-                      className={classes.iconButton}
-                      aria-label="search"
+                        type="submit"
+                        onClick={searchWeb}
+                        className={classes.iconButton}
+                        aria-label="search"
                     >
                       <LanguageIcon />
                     </IconButton>
+                    <IconButton
+                        className={clsx(classes.expand, {[classes.expandOpen]: expanded})}
+                        onClick={handleExpandClick}
+                        aria-expanded={expanded}
+                        aria-label="show more"
+                    >
+                        <ExpandMoreIcon />
+                    </IconButton>
                   </Paper>
+                    <Grid>
+                        <Collapse in={expanded} timeout="auto" unmountOnExit>
+                            <Grid item>
+                                <Box m={2}>
+                                    <Typography gutterBottom>Filter By Minimum Rating</Typography>
+                                    <Slider 
+                                        value={typeof minimumRating === 'number' ? minimumRating : 0}
+                                        onChange={handleSliderChange}
+                                        aria-labelledby="input-slider"
+                                        min={0} max={5} step={0.1}
+                                        marks={marks}
+                                    />
+                                    <Input 
+                                        className={classes.input} 
+                                        value={minimumRating} 
+                                        margin="dense"
+                                        onChange={handleInputChange}
+                                        onBlur={handleBlur}
+                                        inputProps={{step: 0.1, min: 0, max: 5, type: 'number', 'aria-labelledby': 'input-slider'}}
+                                    />
+                                </Box>
+                                <Box m={1}>
+                                    <FormControlLabel 
+                                        control={
+                                            <Checkbox
+                                                checked={checked}
+                                                onChange={handleCheckedChange}
+                                                color="default"
+                                                inputProps={{'aria-label': 'checkbox with default color'}}
+                                            />
+                                        }
+                                        label="Apply Minimum Average Rating"
+                                    />
+                                </Box>
+                            </Grid>
+                            <Grid item>
+                                
+                            </Grid>
+                        </Collapse>
+
+                    </Grid>
                 </Grid>
+
               </Grid>
             </div>
           </Container>
