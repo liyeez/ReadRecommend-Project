@@ -56,31 +56,40 @@ export default function Reviews(props) {
   let read = false;
   let currentUserID: any;
   let reviewFlag = false;
-
-  const token = CookieService.get("access_token");
-  const [openReview, setOpenReview] = useState(false);
-  const [newReview, setReview] = useState("");
-  const [newRating, setRating] = useState(2);
-  const [hover, setHover] = React.useState(-1);
+  let currentRev : any;
+  let currentRat : any;
 
   function isReviewed(){
       getReviews();
       for (var rev of reviews) {
         console.log(rev.user + " " +currentUserID);
-        if(rev.user == currentUserID){
-
+        if(rev.user_id == currentUserID){
             reviewFlag = true; //just to prevent user from writing >1 review
+            currentRev = rev.review; // get current user's rating and review
+            currentRat = rev.rating;
         }
       } 
   }
-  
+
+  const token = CookieService.get("access_token");
+  const [openReview, setOpenReview] = useState(false);
+  const [newReview, setReview] = useState("");
+  const [newRating, setRating] = useState(2);
+  const [oldReview, recordReview] = useState("");
+  const [oldRating, recordRating] = useState(2);
+  const [hover, setHover] = React.useState(-1);
+
   const handleClickOpen = () => {
     readFlag();
     console.log("reviewFlag & read: " + reviewFlag + read);
     if(!reviewFlag && read){ // if the user not commented and has read book
       setOpenReview(true);
+    }else if(reviewFlag && read){ // if review exists and book is read: edit review
+      setReview(currentRev);
+      setRating(currentRat);  
+      setOpenReview(true);
     }else{
-      alert("Please mark the book as read in your library before reviewing!");  
+      alert("Please mark the book as read in your library before reviewing!");
     }
   }
   
@@ -128,7 +137,6 @@ export default function Reviews(props) {
       success: function (data) {
         if (data != null) {
           console.log(data);
-                    
           callback(data);
         }
         callback(null);
@@ -163,13 +171,15 @@ export default function Reviews(props) {
     });
   }
 
-  function Review() {
+  function saveReview() {
     // Closes dialog box.
     handleClose();
     console.log("recorded review: " + newReview + " rating: " + newRating + " for bookID: " + book.book_id);
+    if(reviewFlag){ // if review for this user exists, this func is called for editing, so we delete old review
+      removeReview();
+    }
     var data = addReview(function (data) {
       if (data != null) {
-        
         if (data.message == "review successfully created") {
           window.location.href = "/bookdata/metadata?id=" + book.book_id;
         } else {
@@ -203,7 +213,7 @@ export default function Reviews(props) {
     });
   }
 
-  function removeReview(callback) {
+  function removeReview() {
     $.ajax({
       async: false,
       url: "http://localhost:8000/api/reviews/remove_review",
@@ -215,10 +225,7 @@ export default function Reviews(props) {
       success: function (data) {
         if (data != null && data.message == "review successfully deleted") {
           console.log("removeReview: " + data.message);
-          alert("You've removed your review!");
           window.location.reload();
-        }else{
-          alert(data.message);
         }
       },
       error: function () {
@@ -248,7 +255,7 @@ export default function Reviews(props) {
         <TableBody>
           {reviews.map((row) => (
             <TableRow key={row.id}>
-              <TableCell>{row.user}</TableCell>
+              <TableCell>{row.user_name}</TableCell>
               <TableCell>{row.review}</TableCell>
               <TableCell align="right">
                    
@@ -267,10 +274,10 @@ export default function Reviews(props) {
       <div className={classes.seeMore}>
         
         { reviewFlag
-          ?( <Button color="primary" href="#" onClick={removeReview}>
-              Remove your review
+          ?( <Button color="primary" onClick={handleClickOpen}>
+              Edit your review
             </Button>)
-          :( <Button color="primary" href="#" onClick={handleClickOpen}>
+          :( <Button color="primary" onClick={handleClickOpen}>
               Write a review
             </Button>)
         }  
@@ -289,6 +296,7 @@ export default function Reviews(props) {
               label="Review"
               type="text"
               fullWidth
+              value={newReview}
               onChange={onTextChange}
             />
             <div className={classes.ratingStyle}>
@@ -314,12 +322,23 @@ export default function Reviews(props) {
               Cancel
             </Button>
             <Button
-              onClick={Review}
+              onClick={saveReview}
               color="primary"
               variant="contained"
             >
               Save
             </Button>
+          {/*only display delete button when review exists*/}
+            { reviewFlag
+              ?  (<Button
+                  onClick={removeReview}
+                  color="primary"
+                  variant="contained"
+                >
+                  Delete
+                </Button>)
+              : (null)
+            }
           </DialogActions>
         </Dialog>
 

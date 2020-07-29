@@ -18,8 +18,8 @@ def get_reviews(request):
 
     review_list = []
     for review in reviews.all():
-        review_list.append({"user": review.user.id, "review": review.text,
-                            "rating": review.score})
+        review_list.append({"user_id":review.user.id,"user_name": (review.user.first_name + " " + review.user.last_name), 
+                            "review": review.text,"rating": review.score})
 
     if len(review_list) > 0:
         message = "Got matching reviews"
