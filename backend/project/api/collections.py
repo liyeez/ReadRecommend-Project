@@ -273,6 +273,55 @@ def get_tags(request):
     else:
         return Response({"status": "ok", "message": "Got tags", "tag_list": tag_list}, status=status.HTTP_200_OK)
 
+
+@api_view(["GET"])
+@input_validator(["tag_label"])
+def get_tagged_collections(request):
+    """
+    get_tagged_collections
+
+    Gets all collections with a specified tag
+
+    Input:
+    tag_label (str)
+
+    Returns:
+    collection_list (list):
+        collection_id (int)
+        collection_name (str)
+        collection_owner (int)
+        book_list (list):
+            book_id (int)
+            book_title (str)
+    """ 
+    try:
+        tag = Tag.objects.get(name=request.GET["tag_label"])
+    except:
+        return Response({"status": "error", "message": "Tag not found"}, status=status.HTTP_200_OK)
+
+    collections = tag.collection_set.all()
+
+    collection_list = []
+
+    for collection in collections:
+        curr_collection = {}
+        curr_collection["collection_id"] = collection.collection_id
+        curr_collection["collection_name"] = collection.name
+        curr_collection["collection_owner"] = collection.user.id
+        curr_collection["book_list"] = []
+
+        curr_book = []
+        for book in collection.books.all():
+            curr_book = {}
+            curr_book["book_id"] = book.id
+            curr_book["book_title"] = book.title
+            curr_collection["book_list"].append(curr_book)
+
+        collection_list.append(curr_collection)
+
+    return Response({"status": "ok", "message": "Got collections", "collection_list": collection_list}, status=status.HTTP_200_OK)
+
+
 @api_view(["GET"])
 @input_validator(["collection_id"])
 def recent_added(request): # returns ten most recently added books for specified collection

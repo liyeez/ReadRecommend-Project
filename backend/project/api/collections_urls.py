@@ -13,5 +13,6 @@ urlpatterns = [
     path("add_tag", collections.add_tag),
     path("delete_tag", collections.delete_tag),
     path("get_tags", collections.get_tags),
+    path("get_tagged_collections", collections.get_tagged_collections),
     path("recent_added", collections.recent_added)
 ]
