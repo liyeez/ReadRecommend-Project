@@ -382,9 +382,49 @@ def readers(request):
         if count > 12:
             break
         book = item[0]
-        book_list.append({"id": book.id, "title": book.title})
-
+        stats = BookStats.objects.filter(book=book).first()
+        if stats:
+            book_list.append({"book_id": book.id, "book_title": book.title,
+                        "book_author": book.author, "book_pub_date": book.pub_date,
+                        "average_review": stats.average_rating,"n_reviews": stats.total_ratings,"n_collections":stats.collection_count, "n_readers": stats.read_count})
+        else:
+            book_list.append({"book_id": book.id, "book_title": book.title,
+                        "book_author": book.author, "book_pub_date": book.pub_date,
+                        "average_review": 0,"n_reviews": 0,"n_collections":0, "n_readers": 0})
     return Response({"status": "ok", "message": "Books retrieved", "book_list": book_list}, status=status.HTTP_200_OK)
+
+@api_view(["GET"])
+@auth_validator
+def recommendations(request):
+    user_library = request.user.collection_set.get(library=True)
+    genres = {}
+    for book in user_library.books.all():
+        if book.genre in genres:
+            genres[book.genre] += 1
+        else:
+            genres[book.genre] = 1
+    sort = sorted(genres.items(), key=lambda x: x[1], reverse=True)
+    genre = sort[0][0]
+    books = Book.objects.filter(genre = genre)
+    book_list = []
+    count = 0
+    for book in books:
+        count += 1
+        if count > 12:
+            break
+        if book not in user_library.books.all():
+            stats = BookStats.objects.filter(book=book).first()
+            if stats:
+                book_list.append({"book_id": book.id, "book_title": book.title,
+                            "book_author": book.author, "book_pub_date": book.pub_date,
+                            "average_review": stats.average_rating,"n_reviews": stats.total_ratings,"n_collections":stats.collection_count, "n_readers": stats.read_count})
+            else:
+                book_list.append({"book_id": book.id, "book_title": book.title,
+                            "book_author": book.author, "book_pub_date": book.pub_date,
+                            "average_review": 0,"n_reviews": 0,"n_collections":0, "n_readers": 0})
+
+
+    return Response({"status": "ok", "message": "Genre found", "Most_genre": genre, "book_list": book_list}, status=status.HTTP_200_OK)
 
 
 #
