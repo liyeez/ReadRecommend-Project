@@ -12,6 +12,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
 import LocalLibraryIcon from '@material-ui/icons/LocalLibrary';
+import MenuBookIcon from '@material-ui/icons/MenuBook';
 import HomeIcon from '@material-ui/icons/Home';
 import PeopleIcon from '@material-ui/icons/People';
 import Toolbar from "@material-ui/core/Toolbar";
@@ -60,6 +61,11 @@ const Sidebar: React.FC = ({}) => {
                 <ListItem button key={"My Profile"} component={Router.Link} to="/user/profile">
                 <ListItemIcon><LibraryBooksIcon /></ListItemIcon>
                 <ListItemText primary={'My Profile'} />
+                </ListItem>
+
+                <ListItem button key={"More Books"} component={Router.Link} to="/user/recommendations">
+                <ListItemIcon><MenuBookIcon /></ListItemIcon>
+                <ListItemText primary={'More Books'} />
                 </ListItem>
 
             </List>

@@ -63,6 +63,8 @@ const SignIn: React.FC<Props> = ({}) => {
     });
   };
 
+  let failFlag = false;
+
   function onSignIn() {
     $.ajax({
       url: "http://localhost:8000/api/auth/signin",
@@ -73,7 +75,9 @@ const SignIn: React.FC<Props> = ({}) => {
       },
       success: function (data) {
         if (data.status == "error") {
-          <Router.Redirect to="/" />;
+          console.log(data);
+          failFlag = true;
+          // <Router.Redirect to="/" />;
         } else if (data.status == "ok") {
           // Handle sign in success.
 
@@ -82,11 +86,13 @@ const SignIn: React.FC<Props> = ({}) => {
           // Create a cookie with the token from response.
           CookieService.set("access_token", data.token, options);
           console.log(data.user_id);
-          window.location.reload();
+          window.location.href = "/";
         }
       },
       error: function () {
-        console.log("server error!");
+        console.log("sign in server error!");
+        failFlag = true;
+        window.location.href = "/auth/signin";
       },
     });
   }
@@ -137,8 +143,16 @@ const SignIn: React.FC<Props> = ({}) => {
             >
               Sign In
             </Button>
+            { failFlag
+              ? (<Typography variant="body2">
+                   Wrong login credentials
+                 </Typography>)
+              :(null)
+            }
+            
             <Grid container justify="flex-end">
               <Grid item>
+                
                 <Link href="/auth/signup" variant="body2">
                   {"Don't have an account? Sign Up"}
                 </Link>

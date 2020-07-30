@@ -253,7 +253,7 @@ const Main: React.FC<Props> = ({ userSignedIn }: Props) => {
         //moveCollection(); //function called to POST request
       } else {
         //TO DO: gracefully inform user needs to create a collection first
-        window.location.href = "/";
+        window.location.href = "/auth/signin";
       }
     });
   }
