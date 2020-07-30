@@ -25,7 +25,7 @@ SECRET_KEY = "_^jj)*yu+iraxxm07e^z%%b_pj#!f8_fwo*=x4x(8ovphcd(s7"
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["capstonebackend.simonliveshere.com"]
+ALLOWED_HOSTS = ["capstonebackend.simonliveshere.com", "localhost"]
 
 
 # Application definition
