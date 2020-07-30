@@ -112,16 +112,6 @@ def search(request):
     if 'genre' in request.GET:
         books = books.filter(genre=request.GET['genre'])
 
-    filters = ['average_rating','total_ratings','read_count','collection_count']
-    BookStats.objects.update_all()
-
-    for f in [x for x in filters if x in request.GET]:
-        for b in books:
-            book_stat = BookStats.objects.filter(book=b).first()
-            if not book_stat:
-                books = books.exclude(id=b.id)
-            elif getattr(book_stat,f) <= int(request.GET[f]):              
-                books = books.exclude(id=b.id)
 
     book_list = []
     for book in books.all():
