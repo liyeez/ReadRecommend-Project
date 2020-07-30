@@ -77,7 +77,7 @@ def search(request):
         print (f)
         for b in books:
             book_stat = BookStats.objects.get(book=b)
-            if book_stat and getattr(book_stat,f) <= int(request.GET[f]):                    
+            if book_stat and getattr(book_stat,f) <= float(request.GET[f]):                    
                 books = books.exclude(id=b.id)
 
     book_list = []

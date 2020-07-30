@@ -12,11 +12,8 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
 import IconButton from "@material-ui/core/IconButton";
-import InputBase from "@material-ui/core/InputBase";
-import Link from "@material-ui/core/Link";
 import Paper from "@material-ui/core/Paper";
 import SearchIcon from "@material-ui/icons/Search";
-import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import LanguageIcon from '@material-ui/icons/Language';
 import { makeStyles } from "@material-ui/core/styles";
@@ -68,6 +65,10 @@ interface SearchForm {
 const Search: React.FC<Props> = ({}) => {
   let books: Array<any> = [];
   let users: Array<any> = [];
+  let averageRating : number = 0;
+  let totalRatings : number = 0;
+  let readCount : number = 0;
+  let collectionCount : number = 0;
 
   const [SearchForm, setSearchForm] = useState<SearchForm>({
     title: "",
@@ -86,11 +87,13 @@ const Search: React.FC<Props> = ({}) => {
   function request() {
     var data = onSearch(function (data) {
       console.log(data);
-      if (data.message == "Got matching books") {
-        books = data.book_list;
-      } else if (data.message == "Got users") {
-        users = data.user_list;
-      } 
+      if (data != null) {
+        if (data.message == "Got matching books") {
+            books = data.book_list;
+        } else if (data.message == "Got users") {
+            users = data.user_list;
+        } 
+      }
     });
   }
 
@@ -110,6 +113,10 @@ const Search: React.FC<Props> = ({}) => {
       url: api_call,
       data: {
         search: txt,
+        average_rating: averageRating,
+        total_ratings: totalRatings,
+        read_count: readCount,
+        collection_count: collectionCount,
       },
       method: "GET",
       success: function (data) {
@@ -135,6 +142,20 @@ const Search: React.FC<Props> = ({}) => {
   }
 
   const classes = Style();
+  let parameters = window.location.href.split("?");
+  
+  if (parameters.length === 6) {
+      averageRating = parseFloat(parameters[2].split("=")[1]);
+      totalRatings = parseFloat(parameters[3].split("=")[1]);
+      readCount = parseFloat(parameters[4].split("=")[1]);
+      collectionCount = parseFloat(parameters[5].split("=")[1])
+  }
+
+  console.log(averageRating);
+  console.log(totalRatings);
+  console.log(readCount);
+  console.log(collectionCount);
+
   let str = window.location.href.split("?")[1];
   let type = str.split("=")[0];
   str = str.split("=")[1];

@@ -22,7 +22,6 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import FormControl from '@material-ui/core/FormControl';
 import FormGroup from '@material-ui/core/FormGroup';
@@ -200,14 +199,6 @@ const Main: React.FC<Props> = ({ userSignedIn }: Props) => {
     });
   };
 
-  function searchLocal(event) { 
-    window.location.href = "/search?title=" + SearchForm.title;
-  }
-
-  function searchWeb(event) {
-    window.location.href = "/extsearch?title=" + SearchForm.title + "?index=0";
-  }
-
   function request() {
     var data = randomBooks(function (data) {
       if (data != null) {
@@ -344,39 +335,49 @@ const Main: React.FC<Props> = ({ userSignedIn }: Props) => {
       setCheckedState({...checkedState, [event.target.name]: event.target.checked});
   };
 
-  function requestFilterSearch() {
-      var data = filterSearch(function(data) {
-          if (data != null) {
-              console.log(data);
-          }
-      });
-  };
+//   function requestFilterSearch() {
+//       var data = filterSearch(function(data) {
+//           if (data != null) {
+//               console.log(data);
+//           }
+//       });
+//   };
 
-  function filterSearch(callback) {
-      $.ajax({
-        async: false,
-        url: "http://localhost:8000/api/books/search",
-        data: {
-            search: "",
-            average_rating: minimumRating,
-            total_ratings: filterState.minimumTotalRatings,
-            read_count: filterState.minimumReadCount,
-            collection_count: filterState.minimumCollectionCount,
-        },
-        method: "POST",
-        success: function (data) {
-            if (data != null) {
-            callback(data);
-            } else {
-            callback(null);
-            }
-        },
-        error: function () {
-            console.log("Server error!");
-            callback(null);
-        }
-      });
-  };
+//   function filterSearch(callback) {
+//       $.ajax({
+//         async: false,
+//         url: "http://localhost:8000/api/books/search",
+//         data: {
+//             search: "",
+//             average_rating: minimumRating,
+//             total_ratings: filterState.minimumTotalRatings,
+//             read_count: filterState.minimumReadCount,
+//             collection_count: filterState.minimumCollectionCount,
+//         },
+//         method: "POST",
+//         success: function (data) {
+//             if (data != null) {
+//             callback(data);
+//             } else {
+//             callback(null);
+//             }
+//         },
+//         error: function () {
+//             console.log("Server error!");
+//             callback(null);
+//         }
+//       });
+//   };
+
+  function searchLocal(event) { 
+    window.location.href = "/search?title=" + SearchForm.title + "?average_rating=" + minimumRating + 
+                    "?total_ratings=" + filterState.minimumTotalRatings + "?read_count=" + filterState.minimumReadCount + 
+                    "?collection_count=" + filterState.minimumCollectionCount;
+  }
+
+  function searchWeb(event) {
+    window.location.href = "/extsearch?title=" + SearchForm.title + "?index=0";
+  }
 
   request();
   requestMove(); // have to run beforehand due to async
@@ -460,113 +461,115 @@ const Main: React.FC<Props> = ({ userSignedIn }: Props) => {
                         <FilterListIcon />
                     </IconButton>
                   </Paper>
-                    <Grid>
-                        <Collapse in={expanded} timeout="auto" unmountOnExit>
-                            <Grid item>
-                                <Box m={2}>
-                                    <Typography id="input-slider" gutterBottom>Filter By Minimum Rating</Typography>
-                                    <Slider 
-                                        value={typeof minimumRating === 'number' ? minimumRating : 0}
-                                        onChange={handleSliderChange}
-                                        aria-labelledby="input-slider"
-                                        min={0} max={5} step={0.1}
-                                        marks={marks}
-                                    />
-                                    <Input 
-                                        className={classes.input} 
-                                        value={minimumRating} 
-                                        margin="dense"
-                                        onChange={handleInputChange}
-                                        onBlur={handleBlur}
-                                        inputProps={{step: 0.1, min: 0, max: 5, type: 'number', 'aria-labelledby': 'input-slider'}}
-                                    />
-                                </Box>
+                    <Paper>
+                        <Grid>
+                            <Collapse in={expanded} timeout="auto" unmountOnExit>
+                                <Grid item>
+                                    <Box m={2}>
+                                        <Typography id="input-slider" gutterBottom>Filter By Minimum Rating</Typography>
+                                        <Slider 
+                                            value={typeof minimumRating === 'number' ? minimumRating : 0}
+                                            onChange={handleSliderChange}
+                                            aria-labelledby="input-slider"
+                                            min={0} max={5} step={0.1}
+                                            marks={marks}
+                                        />
+                                        <Input 
+                                            className={classes.input} 
+                                            value={minimumRating} 
+                                            margin="dense"
+                                            onChange={handleInputChange}
+                                            onBlur={handleBlur}
+                                            inputProps={{step: 0.1, min: 0, max: 5, type: 'number', 'aria-labelledby': 'input-slider'}}
+                                        />
+                                    </Box>
 
-                                <Box m={2}>
-                                    <TextField 
-                                        id="minimumTotalRatings" name="minimumTotalRatings"
-                                        label="Minimum Total Ratings" type="number"
-                                        value={filterState.minimumTotalRatings}
-                                        onChange={handleFilterChange}
-                                    />
-                                </Box>
+                                    <Box m={2}>
+                                        <TextField 
+                                            id="minimumTotalRatings" name="minimumTotalRatings"
+                                            label="Minimum Total Ratings" type="number"
+                                            value={filterState.minimumTotalRatings}
+                                            onChange={handleFilterChange}
+                                        />
+                                    </Box>
 
-                                <Box m={2}>
-                                    <TextField
-                                        id="minimumReadCount" name="minimumReadCount"
-                                        label="Minimum Read Count" type="number"
-                                        value={filterState.minimumReadCount}
-                                        onChange={handleFilterChange}
-                                    />
-                                </Box>
+                                    <Box m={2}>
+                                        <TextField
+                                            id="minimumReadCount" name="minimumReadCount"
+                                            label="Minimum Read Count" type="number"
+                                            value={filterState.minimumReadCount}
+                                            onChange={handleFilterChange}
+                                        />
+                                    </Box>
 
-                                <Box m={2}>
-                                    <TextField 
-                                        id="minimumCollectionCount" name="minimumCollectionCount"
-                                        label="Minimum Collection Count" type="number"
-                                        value={filterState.minimumCollectionCount}
-                                        onChange={handleFilterChange}
-                                    />
-                                </Box>
-                            </Grid>
-                            <Grid item>
-                                <Box m={2}>
-                                    <FormControl>
-                                        <FormLabel component="legend">Select Search Filters</FormLabel>
-                                        <FormGroup>
-                                            <FormControlLabel 
-                                                control={
-                                                    <Checkbox
-                                                        checked={checkedState.checkedAverageRating}
-                                                        onChange={handleCheckedChange}
-                                                        color="default"
-                                                        name="checkedAverageRating"
-                                                    />
-                                                }
-                                                label="Apply Minimum Average Rating"
-                                            />
-                                            <FormControlLabel 
-                                                control={
-                                                    <Checkbox
-                                                        checked={checkedState.checkedTotalRatings}
-                                                        onChange={handleCheckedChange}
-                                                        color="default"
-                                                        name="checkedTotalRatings"
-                                                    />
-                                                }
-                                                label="Apply Minimum Total Ratings"
-                                            />
-                                            <FormControlLabel 
-                                                control={
-                                                    <Checkbox
-                                                        checked={checkedState.checkedReadCount}
-                                                        onChange={handleCheckedChange}
-                                                        color="default"
-                                                        name="checkedReadCount"
-                                                    />
-                                                }
-                                                label="Apply Minimum Number of Readers"
-                                            />
-                                            <FormControlLabel 
-                                                control={
-                                                    <Checkbox
-                                                        checked={checkedState.checkedCollectionCount}
-                                                        onChange={handleCheckedChange}
-                                                        color="default"
-                                                        name="checkedCollectionCount"
-                                                    />
-                                                }
-                                                label="Apply Minimum Times Added To Collection"
-                                            />
-                                        </FormGroup>
-                                    </FormControl>
-                                    <Button color="primary" /*onClick={searchLocal} */>
-                                        Advanced Search
-                                    </Button>
-                                </Box>
-                            </Grid>
-                        </Collapse>
-                    </Grid>
+                                    <Box m={2}>
+                                        <TextField 
+                                            id="minimumCollectionCount" name="minimumCollectionCount"
+                                            label="Minimum Collection Count" type="number"
+                                            value={filterState.minimumCollectionCount}
+                                            onChange={handleFilterChange}
+                                        />
+                                    </Box>
+                                </Grid>
+                                <Grid item>
+                                    <Box m={2}>
+                                        {/*<FormControl>
+                                            <FormLabel component="legend">Select Search Filters</FormLabel>
+                                            <FormGroup>
+                                                <FormControlLabel 
+                                                    control={
+                                                        <Checkbox
+                                                            checked={checkedState.checkedAverageRating}
+                                                            onChange={handleCheckedChange}
+                                                            color="default"
+                                                            name="checkedAverageRating"
+                                                        />
+                                                    }
+                                                    label="Apply Minimum Average Rating"
+                                                />
+                                                <FormControlLabel 
+                                                    control={
+                                                        <Checkbox
+                                                            checked={checkedState.checkedTotalRatings}
+                                                            onChange={handleCheckedChange}
+                                                            color="default"
+                                                            name="checkedTotalRatings"
+                                                        />
+                                                    }
+                                                    label="Apply Minimum Total Ratings"
+                                                />
+                                                <FormControlLabel 
+                                                    control={
+                                                        <Checkbox
+                                                            checked={checkedState.checkedReadCount}
+                                                            onChange={handleCheckedChange}
+                                                            color="default"
+                                                            name="checkedReadCount"
+                                                        />
+                                                    }
+                                                    label="Apply Minimum Number of Readers"
+                                                />
+                                                <FormControlLabel 
+                                                    control={
+                                                        <Checkbox
+                                                            checked={checkedState.checkedCollectionCount}
+                                                            onChange={handleCheckedChange}
+                                                            color="default"
+                                                            name="checkedCollectionCount"
+                                                        />
+                                                    }
+                                                    label="Apply Minimum Times Added To Collection"
+                                                />
+                                            </FormGroup>
+                                        </FormControl>*/}
+                                        <Button color="primary" onClick={searchLocal}>
+                                            Advanced Search
+                                        </Button>
+                                    </Box>
+                                </Grid>
+                            </Collapse>
+                        </Grid>
+                    </Paper>
                 </Grid>
 
               </Grid>
