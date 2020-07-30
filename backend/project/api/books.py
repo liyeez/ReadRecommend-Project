@@ -64,6 +64,8 @@ def search(request):
         search = request.GET["search"]
         books = Book.objects.filter(
             Q(title__icontains=search) | Q(author__contains=search))
+        if not books:
+            books = Book.objects.all()
     else:
         books = Book.objects.all()
 
