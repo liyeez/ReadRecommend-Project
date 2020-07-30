@@ -34,8 +34,6 @@ def input_validator(fields: List[str]):
             for key in fields:
                 if key not in request_dict:
                     return Response({"status": "error", "message": "Missing request fields"}, status=status.HTTP_400_BAD_REQUEST)
-                if request_dict[key] == "":
-                    return Response({"status": "error", "message": "Blank key field (" + key + ")"}, status=status.HTTP_400_BAD_REQUEST)
             
             try:
                 return func(request)
