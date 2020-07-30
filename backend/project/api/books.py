@@ -5,7 +5,7 @@ from rest_framework import status
 from django.core.exceptions import ObjectDoesNotExist
 
 from django.db.models import Q
-from .models import Book, BookInstance, BookStats, Review
+from .models import Book, BookInstance, BookStats, Review, Collection
 from .utilities import input_validator, auth_validator
 from datetime import datetime
 import requests
@@ -350,6 +350,41 @@ def search_book(request):
     else:
         return Response({"status": "ok", "message": "No matches", "results": [], "current_index": index}, status=status.HTTP_200_OK)
 
+@api_view(["GET"])
+@input_validator(["book_id"])
+@auth_validator
+def readers(request):
+    try:
+        book = Book.objects.get(id=request.GET["book_id"])
+    except:
+        return Response({"status": "error", "message": "Book not found"}, status=status.HTTP_200_OK)
+    book_id = request.GET["book_id"]
+    user_library = request.user.collection_set.get(library=True)
+    library_id = user_library.pk
+    libraries = Collection.objects.filter(library=True).exclude(pk = library_id)
+    suggestions = {} #book suggestions
+    for library in libraries:
+        try:
+            library.books.get(id = book_id)
+            for book in library.books.all():
+                if book.id != int(book_id) and book not in user_library.books.all():
+                    if book in suggestions:
+                        suggestions[book] += 1
+                    else:
+                        suggestions[book] = 1
+        except:
+            pass
+    sort = sorted(suggestions.items(), key=lambda x: x[1], reverse=True)
+    book_list = []
+    count = 0
+    for item in sort:
+        count += 1
+        if count > 12:
+            break
+        book = item[0]
+        book_list.append({"id": book.id, "title": book.title})
+
+    return Response({"status": "ok", "message": "Books retrieved", "book_list": book_list}, status=status.HTTP_200_OK)
 
 
 #
