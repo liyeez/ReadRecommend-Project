@@ -344,23 +344,6 @@ const Main: React.FC<Props> = ({ userSignedIn }: Props) => {
       setCheckedState({...checkedState, [event.target.name]: event.target.checked});
   };
 
-  // Checks the boxes the user has ticked and returns a filter parameter.
-  function getRequestedFilters() {
-    let filters : string[] = [];
-    if (checkedState.checkedAverageRating) {
-        filters.push('average_rating');
-    }
-    if (checkedState.checkedTotalRatings) {
-        filters.push('total_ratings');
-    }
-    if (checkedState.checkedReadCount) {
-        filters.push('read_count');
-    }
-    if (checkedState.checkedCollectionCount) {
-        filters.push('collection_count');
-    } 
-  }
-
   function requestFilterSearch() {
       var data = filterSearch(function(data) {
           if (data != null) {
@@ -375,10 +358,9 @@ const Main: React.FC<Props> = ({ userSignedIn }: Props) => {
         url: "http://localhost:8000/api/books/search",
         data: {
             search: "",
-            filters: getRequestedFilters(),
-            min_rating: minimumRating,
-            n_reviews: filterState.minimumTotalRatings,
-            n_readers: filterState.minimumReadCount,
+            average_rating: minimumRating,
+            total_ratings: filterState.minimumTotalRatings,
+            read_count: filterState.minimumReadCount,
             collection_count: filterState.minimumCollectionCount,
         },
         method: "POST",
