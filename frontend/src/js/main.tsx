@@ -46,6 +46,11 @@ import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
 import { FormControlLabel } from "@material-ui/core";
 
+declare const API_URL: string;
+
+console.log("api:")
+console.log(API_URL)
+
 const marks = [
     {value: 0, label: '0'},
     {value: 1, label: '1'},
@@ -141,7 +146,7 @@ const Main: React.FC<Props> = ({ userSignedIn }: Props) => {
   function getCollections(){
       $.ajax({
             async: false,
-            url: "http://localhost:8000/api/user/my_profile",
+            url: API_URL + "/api/user/my_profile",
             method: "GET",
             data: {
                 auth: token,
@@ -167,7 +172,7 @@ const Main: React.FC<Props> = ({ userSignedIn }: Props) => {
     console.log(id);
     $.ajax({
       async: false,
-      url: "http://localhost:8000/api/collections/add_to_library",
+      url: API_URL + "/api/collections/add_to_library",
       data: {
         auth: token,
         id: id,
@@ -214,7 +219,7 @@ const Main: React.FC<Props> = ({ userSignedIn }: Props) => {
   function randomBooks(callback) {
     $.ajax({
       async: false,
-      url: "http://localhost:8000/api/books/random",
+      url: API_URL + "/api/books/random",
       data: {
         count: 12,
       },
@@ -251,7 +256,7 @@ const Main: React.FC<Props> = ({ userSignedIn }: Props) => {
   function retrieveCollections(callback) {
     $.ajax({
       async: false,
-      url: "http://localhost:8000/api/user/my_profile",
+      url: API_URL + "/api/user/my_profile",
       method: "GET",
       data: {
         auth: token,
@@ -346,7 +351,7 @@ const Main: React.FC<Props> = ({ userSignedIn }: Props) => {
 //   function filterSearch(callback) {
 //       $.ajax({
 //         async: false,
-//         url: "http://localhost:8000/api/books/search",
+//         url: API_URL + "/api/books/search",
 //         data: {
 //             search: "",
 //             average_rating: minimumRating,

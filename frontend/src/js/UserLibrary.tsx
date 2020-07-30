@@ -23,6 +23,8 @@ import Typography from "@material-ui/core/Typography";
 
 import { makeStyles } from "@material-ui/core/styles";
 
+declare const API_URL: string;
+
 const Style = makeStyles((theme) => ({
     icon: {
         marginRight: theme.spacing(2),
@@ -78,7 +80,7 @@ export default function UserLibrary() {
     function removeLib(id, callback) {
         $.ajax({
             async: false,
-            url: "http://localhost:8000/api/collections/delete_from_library",
+            url: API_URL + "/api/collections/delete_from_library",
             data: {
                 auth: token,
                 id: id,
@@ -113,7 +115,7 @@ export default function UserLibrary() {
     function onSearch(callback) {
         $.ajax({
             async: false,
-            url: "http://localhost:8000/api/user/get_library",
+            url: API_URL + "/api/user/get_library",
             data: {
                 auth: token,
             },
@@ -142,7 +144,7 @@ export default function UserLibrary() {
     function getReadStatus(bookId, callback) {
         $.ajax({
             async: false,
-            url: "http://localhost:8000/api/books/is_read",
+            url: API_URL + "/api/books/is_read",
             data: {
                 auth: token,
                 book_id: bookId
@@ -173,7 +175,7 @@ export default function UserLibrary() {
     function setReadStatus(bookId, callback) {
         $.ajax({
             async: false,
-            url: "http://localhost:8000/api/books/set_read",
+            url: API_URL + "/api/books/set_read",
             data: {
                 auth: token,
                 book_id: bookId,

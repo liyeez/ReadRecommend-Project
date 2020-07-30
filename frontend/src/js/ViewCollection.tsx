@@ -27,6 +27,8 @@ import Typography from "@material-ui/core/Typography";
 
 import { makeStyles } from "@material-ui/core/styles";
 
+declare const API_URL: string;
+
 const Style = makeStyles((theme) => ({
   heroContent: {
     backgroundColor: theme.palette.background.paper,
@@ -107,7 +109,7 @@ const ViewCollection: React.FC<Props> = ({}) => {
 
     $.ajax({
       async: false,
-      url: "http://localhost:8000/api/collections/view_collection",
+      url: API_URL + "/api/collections/view_collection",
       data: {
         collection_id: str,
       },

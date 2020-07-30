@@ -22,6 +22,8 @@ import Typography from "@material-ui/core/Typography";
 
 import { makeStyles } from "@material-ui/core/styles";
 
+declare const API_URL: string;
+
 const Style = makeStyles((theme) => ({
   heroContent: {
     backgroundColor: theme.palette.background.paper,
@@ -112,7 +114,7 @@ const AddTitles: React.FC<Props> = ({ userSignedIn }: Props) => {
   function findNewTitles(callback) {
     $.ajax({
       async: false,
-      url: "http://localhost:8000/api/books/random",
+      url: API_URL + "/api/books/random",
       data: {
         auth: token,
         count: 12,
@@ -136,7 +138,7 @@ const AddTitles: React.FC<Props> = ({ userSignedIn }: Props) => {
   function addTitleToCollection(idToAdd) {
     $.ajax({
       async: false,
-      url: "http://localhost:8000/api/collections/add_title",
+      url: API_URL + "/api/collections/add_title",
       data: {
         auth: token,
         collection_id: collectionId,

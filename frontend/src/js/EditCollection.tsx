@@ -32,6 +32,8 @@ import Typography from "@material-ui/core/Typography";
 
 import { makeStyles } from "@material-ui/core/styles";
 
+declare const API_URL: string;
+
 const Style = makeStyles((theme) => ({
     heroContent: {
         backgroundColor: theme.palette.background.paper,
@@ -201,7 +203,7 @@ const EditCollection: React.FC<Props> = ({}) => {
     function getBooks(callback) {
         $.ajax({
             async: false,
-            url: "http://localhost:8000/api/collections/view_collection",
+            url: API_URL + "/api/collections/view_collection",
             data: {
                 collection_id: collectionId,
             },
@@ -222,7 +224,7 @@ const EditCollection: React.FC<Props> = ({}) => {
     function getTags(callback) {
         $.ajax({
             async: false,
-            url: "http://localhost:8000/api/collections/get_tags",
+            url: API_URL + "/api/collections/get_tags",
             data: {
                 collection_id: collectionId,
             },
@@ -256,7 +258,7 @@ const EditCollection: React.FC<Props> = ({}) => {
         // Change the collection title in the back-end/database.
         $.ajax({
             async: false,
-            url: "http://localhost:8000/api/collections/rename",
+            url: API_URL + "/api/collections/rename",
             data: {
                 auth: token,
                 collection_id: collectionId,
@@ -293,7 +295,7 @@ const EditCollection: React.FC<Props> = ({}) => {
         // Change the collection title in the back-end/database.
         $.ajax({
             async: false,
-            url: "http://localhost:8000/api/collections/add_tag",
+            url: API_URL + "/api/collections/add_tag",
             data: {
                 collection_id: collectionId,
                 tag_label: newTag,
@@ -316,7 +318,7 @@ const EditCollection: React.FC<Props> = ({}) => {
         console.log("Remove tag from collection.");
         $.ajax({
             async: false,
-            url: "http://localhost:8000/api/collections/delete_tag",
+            url: API_URL + "/api/collections/delete_tag",
             data: {
                 collection_id: collectionId,
                 tag_label: tag_label,
@@ -339,7 +341,7 @@ const EditCollection: React.FC<Props> = ({}) => {
     function removeBook(toRemove) {
         $.ajax({
             async: false,
-            url: "http://localhost:8000/api/collections/delete_title",
+            url: API_URL + "/api/collections/delete_title",
             data: {
                 auth: token,
                 collection_id: collectionId,

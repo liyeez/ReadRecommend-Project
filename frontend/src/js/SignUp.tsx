@@ -18,6 +18,7 @@ import Typography from "@material-ui/core/Typography";
 
 import { makeStyles } from "@material-ui/core/styles";
 
+declare const API_URL: string;
 
 const Style = makeStyles((theme) => ({
     paper: {
@@ -89,7 +90,7 @@ const SignUp: React.FC<Props> = ({}) => {
             });
         } else {
             $.ajax({
-                url: "http://localhost:8000/api/auth/signup",
+                url: API_URL + "/api/auth/signup",
                 method: "POST",
                 data: {
                     email: signUpForm.signUpEmail,

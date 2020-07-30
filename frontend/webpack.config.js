@@ -1,5 +1,23 @@
 const path = require("path");
 const CopyPlugin = require("copy-webpack-plugin");
+const webpack = require('webpack');
+
+// Dev/Prod API URL
+var API_URL = {
+    production: JSON.stringify("http://capstonebackend.simonliveshere.com"),
+    development: JSON.stringify("http://localhost:8000")
+}
+
+var environment = function () {
+    switch(process.env.NODE_ENV) {
+        case "production":
+            return "production";
+        case "development":
+            return "development";
+        default:
+            return "production";
+    };
+};
 
 module.exports = {
     // Needed to get VSCode debugging to work
@@ -69,6 +87,13 @@ module.exports = {
         // Needed for React DOM Routing
         historyApiFallback: true
     },
+
+    // Dev/Prod API url
+    plugins: [
+        new webpack.DefinePlugin({
+            API_URL: API_URL[environment()]
+        })
+    ],
 
     // Copy in css files so npm keeps them up to date for us
     // path.join doesnt seem to work too well so use relative paths here
