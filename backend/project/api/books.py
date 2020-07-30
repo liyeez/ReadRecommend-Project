@@ -62,7 +62,7 @@ def filter(request):
             book_stat = BookStats.objects.filter(book=b).first()
             if not book_stat:
                 books = books.exclude(id=b.id)
-            elif getattr(book_stat,f) <= int(request.GET[f]):              
+            elif int(getattr(book_stat,f)) < int(request.GET[f]):         
                 books = books.exclude(id=b.id)
 
     book_list = []
