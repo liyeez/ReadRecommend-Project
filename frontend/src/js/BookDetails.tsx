@@ -19,8 +19,11 @@ import Carousel from "react-material-ui-carousel";
 import Container from "@material-ui/core/Container";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Grid from "@material-ui/core/Grid";
+import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
 import Link from "@material-ui/core/Link";
 import Paper from "@material-ui/core/Paper";
+import PersonIcon from "@material-ui/icons/Person";
+import StarIcon from "@material-ui/icons/Star";
 import Typography from "@material-ui/core/Typography";
 
 import clsx from "clsx";
@@ -304,7 +307,17 @@ const BookDetails: React.FC<Props> = ({}) => {
                    {book.book_description}
                   </Typography>
 
-                  <Grid container justify="center">
+                  <Typography component="p" align="center">
+                      Average User Rating: {book.average_rating} <StarIcon/>
+                  </Typography>
+                  <Typography component="p" align="center">
+                      Number of Readers: {book.n_readers} <PersonIcon />
+                  </Typography>
+                  <Typography component="p" align="center">
+                      Times Added to Collection: {book.n_collections} <LibraryBooksIcon />
+                  </Typography>
+
+                  <Grid container justify="center" className={classes.blockSpacing}>
                     { inLibFlag
                       ? (<Button
                           onClick={() => removeBook(book.book_id)}
@@ -323,8 +336,6 @@ const BookDetails: React.FC<Props> = ({}) => {
                           Add to Library
                         </Button>)
                     }
-
-                    
                   </Grid>
                 </Grid>
               </Paper>

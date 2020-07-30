@@ -243,7 +243,7 @@ export default function Reviews(props) {
   return (
     <React.Fragment>
       <Typography component="h2" variant="h6" color="primary" gutterBottom>
-        Reviews
+        Reviews ({book.n_reviews})
       </Typography>
       <Table size="small">
         <TableHead>
