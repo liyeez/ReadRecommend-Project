@@ -34,12 +34,15 @@ def data(request):
     """
     try:
         book = Book.objects.get(id=request.GET["id"])
-        book_stats = BookStats.objects.get(book=book)
     except ObjectDoesNotExist:
         return Response({"status": "error", "message": "Book not found"}, status=status.HTTP_204_NO_CONTENT)
 
-    BookStats.objects.update_all()
-    return Response({"status": "ok", "message": "Got book data", "book_id": book.id, "book_title": book.title, "book_cover": book.cover, "book_author": book.author, "book_genre": book.genre, "book_description": book.description, "book_pub_date": book.pub_date, "last_review_id": 3, "average_rating": book_stats.average_rating, "n_reviews": book_stats.total_ratings, "n_readers": book_stats.read_count, "n_collections": book_stats.collection_count}, status=status.HTTP_200_OK)
+    book_stats = BookStats.objects.get(book=book)
+    if book_stats:
+        BookStats.objects.update_all()
+        return Response({"status": "ok", "message": "Got book data", "book_id": book.id, "book_title": book.title, "book_cover": book.cover, "book_author": book.author, "book_genre": book.genre, "book_description": book.description, "book_pub_date": book.pub_date, "last_review_id": 3, "average_rating": book_stats.average_rating, "n_reviews": book_stats.total_ratings, "n_readers": book_stats.read_count, "n_collections": book_stats.collection_count}, status=status.HTTP_200_OK)
+    else:
+        return Response({"status": "ok", "message": "Got book data", "book_id": book.id, "book_title": book.title, "book_cover": book.cover, "book_author": book.author, "book_genre": book.genre, "book_description": book.description, "book_pub_date": book.pub_date, "last_review_id": 3}, status=status.HTTP_200_OK)
 
 
 
@@ -64,8 +67,6 @@ def search(request):
         search = request.GET["search"]
         books = Book.objects.filter(
             Q(title__icontains=search) | Q(author__contains=search))
-        if not books:
-            books = Book.objects.all()
     else:
         books = Book.objects.all()
 
@@ -78,19 +79,18 @@ def search(request):
     for f in [x for x in filters if x in request.GET]:
         for b in books:
             book_stat = BookStats.objects.filter(book=b).first()
-            if book_stat and getattr(book_stat,f) <= float(request.GET[f]):                    
+            if not book_stat:
+                books = books.exclude(id=b.id)
+            elif getattr(book_stat,f) <= float(request.GET[f]):              
                 books = books.exclude(id=b.id)
 
     book_list = []
     for book in books.all():
         stats = BookStats.objects.filter(book=book).first()
-        if stats:
-            book_list.append({"book_id": book.id, "book_title": book.title,
-                            "book_author": book.author, "book_pub_date": book.pub_date,
-                            "average_review": stats.average_rating,"n_reviews": stats.total_ratings,"n_collections":stats.collection_count, "n_readers": stats.read_count})
-        else:
-            book_list.append({"book_id": book.id, "book_title": book.title,
-                            "book_author": book.author, "book_pub_date": book.pub_date})
+        book_list.append({"book_id": book.id, "book_title": book.title,
+                        "book_author": book.author, "book_pub_date": book.pub_date,
+                        "average_review": stats.average_rating,"n_reviews": stats.total_ratings,"n_collections":stats.collection_count, "n_readers": stats.read_count})
+
 
     if len(book_list) > 0:
         message = "Got matching books"
