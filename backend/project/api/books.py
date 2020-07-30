@@ -389,9 +389,9 @@ def readers(request):
                         "average_review": stats.average_rating,"n_reviews": stats.total_ratings,"n_collections":stats.collection_count, "n_readers": stats.read_count})
         else:
             book_list.append({"book_id": book.id, "book_title": book.title,
-                        "book_author": book.author, "book_pub_date": book.pub_date})
+                        "book_author": book.author, "book_pub_date": book.pub_date,
+                        "average_review": 0,"n_reviews": 0,"n_collections":0, "n_readers": 0})
     return Response({"status": "ok", "message": "Books retrieved", "book_list": book_list}, status=status.HTTP_200_OK)
-
 
 #
 #
