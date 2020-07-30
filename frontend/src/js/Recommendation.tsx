@@ -18,8 +18,12 @@ import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Container from "@material-ui/core/Container";
+import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import CarouselSlide from "./CarouselSlide";
 import SentimentVeryDissatisfiedIcon from '@material-ui/icons/SentimentVeryDissatisfied';
 import * as Router from 'react-router-dom';
+
 
 const styles= makeStyles((theme) => ({
     container: {
@@ -67,7 +71,23 @@ const styles= makeStyles((theme) => ({
     cardContent: {
         flexGrow: 1,
     },
+    App: {
+        textAlign: 'center',
+        padding: '100px',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',   
+    }
+    
 }));
+
+const slides = [
+    { backgroundColor: '#ff7c7c', title: 'Slide 1' },
+    { backgroundColor: '#ffb6b9', title: 'Slide 2' },
+    { backgroundColor: '#8deaff', title: 'Slide 3' },
+    { backgroundColor: '#ffe084', title: 'Slide 4' },
+    { backgroundColor: '#d9d9d9', title: 'Slide 5' },
+];
 
 interface Props{}
 
@@ -75,9 +95,26 @@ interface SearchForm {
     title: any;
 }
 
+function Arrow(props) {
+    const { direction, clickFunction } = props;
+    const icon = direction === 'left' ? <ArrowBackIcon /> : <ArrowForwardIcon />;
+
+    return <div onClick={clickFunction}>{icon}</div>;
+}
+
 // export interface ContentProps extends WithStyles<typeof styles> {}
 const FindUser: React.FC<Props> = ({}) => {
-   
+
+    const [index, setIndex] = useState(0);
+    const content = slides[index];
+    const numSlides = slides.length;
+
+    const onArrowClick = (direction) => {
+        const increment = direction === 'left' ? -1 : 1;
+        const newIndex = (index + increment + numSlides) % numSlides;
+        setIndex(newIndex);
+    };
+
     const classes = styles();
 
     const [SearchForm, setSearchForm] = useState<SearchForm>({
@@ -94,6 +131,7 @@ const FindUser: React.FC<Props> = ({}) => {
         });
     }
 
+    
     function preventDefault(event) {
         event.preventDefault
         window.location.href="/user/findusers?"+SearchForm.title;
@@ -151,50 +189,21 @@ const FindUser: React.FC<Props> = ({}) => {
     return (
     <React.Fragment>
           <CssBaseline />
-           
-            <Grid container spacing={3} className={classes.container}>
-                <Paper className={classes.paper}>
-                  <AppBar className={classes.searchBar} position="static" color="default" elevation={0}>
-                    <Toolbar>
-                      <Grid container spacing={2} alignItems="center">
-                        
-                        <Grid item xs={12}>
-                          <TextField
-                            fullWidth
-                            InputProps={{
-                                disableUnderline: true,
-                                className: classes.searchInput,
-                            }}
-                            value={SearchForm.title}
-                            name="title"
-                            label="Search by email address or name...."
-                            onChange={onTextboxChange}
-                          />
-                        </Grid>
-                        <Grid item>
-                          <Button variant="contained" color="primary" className={classes.addUser} onClick={preventDefault}>
-                            Search
-                          </Button>
-                        </Grid>
-
-                      </Grid>
-                    </Toolbar>
-                  </AppBar>       
-                </Paper>
-            </Grid>
+            
+            
             <Container className={classes.cardGrid} maxWidth="md">
-              { results
-                  ? (null)
-                  : (<Typography 
-                      align='center'
-                      component="h5"
-                      color="textSecondary"
-                     > 
-                     <IconButton> <SentimentVeryDissatisfiedIcon/></IconButton>
-                     No matches found 
-                     </Typography>)
-
-              }
+              
+              <div className='App'>
+                  <Arrow
+                      direction='left'
+                      clickFunction={() => onArrowClick('left')}
+                  />
+                  <CarouselSlide content={content} />
+                  <Arrow
+                      direction='right'
+                      clickFunction={() => onArrowClick('right')}
+                  />
+              </div>
               <Grid container spacing={4}>
                 {users.map((card) => (
                   <Grid item key={card} xs={12} sm={6} md={4}>
