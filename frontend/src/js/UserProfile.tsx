@@ -36,6 +36,8 @@ import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
 import { useTheme } from "@material-ui/core/styles";
 
+declare const API_URL: string;
+
 let userGoals : any[] = [];
 let mostRecentGoal : any; 
 let userGoalData : any[] = [];
@@ -96,7 +98,7 @@ export default function UserProfile() {
     function retrieveCollections(callback) {
         $.ajax({
             async: false,
-            url: "http://localhost:8000/api/user/my_profile",
+            url: API_URL + "/api/user/my_profile",
             method: "GET",
             data: {
                 auth: token,
@@ -120,7 +122,7 @@ export default function UserProfile() {
     function addCollection(callback) {
         $.ajax({
             async: false,
-            url: "http://localhost:8000/api/collections/create_collection",
+            url: API_URL + "/api/collections/create_collection",
             method: "POST",
             data: {
                 auth: token,
@@ -373,7 +375,7 @@ function Goal() {
     function getUserGoals(callback) {
         $.ajax({
             async: false,
-            url: "http://localhost:8000/api/user/get_goals",
+            url: API_URL + "/api/user/get_goals",
             data: {
                 auth: token,
             },
@@ -418,7 +420,7 @@ function Goal() {
     function setNewGoal(formattedDate, callback) {
         $.ajax({
             async: false,
-            url: "http://localhost:8000/api/user/set_goal",
+            url: API_URL + "/api/user/set_goal",
             data: {
                 auth: token,
                 count_goal: parseInt(newAmount),
@@ -461,7 +463,7 @@ function Goal() {
     function editGoal(callback) {
         $.ajax({
             async: false,
-            url: "http://localhost:8000/api/user/change_count_goal",
+            url: API_URL + "/api/user/change_count_goal",
             data: {
                 auth: token,
                 count_goal: parseInt(newAmount)
@@ -484,7 +486,7 @@ function Goal() {
     function editGoalDate(formattedDateString, callback) {
         $.ajax({
             async: false,
-            url: "http://localhost:8000/api/user/change_start_date",
+            url: API_URL + "/api/user/change_start_date",
             data: {
                 auth: token,
                 date_start: formattedDateString,

@@ -21,6 +21,9 @@ import Rating from '@material-ui/lab/Rating';
 import TextField from "@material-ui/core/TextField";
 import Box from '@material-ui/core/Box';
 import CookieService from "../services/CookieService";
+
+declare const API_URL: string;
+
 // Generate Order Data
 function createData(id, date, name, country, comment, rating) {
   return { id, date, name, country, comment, rating };
@@ -126,7 +129,7 @@ export default function Reviews(props) {
   function onReviews(callback) {
     $.ajax({
       async: false,
-      url: "http://localhost:8000/api/reviews/get_reviews",
+      url: API_URL + "/api/reviews/get_reviews",
       data: {
         auth: token,
         id: book.book_id,
@@ -149,7 +152,7 @@ export default function Reviews(props) {
   function isRead(callback) {
     $.ajax({
       async: false,
-      url: "http://localhost:8000/api/books/is_read",
+      url: API_URL + "/api/books/is_read",
       data: {
         auth: token,
         book_id: book.book_id,
@@ -191,7 +194,7 @@ export default function Reviews(props) {
   function addReview(callback) {
     $.ajax({
       async: false,
-      url: "http://localhost:8000/api/reviews/new_review",
+      url: API_URL + "/api/reviews/new_review",
       data: {
         auth: token,
         id: book.book_id,
@@ -214,7 +217,7 @@ export default function Reviews(props) {
   function removeReview() {
     $.ajax({
       async: false,
-      url: "http://localhost:8000/api/reviews/remove_review",
+      url: API_URL + "/api/reviews/remove_review",
       data: {
         auth: token,
         id: book.book_id,

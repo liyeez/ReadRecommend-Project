@@ -23,6 +23,8 @@ import LanguageIcon from '@material-ui/icons/Language';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import { makeStyles } from "@material-ui/core/styles";
 
+declare const API_URL: string;
+
 const token = CookieService.get("access_token");
 const Style = makeStyles((theme) => ({
   heroContent: {
@@ -96,7 +98,7 @@ const Search: React.FC<Props> = ({}) => {
   function extSearch() {
     $.ajax({
       async: false,
-      url: "http://localhost:8000/api/books/search_book",
+      url: API_URL + "/api/books/search_book",
       data: {
         auth: token,
         search: txt,
@@ -121,7 +123,7 @@ const Search: React.FC<Props> = ({}) => {
     console.log(book);
     $.ajax({
       async: false,
-      url: "http://localhost:8000/api/books/add_book",
+      url: API_URL + "/api/books/add_book",
       data: {
         auth: token,
         book_title: book.book_title,

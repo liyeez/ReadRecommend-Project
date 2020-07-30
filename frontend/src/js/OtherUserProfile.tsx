@@ -25,6 +25,8 @@ import SentimentVeryDissatisfiedIcon from '@material-ui/icons/SentimentVeryDissa
 import ImportContactsIcon from '@material-ui/icons/ImportContacts';
 import * as $ from "jquery";
 
+declare const API_URL: string;
+
 const useStyles = makeStyles((theme) => ({
   icon: {
     marginRight: theme.spacing(2),

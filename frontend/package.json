@@ -4,8 +4,8 @@
   "description": "",
   "main": "",
   "scripts": {
-    "build": "webpack",
-    "start": "webpack-dev-server"
+    "build": "cross-env NODE_ENV=production webpack",
+    "start": "cross-env NODE_ENV=development webpack-dev-server"
   },
   "author": "",
   "license": "",
@@ -46,6 +46,7 @@
     "@typescript-eslint/eslint-plugin": "^3.3.0",
     "@typescript-eslint/parser": "^3.3.0",
     "copy-webpack-plugin": "^6.0.1",
+    "cross-env": "^7.0.2",
     "css-loader": "^3.6.0",
     "eslint": "^7.2.0",
     "eslint-plugin-react": "^7.20.0",

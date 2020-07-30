@@ -26,6 +26,8 @@ import Typography from "@material-ui/core/Typography";
 import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
 
+declare const API_URL: string;
+
 const useStyles = makeStyles((theme) => ({
   image: {
     backgroundImage: "url(https://source.unsplash.com/random)",
@@ -173,7 +175,7 @@ const BookDetails: React.FC<Props> = ({}) => {
     console.log(id);
     $.ajax({
       async: false,
-      url: "http://localhost:8000/api/collections/add_to_library",
+      url: API_URL + "/api/collections/add_to_library",
       data: {
         auth: token,
         id: str,
@@ -195,7 +197,7 @@ const BookDetails: React.FC<Props> = ({}) => {
   function removeBook(id) {
     $.ajax({
       async: false,
-      url: "http://localhost:8000/api/collections/delete_from_library",
+      url: API_URL + "/api/collections/delete_from_library",
       data: {
         auth: token,
         id: id,
@@ -221,7 +223,7 @@ const BookDetails: React.FC<Props> = ({}) => {
 
     $.ajax({
       async: false,
-      url: "http://localhost:8000/api/user/in_library",
+      url: API_URL + "/api/user/in_library",
       data: {
         auth: token,
         book_id: str,
@@ -245,7 +247,7 @@ const BookDetails: React.FC<Props> = ({}) => {
 
     $.ajax({
       async: false,
-      url: "http://localhost:8000/api/books/data",
+      url: API_URL + "/api/books/data",
       data: {
         id: str,
       },

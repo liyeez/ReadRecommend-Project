@@ -22,6 +22,7 @@ import Typography from "@material-ui/core/Typography";
 
 import { makeStyles } from "@material-ui/core/styles";
 
+declare const API_URL: string;
 
 const Style = makeStyles((theme) => ({
     heroContent: {
@@ -86,7 +87,7 @@ const RecentlyAddedBooks: React.FC<Props> = ({}) => {
     function getRecentlyAddedBooks(callback) {
         $.ajax({
             async: false,
-            url: "http://localhost:8000/api/collections/recent_added",
+            url: API_URL + "/api/collections/recent_added",
             data: {
                 collection_id: collectionId,
             },

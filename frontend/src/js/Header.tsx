@@ -25,6 +25,8 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 // Page imports
 import Sidebar from "./Sidebar";
 
+declare const API_URL: string;
+
 const userSignedIn = false;
 const drawerWidth = 240;
 
@@ -71,7 +73,7 @@ function handleLogout() {
     console.log("is this working?");
     // Remove cookie on backend.
     $.ajax({
-        url: "http://localhost:8000/api/auth/signout",
+        url: API_URL + "/api/auth/signout",
         method: "POST",
         data: {
             token: tokenToRemove,

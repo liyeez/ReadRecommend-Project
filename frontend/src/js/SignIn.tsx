@@ -18,6 +18,8 @@ import Typography from "@material-ui/core/Typography";
 import "react-multi-carousel/lib/styles.css";
 import { makeStyles } from "@material-ui/core/styles";
 
+declare const API_URL: string;
+
 const Style = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(8),
@@ -67,7 +69,7 @@ const SignIn: React.FC<Props> = ({}) => {
 
   function onSignIn() {
     $.ajax({
-      url: "http://localhost:8000/api/auth/signin",
+      url: API_URL + "/api/auth/signin",
       method: "POST",
       data: {
         email: signInForm.signInEmail,

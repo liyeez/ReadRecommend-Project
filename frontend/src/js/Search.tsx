@@ -18,6 +18,8 @@ import Typography from "@material-ui/core/Typography";
 import LanguageIcon from '@material-ui/icons/Language';
 import { makeStyles } from "@material-ui/core/styles";
 
+declare const API_URL: string;
+
 const Style = makeStyles((theme) => ({
   heroContent: {
     backgroundColor: theme.palette.background.paper,
@@ -174,9 +176,9 @@ const Search: React.FC<Props> = ({}) => {
 
   let api_call: string;
   if (type == "title") {
-    api_call = "http://localhost:8000/api/books/search";
+    api_call = API_URL + "/api/books/search";
   } else if (type == "finduser") {
-    api_call = "http://localhost:8000/api/user/find_users";
+    api_call = API_URL + "/api/user/find_users";
   }
 
   onSearch(request);

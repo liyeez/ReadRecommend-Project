@@ -21,6 +21,8 @@ import Container from "@material-ui/core/Container";
 import SentimentVeryDissatisfiedIcon from '@material-ui/icons/SentimentVeryDissatisfied';
 import * as Router from 'react-router-dom';
 
+declare const API_URL: string;
+
 const styles= makeStyles((theme) => ({
     container: {
       paddingTop: theme.spacing(4),
@@ -105,7 +107,7 @@ const FindUser: React.FC<Props> = ({}) => {
     function onSearch() {
       $.ajax({
         async: false,
-        url: "http://localhost:8000/api/user/find_users",
+        url: API_URL + "/api/user/find_users",
         data: {
           search: txt,
         },
