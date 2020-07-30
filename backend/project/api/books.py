@@ -60,9 +60,12 @@ def search(request):
         book_title (str)
         book_author (str)
     """
-    search = request.GET["search"]
-    books = Book.objects.filter(
-        Q(title__icontains=search) | Q(author__contains=search))
+    if 'search' in request.GET:
+        search = request.GET["search"]
+        books = Book.objects.filter(
+            Q(title__icontains=search) | Q(author__contains=search))
+    else:
+        books = Book.objects.all()
 
     if 'genre' in request.GET:
         books = books.filter(genre=request.GET['genre'])
