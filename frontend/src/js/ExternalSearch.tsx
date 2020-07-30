@@ -120,6 +120,22 @@ const Search: React.FC<Props> = ({}) => {
  
   function storeBook(book) {
     console.log("In storeBook");
+    if(book.book_author == ""){
+      book.book_author = 'Unknown';
+    }
+    let date = book.book_pub_date.split("-");
+    if(date.length < 3){ //incomplete pub date
+      if(parseInt(date[0]) > 1000){ //check if its year
+          book.book_pub_date = date[0] + '-' + '01' + '-' + '01'; //default jan first
+      }else{
+          book.book_pub_date = '2000' + '-' + '01' + '-' + '01'; 
+      }
+    }
+    // console.log(book.book_cover);  TODO book_cover
+    // if(!isUrl(book.book_cover)){
+    //     book.book_cover = '';
+    // }
+
     console.log(book);
     $.ajax({
       async: false,

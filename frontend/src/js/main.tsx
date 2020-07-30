@@ -310,10 +310,14 @@ const Main: React.FC<Props> = ({ userSignedIn }: Props) => {
         setFilterState({...filterState, [event.target.name]: event.target.value});
     }
 
-    function searchLocal(event) { 
+    function advSearchLocal(event) { 
         window.location.href = "/search?title=" + SearchForm.title + "?average_rating=" + minimumRating + 
             "?total_ratings=" + filterState.minimumTotalRatings + "?read_count=" + filterState.minimumReadCount + 
             "?collection_count=" + filterState.minimumCollectionCount;
+    }
+
+    function searchLocal(event) { 
+        window.location.href = "/search?title=" + SearchForm.title;
     }
 
     function searchWeb(event) {
@@ -389,7 +393,7 @@ const Main: React.FC<Props> = ({ userSignedIn }: Props) => {
                                                             value={typeof minimumRating === 'number' ? minimumRating : 0}
                                                             onChange={handleSliderChange}
                                                             aria-labelledby="input-slider"
-                                                            min={0} max={5} step={0.1}
+                                                            min={0} max={5} step={1}
                                                             marks={marks}
                                                         />
                                                         <Input 
@@ -398,7 +402,7 @@ const Main: React.FC<Props> = ({ userSignedIn }: Props) => {
                                                             margin="dense"
                                                             onChange={handleInputChange}
                                                             onBlur={handleBlur}
-                                                            inputProps={{step: 0.1, min: 0, max: 5, type: 'number', 'aria-labelledby': 'input-slider'}}
+                                                            inputProps={{step: 1, min: 0, max: 5, type: 'number', 'aria-labelledby': 'input-slider'}}
                                                         />
                                                     </Box>
                                                     <Box m={2}>
@@ -428,7 +432,7 @@ const Main: React.FC<Props> = ({ userSignedIn }: Props) => {
                                                 </Grid>
                                                 <Grid item>
                                                     <Box m={2}>
-                                                        <Button color="primary" onClick={searchLocal}>
+                                                        <Button color="primary" onClick={advSearchLocal}>
                                                             Advanced Search
                                                         </Button>
                                                     </Box>

@@ -124,6 +124,7 @@ function Arrow(props) {
 // export interface ContentProps extends WithStyles<typeof styles> {}
 const FindUser: React.FC<Props> = ({}) => {
     let books: any = [];
+    let genre: any = [];
     const [index, setIndex] = useState(0);
     const [index2, setIndex2] = useState(1);
     const [index3, setIndex3] = useState(2);
@@ -152,15 +153,16 @@ const FindUser: React.FC<Props> = ({}) => {
       const token = CookieService.get('access_token');
         $.ajax({
             async: false,
-            url: API_URL + "/api/user/get_library",
+            url: "http://localhost:8000/api/books/recommendations",
             data: {
                 auth: token,
             },
             method: "GET",
             success: function (data) {
-                if (data != null) {
+                if (data != null && data.message == 'Genre found') {
                     console.log(data);
                     books = data.book_list;
+                    genre = data.Most_genre
                     numSlides = books.length;
                 }
                 
@@ -183,7 +185,7 @@ const FindUser: React.FC<Props> = ({}) => {
             <Container className={classes.cardGrid} >
               <Grid container spacing={5} className={classes.carousel}>
                 <Grid item>
-                    <Typography gutterBottom variant="h3" component="h2">
+                    <Typography gutterBottom variant="h4">
                        <WhatshotIcon /> Your favourite genre {} <WhatshotIcon />
                     </Typography>
                 </Grid>
@@ -191,7 +193,7 @@ const FindUser: React.FC<Props> = ({}) => {
 
               
               { numSlides == 1
-                  ? (<Grid container spacing={2} className={classes.carousel}>
+                  ? (<Grid container spacing={2} className={classes.cardGrid}>
                         <Grid item>
                           <Arrow
                               direction='left'
@@ -214,7 +216,7 @@ const FindUser: React.FC<Props> = ({}) => {
               } 
 
               { numSlides == 2
-                  ? (<Grid container spacing={5} className={classes.carousel}>
+                  ? (<Grid container spacing={2} className={classes.cardGrid}>
                         <Grid item>
                           <Arrow
                               direction='left'
@@ -237,7 +239,83 @@ const FindUser: React.FC<Props> = ({}) => {
               }
 
               { numSlides > 2
-                  ? (<Grid container spacing={5} className={classes.cardGrid}>
+                  ? (<Grid container spacing={2} className={classes.cardGrid}>
+                        <Grid item>
+                          <Arrow
+                              direction='left'
+                              clickFunction={() => onArrowClick('left')}
+                          />
+                        </Grid>
+                        <CardStyle books={books} index={index}/>
+                        <CardStyle books={books} index={index2}/>
+                        <CardStyle books={books} index={index3}/>
+                        <Grid item>  
+                          <Arrow
+                              direction='right'
+                              clickFunction={() => onArrowClick('right')}
+                          />
+                        </Grid>
+                     </Grid>
+
+                     )
+                  : (null)
+              }
+              
+              <Grid container spacing={5} className={classes.carousel}>
+                <Grid item>
+                    <Typography gutterBottom variant="h4">
+                       <WhatshotIcon /> Reader who likes {genre} also read: <WhatshotIcon />
+                    </Typography>
+                </Grid>
+              </Grid>      
+              { numSlides == 1
+                  ? (<Grid container spacing={2} className={classes.cardGrid}>
+                        <Grid item>
+                          <Arrow
+                              direction='left'
+                              clickFunction={() => onArrowClick('left')}
+                          />
+                        </Grid>
+                        
+                          <CardStyle books={books} index={index}/>
+                       
+                        <Grid item>  
+                          <Arrow
+                              direction='right'
+                              clickFunction={() => onArrowClick('right')}
+                          />
+                        </Grid>
+                     </Grid>
+
+                     )
+                  : (null)
+              } 
+
+              { numSlides == 2
+                  ? (<Grid container spacing={2} className={classes.cardGrid}>
+                        <Grid item>
+                          <Arrow
+                              direction='left'
+                              clickFunction={() => onArrowClick('left')}
+                          />
+                        </Grid>
+                        <CardStyle books={books} index={index}/>
+                        <CardStyle books={books} index={index2}/>
+                          
+                        <Grid item>  
+                          <Arrow
+                              direction='right'
+                              clickFunction={() => onArrowClick('right')}
+                          />
+                        </Grid>
+                     </Grid>
+
+                     )
+                  : (null)
+              }
+
+              { numSlides > 2
+                  ? (<Grid container spacing={2} className={classes.cardGrid}>
                         <Grid item>
                           <Arrow
                               direction='left'
@@ -261,16 +339,9 @@ const FindUser: React.FC<Props> = ({}) => {
               
              
             </Container>
-            <Container className={classes.cardGrid} maxWidth="md">
-              <Grid container spacing={5} className={classes.carousel}>
-                <Grid item>
-                    <Typography gutterBottom variant="h3" component="h2">
-                       <WhatshotIcon /> Reader who likes {} also read: <WhatshotIcon />
-                    </Typography>
-                </Grid>
-              </Grid>      
 
-              
+            <Container className={classes.cardGrid} maxWidth="md">
+
              
             </Container>
             

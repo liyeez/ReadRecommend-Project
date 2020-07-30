@@ -110,6 +110,8 @@ const Search: React.FC<Props> = ({}) => {
   }
 
   function onSearch(callback) {
+    console.log('search for: ' + txt);
+    console.log(api_call);
     $.ajax({
       async: false,
       url: api_call,
@@ -175,10 +177,13 @@ const Search: React.FC<Props> = ({}) => {
   console.log("To find: " + txt + " of type: " + type);
 
   let api_call: string;
-  if (type == "title") {
+  let s = window.location.href.split("?");
+  if (type == "title" && s.length == 2) {
     api_call = API_URL + "/api/books/search";
   } else if (type == "finduser") {
     api_call = API_URL + "/api/user/find_users";
+  } else if (type == "title" && s.length > 2){
+    api_call = API_URL + "/api/books/filter";
   }
 
   onSearch(request);

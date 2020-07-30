@@ -355,15 +355,7 @@ const BookDetails: React.FC<Props> = ({}) => {
             </Grid>
             {/*Carousel*/} {/*TBD feature*/}
             <Grid item xs={12} md={8} lg={9}>
-              <Typography
-                component="h4"
-                variant="h4"
-                align="left"
-                color="textSecondary"
-                gutterBottom
-              >
-                More Books like this:
-              </Typography>
+              
               
             </Grid>
           </Grid>

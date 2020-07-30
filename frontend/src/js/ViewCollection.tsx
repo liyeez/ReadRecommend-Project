@@ -104,9 +104,7 @@ const ViewCollection: React.FC<Props> = ({}) => {
   }
 
   function onSearch(callback) {
-    // TEMP SOLUTION FOR BOOKS DISPLAY, URL BELOW WILL CHANGE ONCE api
-    // FOR GET /collections/view_collection IS IMPLEMENTED
-
+    
     $.ajax({
       async: false,
       url: API_URL + "/api/collections/view_collection",
