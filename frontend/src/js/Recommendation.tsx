@@ -2,6 +2,7 @@ import React, {ChangeEvent, useState} from "react";
 import $ = require("jquery");
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
+import CookieService from "../services/CookieService";
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
@@ -13,6 +14,7 @@ import { makeStyles, createStyles, Theme, withStyles, WithStyles } from '@materi
 import SearchIcon from '@material-ui/icons/Search';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import Card from "@material-ui/core/Card";
+import WhatshotIcon from '@material-ui/icons/Whatshot';
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
@@ -23,42 +25,16 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import CarouselSlide from "./CarouselSlide";
 import SentimentVeryDissatisfiedIcon from '@material-ui/icons/SentimentVeryDissatisfied';
 import * as Router from 'react-router-dom';
-
+declare const API_URL: string;
 
 const styles= makeStyles((theme) => ({
-    container: {
-      paddingTop: theme.spacing(4),
-      paddingLeft: theme.spacing(16),
-      paddingRight: theme.spacing(4),
    
-    },
-    paper: {
-      align: 'center',
-      width: '900px',
-      margin: 'auto',
-      overflow: 'hidden',
-    },
-    searchBar: {
-      borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
-     
-    },
-    searchInput: {
-      fontSize: theme.typography.fontSize,
-
-    },
-    block: {
-      display: 'block',
-    },
-    addUser: {
-      marginRight: theme.spacing(1),
-      marginBottom: theme.spacing(2),
-    },
-    contentWrapper: {
-      margin: '40px 16px',
-    },
     cardGrid: {
-      paddingTop: theme.spacing(8),
-      paddingBottom: theme.spacing(8),
+      paddingTop: theme.spacing(2),
+      paddingBottom: theme.spacing(2),
+      alignContent: 'left',
+      justifyContent: 'center',
+      width: '1000px',
     },
     card: {
         height: '100%',
@@ -71,12 +47,13 @@ const styles= makeStyles((theme) => ({
     cardContent: {
         flexGrow: 1,
     },
-    App: {
-        textAlign: 'center',
-        padding: '100px',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',   
+    App: { // the item's size
+        margin: '0px 0px',
+        width: '270px',
+        justifyContent: 'center',   
+    },
+    carousel:{ //width doesnt affect
+      justifyContent: 'center',
     }
     
 }));
@@ -84,10 +61,16 @@ const styles= makeStyles((theme) => ({
 const slides = [
     { backgroundColor: '#ff7c7c', title: 'Slide 1' },
     { backgroundColor: '#ffb6b9', title: 'Slide 2' },
-    { backgroundColor: '#8deaff', title: 'Slide 3' },
-    { backgroundColor: '#ffe084', title: 'Slide 4' },
-    { backgroundColor: '#d9d9d9', title: 'Slide 5' },
+    // { backgroundColor: '#8deaff', title: 'Slide 3' },
+    // { backgroundColor: '#ffe084', title: 'Slide 4' },
+    // { backgroundColor: '#d9d9d9', title: 'Slide 5' },
+    // { backgroundColor: '#ecc6c6', title: 'Slide 6' },
 ];
+
+function viewBook(id){
+
+}
+
 
 interface Props{}
 
@@ -95,142 +78,200 @@ interface SearchForm {
     title: any;
 }
 
+function CardStyle(props){
+
+    const {books, index} = props;
+    const classes = styles();
+    console.log("displaying book index: " + index);
+    console.log(books[index]);
+    return(
+        <Grid item className={classes.App}>
+            <Card className={classes.card}>
+              <CardMedia
+                className={classes.cardMedia}
+                image="https://source.unsplash.com/random?book"
+                title="Image title"
+              />
+              <CardContent className={classes.cardContent}>
+                <Typography gutterBottom variant="h5" component="h2">
+                  {books[index].book_title}
+                </Typography>
+                <Typography>By Author: {books[index].book_author}</Typography>
+                <Typography>Published on: {books[index].book_pub_date}</Typography>
+              </CardContent>
+              <CardActions>
+                <Button
+                  size="small"
+                  color="primary"
+                  onClick={() => viewBook(books[index].book_id)}
+                >
+                  View
+                </Button>
+              </CardActions>
+            </Card>
+          </Grid>
+
+    );
+}
+
 function Arrow(props) {
     const { direction, clickFunction } = props;
-    const icon = direction === 'left' ? <ArrowBackIcon /> : <ArrowForwardIcon />;
+    const icon = direction === 'left' ? <IconButton><ArrowBackIcon /></IconButton> : <IconButton><ArrowForwardIcon /></IconButton>;
 
     return <div onClick={clickFunction}>{icon}</div>;
 }
 
 // export interface ContentProps extends WithStyles<typeof styles> {}
 const FindUser: React.FC<Props> = ({}) => {
-
+    let books: any = [];
     const [index, setIndex] = useState(0);
-    const content = slides[index];
-    const numSlides = slides.length;
+    const [index2, setIndex2] = useState(1);
+    const [index3, setIndex3] = useState(2);
 
+    let numSlides =0;
+    
     const onArrowClick = (direction) => {
         const increment = direction === 'left' ? -1 : 1;
         const newIndex = (index + increment + numSlides) % numSlides;
+        const newIndex2 = (index2 + increment + numSlides) % numSlides;
+        const newIndex3 = (index3 + increment + numSlides) % numSlides;
         setIndex(newIndex);
+        setIndex2(newIndex2);
+        setIndex3(newIndex3);
+        console.log(newIndex + " " + newIndex2 +" " + newIndex3);
     };
 
     const classes = styles();
 
-    const [SearchForm, setSearchForm] = useState<SearchForm>({
-      title: '',
-    });
+    
+    function viewBook(id){
 
-    const onTextboxChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setSearchForm(prevSearchForm => {
-          return {
-            ...prevSearchForm,
-            [name]: value,
-          };
+    }
+    
+    function getBooks() {
+      const token = CookieService.get('access_token');
+        $.ajax({
+            async: false,
+            url: API_URL + "/api/user/get_library",
+            data: {
+                auth: token,
+            },
+            method: "GET",
+            success: function (data) {
+                if (data != null) {
+                    console.log(data);
+                    books = data.book_list;
+                    numSlides = books.length;
+                }
+                
+            },
+            error: function () {
+                console.log("server error!");
+            }
         });
     }
 
     
-    function preventDefault(event) {
-        event.preventDefault
-        window.location.href="/user/findusers?"+SearchForm.title;
-    }
-
-    let results = false;
-    let txt = "";
-    let users: any= [];
-    function onSearch() {
-      $.ajax({
-        async: false,
-        url: "http://localhost:8000/api/user/find_users",
-        data: {
-          search: txt,
-        },
-        method: "GET",
-        success: function (data) {
-          console.log(data);
-          if (data != null) {
-              if(data.message != "No matches found"){
-                 results = true;
-                 console.log(data);
-                 users = data.user_list;
-              }
-          }
-        },
-        error: function () {
-          console.log("server error!");
-         
-        },
-      });
-    }
-
-    let array = window.location.href.split("?");
-    if(array.length > 1){
-        console.log("looking for user: " + array[1]);
-        let searchstr = array[1].split("%20");
-        if(searchstr.length > 0){
-            for(let i=0; i < searchstr.length; i++ ){
-                txt = txt.concat(searchstr[i]);
-                if(i != array.length-1){
-                    txt = txt.concat(" ");
-                }
-            }
-        }else{
-            txt = array[1];
-        }
-        onSearch();
-    }
-    
-    function viewUser(id){
-        window.location.href = "/user/otherusers?userid=" + id;
-    }
-
+  
+    getBooks();
+    console.log("length is: " + books.length);
     return (
     <React.Fragment>
           <CssBaseline />
             
             
-            <Container className={classes.cardGrid} maxWidth="md">
+            <Container className={classes.cardGrid} >
+              <Grid container spacing={5} className={classes.carousel}>
+                <Grid item>
+                    <Typography gutterBottom variant="h3" component="h2">
+                       <WhatshotIcon /> Your favourite genre {} <WhatshotIcon />
+                    </Typography>
+                </Grid>
+              </Grid>      
+
               
-              <div className='App'>
-                  <Arrow
-                      direction='left'
-                      clickFunction={() => onArrowClick('left')}
-                  />
-                  <CarouselSlide content={content} />
-                  <Arrow
-                      direction='right'
-                      clickFunction={() => onArrowClick('right')}
-                  />
-              </div>
-              <Grid container spacing={4}>
-                {users.map((card) => (
-                  <Grid item key={card} xs={12} sm={6} md={4}>
-                    <Card className={classes.card}>
-                      <CardMedia
-                        className={classes.cardMedia}
-                        image="https://source.unsplash.com/random?book"
-                        title="Image title"
-                      />
-                      <CardContent className={classes.cardContent}>
-                        <Typography gutterBottom variant="h5" component="h2">
-                          {card.first_name + " " + card.last_name}
-                        </Typography>
-                      </CardContent>
-                      <CardActions>
-                        <Button
-                          size="small"
-                          color="primary"
-                          onClick={() => viewUser(card.user_id)}
-                        >
-                          View
-                        </Button>
-                      </CardActions>
-                    </Card>
-                  </Grid>
-                ))}
-              </Grid>
+              { numSlides == 1
+                  ? (<Grid container spacing={2} className={classes.carousel}>
+                        <Grid item>
+                          <Arrow
+                              direction='left'
+                              clickFunction={() => onArrowClick('left')}
+                          />
+                        </Grid>
+                        
+                          <CardStyle books={books} index={index}/>
+                       
+                        <Grid item>  
+                          <Arrow
+                              direction='right'
+                              clickFunction={() => onArrowClick('right')}
+                          />
+                        </Grid>
+                     </Grid>
+
+                     )
+                  : (null)
+              } 
+
+              { numSlides == 2
+                  ? (<Grid container spacing={5} className={classes.carousel}>
+                        <Grid item>
+                          <Arrow
+                              direction='left'
+                              clickFunction={() => onArrowClick('left')}
+                          />
+                        </Grid>
+                        <CardStyle books={books} index={index}/>
+                        <CardStyle books={books} index={index2}/>
+                          
+                        <Grid item>  
+                          <Arrow
+                              direction='right'
+                              clickFunction={() => onArrowClick('right')}
+                          />
+                        </Grid>
+                     </Grid>
+
+                     )
+                  : (null)
+              }
+
+              { numSlides > 2
+                  ? (<Grid container spacing={5} className={classes.cardGrid}>
+                        <Grid item>
+                          <Arrow
+                              direction='left'
+                              clickFunction={() => onArrowClick('left')}
+                          />
+                        </Grid>
+                        <CardStyle books={books} index={index}/>
+                        <CardStyle books={books} index={index2}/>
+                        <CardStyle books={books} index={index3}/>
+                        <Grid item>  
+                          <Arrow
+                              direction='right'
+                              clickFunction={() => onArrowClick('right')}
+                          />
+                        </Grid>
+                     </Grid>
+
+                     )
+                  : (null)
+              }
+              
+             
+            </Container>
+            <Container className={classes.cardGrid} maxWidth="md">
+              <Grid container spacing={5} className={classes.carousel}>
+                <Grid item>
+                    <Typography gutterBottom variant="h3" component="h2">
+                       <WhatshotIcon /> Reader who likes {} also read: <WhatshotIcon />
+                    </Typography>
+                </Grid>
+              </Grid>      
+
+              
+             
             </Container>
             
     </React.Fragment>

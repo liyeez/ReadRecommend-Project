@@ -9,9 +9,8 @@ export default function CarouselSlide(props) {
             backgroundColor,
             borderRadius: 5,
             padding: '75px 50px',
-            margin: '0px 25px',
-            width: '500px',
-            boxShadow: '20px 20px 20px black',
+            margin: '0px 10px',
+            width: '200px',
             display: 'flex',
             justifyContent: 'center',
         } 

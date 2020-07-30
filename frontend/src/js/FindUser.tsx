@@ -192,7 +192,7 @@ const FindUser: React.FC<Props> = ({}) => {
                       component="h5"
                       color="textSecondary"
                      > 
-                     <IconButton> <SentimentVeryDissatisfiedIcon/></IconButton>
+                     <SentimentVeryDissatisfiedIcon/>
                      No matches found 
                      </Typography>)
 

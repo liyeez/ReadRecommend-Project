@@ -158,7 +158,7 @@ export default function Profile() {
               color="textPrimary"
               gutterBottom
             >
-              Collections <IconButton><BookmarksIcon/></IconButton>
+              Collections<BookmarksIcon/>
             </Typography>
             { cards.length
               ? (null)
@@ -167,7 +167,7 @@ export default function Profile() {
                   component="h5"
                   color="textSecondary"
                  > 
-                 <IconButton> <SentimentVeryDissatisfiedIcon/></IconButton>
+                 <SentimentVeryDissatisfiedIcon/>
                  {userForm.firstName + " " + userForm.lastName} have no collections yet
                  </Typography>)
             }
@@ -208,7 +208,7 @@ export default function Profile() {
               color="textPrimary"
               gutterBottom
             >
-              Books read <IconButton><ImportContactsIcon/></IconButton>
+              Books read <ImportContactsIcon/>
             </Typography>
             { lib.length
               ? (null)
@@ -217,7 +217,7 @@ export default function Profile() {
                   component="h5"
                   color="textSecondary"
                  > 
-                 <IconButton> <SentimentVeryDissatisfiedIcon/></IconButton>
+                 <SentimentVeryDissatisfiedIcon/>
                  No books in {userForm.firstName + " " + userForm.lastName}'s library 
                  </Typography>)
             }
