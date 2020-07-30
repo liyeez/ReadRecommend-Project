@@ -4,7 +4,7 @@ const webpack = require('webpack');
 
 // Dev/Prod API URL
 var API_URL = {
-    production: JSON.stringify("http://capstonebackend.simonliveshere.com"),
+    production: JSON.stringify("https://capstonebackend.simonliveshere.com"),
     development: JSON.stringify("http://localhost:8000")
 }
 

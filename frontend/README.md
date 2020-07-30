@@ -16,8 +16,7 @@
    - Otherwise, use your preferred browser and connect to the webpage to debug.
    - The webserver will automatically reload the page on saved changes to the source files.
 4. When you are happy with the end result, run the `deploy.py` script to upload to the online webserver.
-5. Check it out at `http://vm0.simonliveshere.com`.
-# Capstone Frontend
+5. Check it out at `https://capstone.simonliveshere.com`.
 
 ## Requirements
 
@@ -63,3 +62,7 @@
   - E.g. For jQuery: `npm install --save jquery @types/jquery`.
 - If there are additional dependencies that need to be in a specific folder, use the `copy-webpack-plugin` plugin to copy from the npm source into the output folder.
   - E.g. To copy the Bootstrap CSS files from the Bootstrap npm package into `src/css`, a CopyPlugin pattern is configured in `webpack.config.js`. Check the code there and use it as a template.
+
+## Deployment
+
+- Run deploy.py.

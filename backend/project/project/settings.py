@@ -25,7 +25,7 @@ SECRET_KEY = "_^jj)*yu+iraxxm07e^z%%b_pj#!f8_fwo*=x4x(8ovphcd(s7"
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["capstonebackend.simonliveshere.com"]
 
 
 # Application definition
@@ -138,3 +138,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = "/static/"
+
+# Static files for deployment
+STATIC_ROOT = os.path.join(BASE_DIR, "static/")

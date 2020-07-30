@@ -49,3 +49,11 @@ Superuser account (http://localhost:8000/admin/):
   - Since we use Django for backend only, we only need the View and (potentially) Model.
   - Basically, Views receive and respond to requests, using function calls to a Model.
   - Models interact with the database / other data sources.
+
+## Deployment
+
+- Shut down the django server and run deploy.py.
+- The webserver should automatically pick up the changes but if it does not:
+  - SSH to capstonebackend.simonliveshere.com.
+  - Stop the running uwsgi background job.
+  - Restart it, move it to background, disown it, and resume.

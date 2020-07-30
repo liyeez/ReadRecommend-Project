@@ -116,3 +116,4 @@ package-lock.json
 # Compiled output
 index.js
 index.js.map
+backend/project/db.sqlite3

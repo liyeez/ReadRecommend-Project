@@ -17,7 +17,14 @@ Week 5
 GPU died for my PC :(. Helped Monica out with a weird React form issue where the POST request was appearing in the URL.
 
 Week 6
-Quiet flex week catching up on other courses.
+Quiet flex week catching up on other courses. Bug fixes + small requested changes from frontend guys. Improved changelog as per reflection.
 
 Week 7
-Worked on book data scraping from external apis. Currently obtaining data from Google books api.
+Worked on book data scraping from external apis. Currently obtaining data from Google books api and populating our db only when explicitly requested.
+
+Week 8
+Worked with Stephanie to make a few requested changes like additional fields for book data, changing cover from base64 encoded image to url, etc. Added a few additional requested features like returning all collections with a tag, etc.
+
+Week 9
+Added a few more requested features from frontend. Prepped + deployed vms for the project. Set up deployment pipeline, web servers, hosts, https, etc.
+
