@@ -16,8 +16,7 @@
    - Otherwise, use your preferred browser and connect to the webpage to debug.
    - The webserver will automatically reload the page on saved changes to the source files.
 4. When you are happy with the end result, run the `deploy.py` script to upload to the online webserver.
-5. Check it out at `http://vm0.simonliveshere.com`.
-# Capstone Frontend
+5. Check it out at `https://capstone.simonliveshere.com`.
 
 ## Requirements
 
