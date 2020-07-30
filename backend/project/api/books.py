@@ -382,8 +382,14 @@ def readers(request):
         if count > 12:
             break
         book = item[0]
-        book_list.append({"id": book.id, "title": book.title})
-
+        stats = BookStats.objects.filter(book=book).first()
+        if stats:
+            book_list.append({"book_id": book.id, "book_title": book.title,
+                        "book_author": book.author, "book_pub_date": book.pub_date,
+                        "average_review": stats.average_rating,"n_reviews": stats.total_ratings,"n_collections":stats.collection_count, "n_readers": stats.read_count})
+        else:
+            book_list.append({"book_id": book.id, "book_title": book.title,
+                        "book_author": book.author, "book_pub_date": book.pub_date})
     return Response({"status": "ok", "message": "Books retrieved", "book_list": book_list}, status=status.HTTP_200_OK)
 
 
