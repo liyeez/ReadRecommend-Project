@@ -63,3 +63,7 @@
   - E.g. For jQuery: `npm install --save jquery @types/jquery`.
 - If there are additional dependencies that need to be in a specific folder, use the `copy-webpack-plugin` plugin to copy from the npm source into the output folder.
   - E.g. To copy the Bootstrap CSS files from the Bootstrap npm package into `src/css`, a CopyPlugin pattern is configured in `webpack.config.js`. Check the code there and use it as a template.
+
+## Deployment
+
+- Run deploy.py.

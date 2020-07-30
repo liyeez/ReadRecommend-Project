@@ -15,14 +15,11 @@ import paramiko
 import scp
 
 
-HOST = "capstone.simonliveshere.com"
+HOST = "capstonebackend.simonliveshere.com"
 USER = "ubuntu"
 
-SOURCE_DIRECTORY = "./src"
-TARGET_DIRECTORY = "/var/www/capstone"
-
-FILE_TYPES = [".html", ".css"]
-ADDITIONAL_FILES = ["./src/js/index.js"]
+SOURCE_DIRECTORY = "./project"
+TARGET_DIRECTORY = "/home/ubuntu/capstone"
 
 
 # Upload progress
@@ -36,8 +33,7 @@ def check_folder(file_path, file_list):
         if child.is_dir():
             check_folder(child, file_list)
         else:
-            if child.suffix in FILE_TYPES:
-                file_list.append(child)
+            file_list.append(child)
 
 
 # Get confirmation
@@ -56,16 +52,14 @@ ssh_client.connect(HOST, 22, USER)
 # Crawl folder and upload files
 scp_client = scp.SCPClient(ssh_client.get_transport(), progress=progress)
 try:
-    # Load the additional files into upload queue
-    upload_queue = list(map(lambda x:pathlib.Path(x), ADDITIONAL_FILES))
-    
     # Work with pure paths
     SOURCE_DIRECTORY = pathlib.Path(SOURCE_DIRECTORY)
     TARGET_DIRECTORY = pathlib.Path(TARGET_DIRECTORY)
 
     # Crawl the directory and populate upload_queue with files we need to upload
+    upload_queue = []
     check_folder(SOURCE_DIRECTORY, upload_queue)
-
+    
     for file in upload_queue:
         print(f"Uploading {file}")
 
