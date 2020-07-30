@@ -46,8 +46,47 @@ def data(request):
 
 
 
+
+
+
 @api_view(["GET"])
-#@input_validator(["search"])
+def filter(request):
+
+    books = Book.objects.all()
+
+    filters = ['average_rating','total_ratings','read_count','collection_count']
+    BookStats.objects.update_all()
+
+    for f in [x for x in filters if x in request.GET]:
+        for b in books:
+            book_stat = BookStats.objects.filter(book=b).first()
+            if not book_stat:
+                books = books.exclude(id=b.id)
+            elif getattr(book_stat,f) <= int(request.GET[f]):              
+                books = books.exclude(id=b.id)
+
+    book_list = []
+    for book in books.all():
+        stats = BookStats.objects.filter(book=book).first()
+        book_list.append({"book_id": book.id, "book_title": book.title,
+                        "book_author": book.author, "book_pub_date": book.pub_date,
+                        "average_review": stats.average_rating,"n_reviews": stats.total_ratings,"n_collections":stats.collection_count, "n_readers": stats.read_count})
+
+
+    if len(book_list) > 0:
+        message = "Got matching books"
+    else:
+        message = "No matches found"
+
+    return Response({"status": "ok", "message": message, "book_list": book_list}, status=status.HTTP_200_OK)
+
+
+
+
+
+
+@api_view(["GET"])
+@input_validator(["search"])
 def search(request):
     """
     search
@@ -81,7 +120,7 @@ def search(request):
             book_stat = BookStats.objects.filter(book=b).first()
             if not book_stat:
                 books = books.exclude(id=b.id)
-            elif getattr(book_stat,f) <= float(request.GET[f]):              
+            elif getattr(book_stat,f) <= int(request.GET[f]):              
                 books = books.exclude(id=b.id)
 
     book_list = []
