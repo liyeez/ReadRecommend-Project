@@ -10,6 +10,7 @@ from .utilities import input_validator, auth_validator
 from datetime import datetime
 import requests
 import base64
+import string
 
 
 @api_view(["GET"])
@@ -456,8 +457,36 @@ def recommendations(request):
 
     return Response({"status": "ok", "message": "Genre found", "Most_genre": genre, "book_list": book_list}, status=status.HTTP_200_OK)
 
+@api_view(["GET"])
+@input_validator(["keyword"])
+def keyword(request):
+    keyword = request.GET["keyword"].lower()
+    book_list = []
+    count = 0
+    for book in Book.objects.all():
+        if count >12:
+            break
+        desc = book.description.translate(str.maketrans('', '', string.punctuation))
+        desc = desc.lower()
+        words = desc.split()
+        if keyword in words:
+            count +=1
+            stats = BookStats.objects.filter(book=book).first()
+            if stats:
+                book_list.append({"book_id": book.id, "book_title": book.title,
+                            "book_author": book.author, "book_pub_date": book.pub_date,
+                            "average_review": stats.average_rating,"n_reviews": stats.total_ratings,"n_collections":stats.collection_count, "n_readers": stats.read_count})
+            else:
+                book_list.append({"book_id": book.id, "book_title": book.title,
+                            "book_author": book.author, "book_pub_date": book.pub_date,
+                            "average_review": 0,"n_reviews": 0,"n_collections":0, "n_readers": 0})
+    if count == 0:
+        return Response({"status": "ok", "message": "No matches found"}, status=status.HTTP_200_OK)
 
-#
+    return Response({"status": "ok", "message": "Found matches", "book_list": book_list}, status=status.HTTP_200_OK)
+
+
+
 #
 #@api_view(["GET"])
 #@input_validator(["id"])
