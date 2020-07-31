@@ -6,6 +6,8 @@ import * as $ from "jquery";
 import * as Router from "react-router-dom";
 
 import CookieService from "../services/CookieService";
+import BookReadStatus from "./BookReadStatus";
+
 // Material UI
 import AddIcon from "@material-ui/icons/Add";
 import Button from "@material-ui/core/Button";
@@ -16,9 +18,6 @@ import CardMedia from "@material-ui/core/CardMedia";
 import Container from "@material-ui/core/Container";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Grid from "@material-ui/core/Grid";
-import FormGroup from '@material-ui/core/FormGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Switch from '@material-ui/core/Switch';
 import Typography from "@material-ui/core/Typography";
 
 import { makeStyles } from "@material-ui/core/styles";
@@ -53,16 +52,11 @@ const Style = makeStyles((theme) => ({
     },
 }));
 
-let readStatus : any[] = [];
-
 export default function UserLibrary() {
     const classes = Style();
     const token = CookieService.get("access_token");
 
-    const [libraryReadStatuses, setLibraryReadStatuses] = useState<boolean[]>([]);
-    const [statusChanged, setStatusChanged] = useState<boolean>(false);
-
-    let cards: Array<any> = [];
+    let libraryBooks: Array<any> = [];
 
     function removeBook(id) {
         var data = removeLib(id, function (data) {
@@ -103,7 +97,7 @@ export default function UserLibrary() {
         var data = onSearch(function (data) {
             if (data != null) {
                 if (data.message == "Got user library") {
-                    cards = data.book_list;
+                    libraryBooks = data.book_list;
                 } else {
                     alert("No Matched Results!");
                     window.location.href = "/";
@@ -133,69 +127,6 @@ export default function UserLibrary() {
         });
     }
 
-    function initialiseReadStatus(bookId) : boolean {
-        let status = false;
-        var data = getReadStatus(bookId, function (data) {
-            status = data.is_read;
-        });
-        return status;
-    }
-
-    function getReadStatus(bookId, callback) {
-        $.ajax({
-            async: false,
-            url: API_URL + "/api/books/is_read",
-            data: {
-                auth: token,
-                book_id: bookId
-            }, 
-            method: "GET",
-            success: function (data) {
-                if (data != null) {
-                    console.log(data.is_read);
-                    callback(data);
-                } else {
-                    callback(null);
-                }
-            },
-            error: function() {
-                console.log("server error!");
-                callback(null);
-            }
-        })
-    }
-
-    // Toggles the read status of a book in a user's library between read and unread.
-    function toggleRead(bookId) {
-        var data = setReadStatus(bookId, function (data) {
-            setStatusChanged(!statusChanged);
-        });
-    }
-
-    function setReadStatus(bookId, callback) {
-        $.ajax({
-            async: false,
-            url: API_URL + "/api/books/set_read",
-            data: {
-                auth: token,
-                book_id: bookId,
-            },
-            method: "POST",
-            success: function (data) {
-                if (data != null) {
-                    console.log(data.message);
-                    callback(data);
-                } else {
-                    callback(null);
-                }
-            },
-            error: function() {
-                console.log("server error!");
-                callback(null);
-            }
-        })
-    }
-
     request();
 
     return (
@@ -221,24 +152,22 @@ export default function UserLibrary() {
                 {/* User's Libary Books */}
                 <Container className={classes.cardGrid} maxWidth="md">
                     <Grid container spacing={4}>
-                        {cards.map((card) => (
-                            <Grid item key={card.id} xs={12} sm={6} md={4}>
+                        {libraryBooks.map((libraryBook) => (
+                            <Grid item key={libraryBook.id} xs={12} sm={6} md={4}>
                                 <Card className={classes.card}>
                                     <CardMedia className={classes.cardMedia} image="https://source.unsplash.com/random" title="Image title"/>
                                     <CardContent className={classes.cardContent}>
-                                        <Typography gutterBottom variant="h5" component="h2">
-                                            {card.book_title}
-                                        </Typography>
+                                        <Typography gutterBottom variant="h5" component="h2">{libraryBook.book_title}</Typography>
+
                                         {/* Switch To Display Read Status of Book */}
-                                        <FormGroup row>
-                                            <FormControlLabel control={<Switch checked={initialiseReadStatus(card.id)} onChange={() => toggleRead(card.id)} color="primary"/>} label="Read Status"/>
-                                        </FormGroup>
-                                        <Typography>By Author: {card.book_author}</Typography>
-                                        <Typography>Published on: {card.book_pub_date}</Typography>
+                                        <BookReadStatus bookId={libraryBook.id}></BookReadStatus>
+
+                                        <Typography>By Author: {libraryBook.book_author}</Typography>
+                                        <Typography>Published on: {libraryBook.book_pub_date}</Typography>
                                     </CardContent>
                                     <CardActions>
-                                        <Button component={Router.Link} to={"/bookdata/metadata?id=" + card.id} size="small" color="primary">View</Button>
-                                        <Button size="small" color="primary" onClick={() => removeBook(card.id)}>Remove</Button>
+                                        <Button component={Router.Link} to={"/bookdata/metadata?id=" + libraryBook.id} size="small" color="primary">View</Button>
+                                        <Button size="small" color="primary" onClick={() => removeBook(libraryBook.id)}>Remove</Button>
                                         <Button size="small" color="primary">Move to Collection</Button>
                                     </CardActions>
                                 </Card>

@@ -6,6 +6,8 @@ import * as Router from "react-router-dom";
 import * as $ from "jquery";
 import CookieService from "../services/CookieService";
 
+import BookReadStatus from "./BookReadStatus";
+
 // Material UI
 import Alert from "@material-ui/lab/Alert";
 import AddIcon from "@material-ui/icons/Add";
@@ -475,6 +477,7 @@ const EditCollection: React.FC<Props> = ({}) => {
                                     <CardMedia className={classes.cardMedia} image="https://source.unsplash.com/random?book" title="Image title"/>
                                     <CardContent className={classes.cardContent}>
                                         <Typography gutterBottom variant="h5" component="h2">{book.title}</Typography>
+                                        <BookReadStatus bookId={book.id}></BookReadStatus>
                                         <Typography>
                                             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam molestie pellentesque tortor in rhoncus.
                                         </Typography>
@@ -482,9 +485,6 @@ const EditCollection: React.FC<Props> = ({}) => {
                                     <CardActions>
                                         <Button component={Router.Link} to={"/bookdata/metadata?isbn=" + book.id} size="small" color="primary">
                                             View
-                                        </Button>
-                                        <Button size="small" color="primary" component={Router.Link} to="/">
-                                            Edit Status
                                         </Button>
                                         {/* TODO: Display an alert saying 'book removed from collection' */}
                                         <Button size="small" color="primary" onClick={() => removeBook(book.id)}>
