@@ -61,4 +61,6 @@ and display of aggregate statistics, as well as the filtering and recommendation
 
 Week 9
 
+- This week we aimed to finalise our code for the project. I worked on the frontend features for editing reading goals, as well as filtering capabilities in book search.
+
 Week 10
