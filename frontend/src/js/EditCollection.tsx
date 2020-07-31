@@ -6,6 +6,8 @@ import * as Router from "react-router-dom";
 import * as $ from "jquery";
 import CookieService from "../services/CookieService";
 
+import BookReadStatus from "./BookReadStatus";
+
 // Material UI
 import Alert from "@material-ui/lab/Alert";
 import AddIcon from "@material-ui/icons/Add";
@@ -35,6 +37,9 @@ import { makeStyles } from "@material-ui/core/styles";
 declare const API_URL: string;
 
 const Style = makeStyles((theme) => ({
+    actionButton: {
+        margin: 10,
+    },
     heroContent: {
         backgroundColor: theme.palette.background.paper,
         padding: theme.spacing(8, 0, 6),
@@ -384,8 +389,8 @@ const EditCollection: React.FC<Props> = ({}) => {
                             {/* Page Title and Main Action For Title */}
                             <Typography component="h1" variant="h2" align="center" color="textPrimary" gutterBottom>
                                 {collection}
-                                <Button variant="outlined" color="secondary" onClick={handleClickOpen} startIcon={<EditIcon />}>
-                                    Rename Collection
+                                <Button variant="outlined" color="secondary" onClick={handleClickOpen} startIcon={<EditIcon />} className={classes.actionButton}>
+                                    Rename
                                 </Button>
                             </Typography>
 
@@ -407,6 +412,9 @@ const EditCollection: React.FC<Props> = ({}) => {
 
                         {/* Collection Tags Section */}
                         <Paper component="ul" className={classes.chipRoot}>
+                            <Button onClick={handleTagOpen} type="submit" variant="outlined" color="default" startIcon={<AddIcon />} className={classes.chip}>
+                                Tag
+                            </Button>
                             {tag_list.map((data) => {
                                 return (
                                     <li key={data.key}>
@@ -433,16 +441,11 @@ const EditCollection: React.FC<Props> = ({}) => {
                         <div className={classes.heroButtons}>
                             <Grid container spacing={2} justify="center">
                                 <Grid item>
-                                    <Button onClick={handleTagOpen} type="submit" variant="outlined" color="primary" startIcon={<AddIcon />}>
-                                        Add Tags
-                                    </Button>
-                                </Grid>
-                                <Grid item>
                                     <Button 
                                         component={Router.Link} to={"/user/addTitles?collectionid=" + collectionId} 
                                         type="submit" variant="outlined" color="primary" startIcon={<AddIcon />}
                                     >
-                                        Add Books
+                                        Books
                                     </Button>
                                 </Grid>
                                 <Grid item>
@@ -453,16 +456,13 @@ const EditCollection: React.FC<Props> = ({}) => {
                                         Recently Added Books
                                     </Button>
                                 </Grid>
-                                <Grid item>
-                                    <Button type="submit" variant="outlined" color="default" startIcon={<ImportExportIcon />}>
+                                {/*<Grid item>
+                                    <Button 
+                                        type="submit" variant="outlined" color="default" startIcon={<ImportExportIcon />}
+                                    >
                                         Import Books
                                     </Button>
-                                </Grid>
-                                <Grid item>
-                                    <Button type="submit" variant="outlined" color="default" startIcon={<ImportExportIcon />}>
-                                        Export Books
-                                    </Button>
-                                </Grid>
+                                </Grid>*/}
                             </Grid>
                         </div>
                     </Container>
@@ -477,6 +477,7 @@ const EditCollection: React.FC<Props> = ({}) => {
                                     <CardMedia className={classes.cardMedia} image="https://source.unsplash.com/random?book" title="Image title"/>
                                     <CardContent className={classes.cardContent}>
                                         <Typography gutterBottom variant="h5" component="h2">{book.title}</Typography>
+                                        <BookReadStatus bookId={book.id}></BookReadStatus>
                                         <Typography>
                                             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam molestie pellentesque tortor in rhoncus.
                                         </Typography>
@@ -484,9 +485,6 @@ const EditCollection: React.FC<Props> = ({}) => {
                                     <CardActions>
                                         <Button component={Router.Link} to={"/bookdata/metadata?isbn=" + book.id} size="small" color="primary">
                                             View
-                                        </Button>
-                                        <Button size="small" color="primary" component={Router.Link} to="/">
-                                            Edit Status
                                         </Button>
                                         {/* TODO: Display an alert saying 'book removed from collection' */}
                                         <Button size="small" color="primary" onClick={() => removeBook(book.id)}>

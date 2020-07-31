@@ -10,6 +10,7 @@ from .utilities import input_validator, auth_validator
 from datetime import datetime
 import requests
 import base64
+import string
 
 
 @api_view(["GET"])
@@ -46,8 +47,53 @@ def data(request):
 
 
 
+
+
 @api_view(["GET"])
-#@input_validator(["search"])
+def filter(request):
+
+    if 'search' in request.GET:
+        search = request.GET["search"]
+        books = Book.objects.filter(
+            Q(title__icontains=search) | Q(author__contains=search))
+    else:
+        books = Book.objects.all()
+
+    if 'genre' in request.GET:
+        books = books.filter(genre=request.GET['genre'])
+
+    filters = ['average_rating','total_ratings','read_count','collection_count']
+    BookStats.objects.update_all()
+
+    for f in [x for x in filters if x in request.GET]:
+        for b in books:
+            book_stat = BookStats.objects.filter(book=b).first()
+            if not book_stat:
+                books = books.exclude(id=b.id)
+            elif getattr(book_stat,f) < int(request.GET[f]):              
+                books = books.exclude(id=b.id)
+
+    book_list = []
+    for book in books.all():
+        stats = BookStats.objects.filter(book=book).first()
+        book_list.append({"book_id": book.id, "book_title": book.title,
+                        "book_author": book.author, "book_pub_date": book.pub_date,
+                        "average_review": stats.average_rating,"n_reviews": stats.total_ratings,"n_collections":stats.collection_count, "n_readers": stats.read_count})
+
+
+    if len(book_list) > 0:
+        message = "Got matching books"
+    else:
+        message = "No matches found"
+
+    return Response({"status": "ok", "message": message, "book_list": book_list}, status=status.HTTP_200_OK)
+
+
+
+
+
+
+@api_view(["GET"])
 def search(request):
     """
     search
@@ -73,16 +119,6 @@ def search(request):
     if 'genre' in request.GET:
         books = books.filter(genre=request.GET['genre'])
 
-    filters = ['average_rating','total_ratings','read_count','collection_count']
-    BookStats.objects.update_all()
-
-    for f in [x for x in filters if x in request.GET]:
-        for b in books:
-            book_stat = BookStats.objects.filter(book=b).first()
-            if not book_stat:
-                books = books.exclude(id=b.id)
-            elif getattr(book_stat,f) <= float(request.GET[f]):              
-                books = books.exclude(id=b.id)
 
     book_list = []
     for book in books.all():
@@ -98,6 +134,7 @@ def search(request):
         message = "No matches found"
 
     return Response({"status": "ok", "message": message, "book_list": book_list}, status=status.HTTP_200_OK)
+
 
 
 @api_view(["GET"])
@@ -436,8 +473,36 @@ def recommendations(request):
 
     return Response({"status": "ok", "message": "Genre found", "Most_genre": genre, "book_list": book_list}, status=status.HTTP_200_OK)
 
+@api_view(["GET"])
+@input_validator(["keyword"])
+def keyword(request):
+    keyword = request.GET["keyword"].lower()
+    book_list = []
+    count = 0
+    for book in Book.objects.all():
+        if count >12:
+            break
+        desc = book.description.translate(str.maketrans('', '', string.punctuation))
+        desc = desc.lower()
+        words = desc.split()
+        if keyword in words:
+            count +=1
+            stats = BookStats.objects.filter(book=book).first()
+            if stats:
+                book_list.append({"book_id": book.id, "book_title": book.title,
+                            "book_author": book.author, "book_pub_date": book.pub_date,
+                            "average_review": stats.average_rating,"n_reviews": stats.total_ratings,"n_collections":stats.collection_count, "n_readers": stats.read_count})
+            else:
+                book_list.append({"book_id": book.id, "book_title": book.title,
+                            "book_author": book.author, "book_pub_date": book.pub_date,
+                            "average_review": 0,"n_reviews": 0,"n_collections":0, "n_readers": 0})
+    if count == 0:
+        return Response({"status": "ok", "message": "No matches found"}, status=status.HTTP_200_OK)
 
-#
+    return Response({"status": "ok", "message": "Found matches", "book_list": book_list}, status=status.HTTP_200_OK)
+
+
+
 #
 #@api_view(["GET"])
 #@input_validator(["id"])
