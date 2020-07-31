@@ -10,6 +10,7 @@ from .utilities import input_validator, auth_validator
 from datetime import datetime
 import requests
 import base64
+import string
 
 
 @api_view(["GET"])
@@ -349,34 +350,50 @@ def search_book(request):
     r = requests.get(API_ENDPOINT, params=payload)
 
     results = []
+    count = 0
     for match in r.json()["items"]:
         book = {}
-        book["book_title"] = ""
-        book["book_author"] = ""
-        book["book_description"] = ""
-        book["book_genre"] = ""
-        book["book_isbn"] = "0000000000"
-        book["cover"] = ""
-        book["book_pub_date"] = ""
         # Sometimes these fields are missing
         try:
             book["book_title"] = match["volumeInfo"]["title"]
+        except:
+            book["book_title"] = ""
+        try:
             book["book_author"] = match["volumeInfo"]["authors"][0]
+        except:
+            book["book_author"] = ""
+        try:
             book["book_description"] = match["volumeInfo"]["description"]
+        except:
+            book["book_description"] = ""
+        try:
             book["book_genre"] = ",".join(match["volumeInfo"]["categories"])
+        except:
+            book["book_genre"] = ""
+        try:
             book["cover"] = match["volumeInfo"]["imageLinks"]["thumbnail"]
+        except:
+            book["cover"] = ""
+        try:
             book["book_pub_date"] = match["volumeInfo"]["publishedDate"]
         except:
-            pass
+            book["book_pub_date"] = ""
+            
         # Look for isbn
         # json doesnt guarantee list order so loop through the possibilities
-        for identifier in match["volumeInfo"]["industryIdentifiers"]:
-            if identifier["type"] == "ISBN_10":
-                book["book_isbn"] = identifier["identifier"]
-        results.append(book)
+        try:
+            for identifier in match["volumeInfo"]["industryIdentifiers"]:
+                if identifier["type"] == "ISBN_10":
+                    book["book_isbn"] = identifier["identifier"]
+            # Do not allow books without isbn numbers to be returned
+            results.append(book)
+        except:
+            pass
+
+        count += 1
         
     if len(results) > 0:
-        return Response({"status": "ok", "message": "Success", "results": results, "current_index": index + len(results)}, status=status.HTTP_200_OK)
+        return Response({"status": "ok", "message": "Success", "results": results, "current_index": index + count}, status=status.HTTP_200_OK)
     else:
         return Response({"status": "ok", "message": "No matches", "results": [], "current_index": index}, status=status.HTTP_200_OK)
 
@@ -456,8 +473,36 @@ def recommendations(request):
 
     return Response({"status": "ok", "message": "Genre found", "Most_genre": genre, "book_list": book_list}, status=status.HTTP_200_OK)
 
+@api_view(["GET"])
+@input_validator(["keyword"])
+def keyword(request):
+    keyword = request.GET["keyword"].lower()
+    book_list = []
+    count = 0
+    for book in Book.objects.all():
+        if count >12:
+            break
+        desc = book.description.translate(str.maketrans('', '', string.punctuation))
+        desc = desc.lower()
+        words = desc.split()
+        if keyword in words:
+            count +=1
+            stats = BookStats.objects.filter(book=book).first()
+            if stats:
+                book_list.append({"book_id": book.id, "book_title": book.title,
+                            "book_author": book.author, "book_pub_date": book.pub_date,
+                            "average_review": stats.average_rating,"n_reviews": stats.total_ratings,"n_collections":stats.collection_count, "n_readers": stats.read_count})
+            else:
+                book_list.append({"book_id": book.id, "book_title": book.title,
+                            "book_author": book.author, "book_pub_date": book.pub_date,
+                            "average_review": 0,"n_reviews": 0,"n_collections":0, "n_readers": 0})
+    if count == 0:
+        return Response({"status": "ok", "message": "No matches found"}, status=status.HTTP_200_OK)
 
-#
+    return Response({"status": "ok", "message": "Found matches", "book_list": book_list}, status=status.HTTP_200_OK)
+
+
+
 #
 #@api_view(["GET"])
 #@input_validator(["id"])
