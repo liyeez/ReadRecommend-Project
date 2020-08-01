@@ -175,7 +175,7 @@ const Search: React.FC<Props> = ({}) => {
 
   function externalSearch(event) {
     event.preventDefault();
-    window.location.href = "/extsearch?title=" + SearchForm.title;
+    window.location.href = "/extsearch?title=" + SearchForm.title + "?index=0";
   }
 
   let type = (window.location.href.split("?")[1]).split("=")[0];
@@ -263,8 +263,8 @@ const Search: React.FC<Props> = ({}) => {
        
         <Container className={classes.cardGrid} maxWidth="md">
             <Grid container spacing={4}>
-                {extBooks.map((card) => (
-                    <Grid item key={card} xs={12} sm={6} md={4}>
+                {extBooks.map((book) => (
+                    <Grid item key={book} xs={12} sm={6} md={4}>
                         <Card className={classes.card}>
                         <CardMedia
                           className={classes.cardMedia}
@@ -274,16 +274,16 @@ const Search: React.FC<Props> = ({}) => {
                         
                         <CardContent className={classes.cardContent}>
                           <Typography gutterBottom variant="h5" component="h2">
-                            {card.book_title}
+                            {book.book_title}
                           </Typography>
-                          <Typography>By Author: {card.book_author}</Typography>
-                          <Typography>Published on: {card.book_pub_date}</Typography>
+                          <Typography>By Author: {book.book_author}</Typography>
+                          <Typography>Published on: {book.book_pub_date}</Typography>
                         </CardContent>
                         <CardActions>
                             <Button
                               size="small"
                               color="primary"
-                              onClick={() => storeBook(card)}
+                              onClick={() => storeBook(book)}
                             >
                               View
                             </Button>

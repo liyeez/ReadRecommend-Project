@@ -195,9 +195,9 @@ export default function UserProfile() {
                 </Container>
 
                 {/* User's Book Collections */}
-                <Container className={classes.cardGrid} maxWidth="md">
+                <Container className={classes.cardGrid} maxWidth="lg">
                     <Typography component="h4" variant="h4" align="left" color="textPrimary" gutterBottom>
-                        User Collections
+                        User Collections   {'    '}   
                         <Button 
                             type="submit" variant="outlined" color="primary" startIcon={<AddIcon />}
                             onClick={handleClickOpen}
@@ -273,8 +273,10 @@ const useStyles = makeStyles((theme) => ({
         flex: 1,
     },
     cardGrid: {
-        paddingTop: theme.spacing(8),
         paddingBottom: theme.spacing(8),
+    },
+    createButton: {
+        paddingRight: theme.spacing(8),   
     },
 }));
 
@@ -349,6 +351,11 @@ function Goal() {
         setOpenEditGoal(false);
     }
 
+    const handleDeleteGoal = () => {
+        setOpenEditGoal(false);
+        deleteGoal();
+    }
+
     // Detects new value typed into dialog box and loads it on the screen.
     const onAmountChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -394,21 +401,45 @@ function Goal() {
             }
         })
     }
+
+    function deleteGoal() {
+        $.ajax({
+            async: false,
+            url: API_URL + "/api/user/delete_goal",
+            data: {
+                auth: token,
+            },
+            method: "POST",
+            success: function (data) {
+                if (data != null) {
+                    alert(data.message);
+                    window.location.reload();
+                }
+            },
+            error: function () {
+                console.log('delete server error!');
+            }
+        })
+    }
     
     // Format the requested date into string for backend query.
     function formatDate() {
+      
         let dateString = selectedDate?.toISOString().split('T')[0];
         let dateParts = dateString?.split("-");
         let formattedDateString = "";
         if (dateParts != null && dateParts.length == 3) {
-            formattedDateString = dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0];
+            //toISOString is buggy, so the actual date is actually +1 day
+            formattedDateString = (parseInt(dateParts[2])+1) + "-" + dateParts[1] + "-" + dateParts[0];
         }
+        console.log('formatted date is: ');
         return formattedDateString;
     }
     
     function requestNewGoal() {
+        
         let formattedDateString = formatDate();
-
+        console.log(formattedDateString);
         var data = setNewGoal(formattedDateString, function (data) {
             if (data != null) {
                 if (data.message === "Goal created") {
@@ -420,6 +451,7 @@ function Goal() {
     }
 
     function setNewGoal(formattedDate, callback) {
+        console.log(formattedDate);
         $.ajax({
             async: false,
             url: API_URL + "/api/user/set_goal",
@@ -430,7 +462,9 @@ function Goal() {
             },
             method: "POST",
             success: function (data) {
+
                 if (data != null) {
+                    console.log(data);
                     callback(data);
                 } else {
                     callback(null);
@@ -633,6 +667,7 @@ function Goal() {
                     </DialogContent>
                     <DialogActions>
                         <Button onClick={handleCloseEditGoal} color="primary">Cancel</Button>
+                        <Button onClick={handleDeleteGoal} color="primary">Delete</Button>
                         <Button onClick={handleEditGoal} color="primary" variant="contained">Save Changes</Button>
                     </DialogActions>
                 </Dialog>

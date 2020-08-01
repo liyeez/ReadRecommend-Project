@@ -449,8 +449,8 @@ const Main: React.FC<Props> = ({ userSignedIn }: Props) => {
                 {/* Books in System For User Browsing */}
                 <Container className={classes.cardGrid} maxWidth="md">
                     <Grid container spacing={4}>
-                        {cards.map((card) => (
-                            <Grid item key={card.book_id} xs={12} sm={6} md={4}>
+                        {cards.map((book) => (
+                            <Grid item key={book.book_id} xs={12} sm={6} md={4}>
                                 <Card className={classes.card}>
                                     <CardMedia
                                         className={classes.cardMedia}
@@ -458,19 +458,19 @@ const Main: React.FC<Props> = ({ userSignedIn }: Props) => {
                                         title="Image title"
                                     />
                                     <CardContent className={classes.cardContent}>
-                                        <Typography gutterBottom variant="h5" component="h2">{card.book_title}</Typography>
-                                        <Typography>By Author: {card.book_author}</Typography>
-                                        <Typography>Published On: {card.book_pub_date}</Typography>
+                                        <Typography gutterBottom variant="h5" component="h2">{book.book_title}</Typography>
+                                        <Typography>By Author: {book.book_author}</Typography>
+                                        <Typography>Published On: {book.book_pub_date}</Typography>
                                     </CardContent>
 
                                     <CardActions>
-                                        <Button size="small" color="primary" component={Router.Link} to={"/bookdata/metadata?id=" + card.book_id}>
+                                        <Button size="small" color="primary" component={Router.Link} to={"/bookdata/metadata?id=" + book.book_id}>
                                             View
                                         </Button>
 
                                         {/*User can only add book to library and collections if signed in.*/}
                                         {userSignedIn ? (
-                                            <Button size="small" color="primary" endIcon={<AddIcon />} onClick={() => addLib(card.book_id)}>
+                                            <Button size="small" color="primary" endIcon={<AddIcon />} onClick={() => addLib(book.book_id)}>
                                                 {" "}
                                                 Add to Libary{" "}
                                             </Button>

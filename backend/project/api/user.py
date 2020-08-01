@@ -210,8 +210,9 @@ def set_goal(request):
     None
     """
     date_start = datetime.strptime(request.POST["date_start"], '%d-%m-%Y').date()
+    
     if date_start < datetime.now().date():
-        return Response({"status": "error", "message":"invalid date"}, status=status.HTTP_200_OK)
+        return Response({"status": "error", "message":"invalid date", "date":date_start}, status=status.HTTP_200_OK)
     current_goals = request.user.goal_set.filter(current = True)
     has_current = False
     for goal in current_goals:

@@ -9,6 +9,7 @@ import * as $ from "jquery";
 import AddIcon from "@material-ui/icons/Add";
 import Button from "@material-ui/core/Button";
 import Card from "@material-ui/core/Card";
+import Chip from "@material-ui/core/Chip";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
@@ -65,6 +66,17 @@ const Style = makeStyles((theme) => ({
     alignItems: "center",
     width: 400,
   },
+  chip: {
+      margin: theme.spacing(0.5),
+  },
+  chipRoot: {
+      display: "flex",
+      justifyContent: "center",
+      flexWrap: "wrap",
+      listStyle: "none",
+      padding: theme.spacing(0.5),
+      margin: 0,
+  },
 }));
 
 interface Props {}
@@ -72,13 +84,15 @@ interface Props {}
 function viewBook(data) {
   window.location.href = "/bookdata/metadata?id=" + data;
 }
+let tag_list: any[] = [];
+let book_list: any = [];
+let collection: any;
+let str = window.location.href.split("?")[1];
 
 const ViewCollection: React.FC<Props> = ({}) => {
   const classes = Style();
 
-  let book_list: any = [];
-  let collection: any;
-  let str = window.location.href.split("?")[1];
+  
   //if(str != null && str != ''){
     str = str.split("=")[1];
     console.log("To find: " + str);
@@ -86,6 +100,47 @@ const ViewCollection: React.FC<Props> = ({}) => {
     //window.location.href = "/";
   //}  
   
+  function requestTags() {
+      var result = getTags(function (result) {
+          if (result != null) {
+              if (result.message == "Got tags") {
+                  let newTags: any[] = [];
+                  result.tag_list.forEach(function (tag) {
+                      let Tag = { key: newTags.length, tag_label: tag.tag_label };
+                      newTags.push(Tag);
+                  });
+                  tag_list = newTags;
+              } else if (result.message == "Collection has no tags") {
+                  console.log("Do nothing, continue loading the page.");
+              } else {
+                  alert("No Matched Results!");
+                  window.location.href = "/";
+              }
+          }
+      });
+  }
+
+
+  function getTags(callback) {
+        $.ajax({
+            async: false,
+            url: API_URL + "/api/collections/get_tags",
+            data: {
+                collection_id: str,
+            },
+            method: "GET",
+            success: function (data) {
+                if (data != null) {
+                    callback(data);
+                }
+                callback(null);
+            },
+            error: function () {
+                console.log("server error!");
+                callback(null);
+            },
+        });
+    }
 
   // Retrieves collection data from the back-end/database.
   function request() {
@@ -125,7 +180,7 @@ const ViewCollection: React.FC<Props> = ({}) => {
       },
     });
   }
-
+  requestTags();
   request();
 
   return (
@@ -145,6 +200,26 @@ const ViewCollection: React.FC<Props> = ({}) => {
             >
               {collection}
             </Typography>
+
+            {/* Collection Tags Section */}
+              <Paper component="ul" className={classes.chipRoot}>
+                  <Typography 
+                    className={classes.chip}
+                    variant="h5"
+                    align="center"
+                    color="textPrimary"
+                    gutterBottom
+                  >
+                    Tags: 
+                  </Typography>
+                  {tag_list.map((data) => {
+                      return (
+                          <li key={data.key}>
+                              <Chip label={data.tag_label} className={classes.chip}/>
+                          </li>
+                      );
+                  })}
+              </Paper>
 
             <div className={classes.heroButtons}>
               <Grid container spacing={2} justify="center">

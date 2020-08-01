@@ -149,27 +149,50 @@ const FindUser: React.FC<Props> = ({}) => {
 
     }
     
+
+
     function getBooks() {
       const token = CookieService.get('access_token');
+        // $.ajax({
+        //     async: false,
+        //     url: "http://localhost:8000/api/books/recommendations",
+        //     data: {
+        //         auth: token,
+        //     },
+        //     method: "GET",
+        //     success: function (data) {
+        //         if (data != null && data.message == 'Genre found') {
+        //             console.log(data);
+        //             books = data.book_list;
+        //             genre = data.Most_genre
+        //             numSlides = books.length;
+        //         }
+                
+        //     },
+        //     error: function () {
+        //         console.log("server error!");
+        //     }
+        // });
+
         $.ajax({
             async: false,
-            url: "http://localhost:8000/api/books/recommendations",
+            url: API_URL + "/api/user/get_library",
             data: {
                 auth: token,
             },
             method: "GET",
             success: function (data) {
-                if (data != null && data.message == 'Genre found') {
+                if (data != null) {
                     console.log(data);
                     books = data.book_list;
                     genre = data.Most_genre
                     numSlides = books.length;
                 }
-                
+               
             },
             error: function () {
                 console.log("server error!");
-            }
+            },
         });
     }
 
@@ -261,13 +284,93 @@ const FindUser: React.FC<Props> = ({}) => {
                   : (null)
               }
               
+              {/*Most Read Genre*/}
               <Grid container spacing={5} className={classes.carousel}>
                 <Grid item>
                     <Typography gutterBottom variant="h4">
                        <WhatshotIcon /> Reader who likes {genre} also read: <WhatshotIcon />
                     </Typography>
                 </Grid>
-              </Grid>      
+              </Grid> 
+
+              { numSlides == 1
+                  ? (<Grid container spacing={2} className={classes.cardGrid}>
+                        <Grid item>
+                          <Arrow
+                              direction='left'
+                              clickFunction={() => onArrowClick('left')}
+                          />
+                        </Grid>
+                        
+                          <CardStyle books={books} index={index}/>
+                       
+                        <Grid item>  
+                          <Arrow
+                              direction='right'
+                              clickFunction={() => onArrowClick('right')}
+                          />
+                        </Grid>
+                     </Grid>
+
+                     )
+                  : (null)
+              } 
+
+              { numSlides == 2
+                  ? (<Grid container spacing={2} className={classes.cardGrid}>
+                        <Grid item>
+                          <Arrow
+                              direction='left'
+                              clickFunction={() => onArrowClick('left')}
+                          />
+                        </Grid>
+                        <CardStyle books={books} index={index}/>
+                        <CardStyle books={books} index={index2}/>
+                          
+                        <Grid item>  
+                          <Arrow
+                              direction='right'
+                              clickFunction={() => onArrowClick('right')}
+                          />
+                        </Grid>
+                     </Grid>
+
+                     )
+                  : (null)
+              }
+
+              { numSlides > 2
+                  ? (<Grid container spacing={2} className={classes.cardGrid}>
+                        <Grid item>
+                          <Arrow
+                              direction='left'
+                              clickFunction={() => onArrowClick('left')}
+                          />
+                        </Grid>
+                        <CardStyle books={books} index={index}/>
+                        <CardStyle books={books} index={index2}/>
+                        <CardStyle books={books} index={index3}/>
+                        <Grid item>  
+                          <Arrow
+                              direction='right'
+                              clickFunction={() => onArrowClick('right')}
+                          />
+                        </Grid>
+                     </Grid>
+
+                     )
+                  : (null)
+              }
+
+              {/*Shared tags Collection from other users*/}
+              <Grid container spacing={5} className={classes.carousel}>
+                <Grid item>
+                    <Typography gutterBottom variant="h4">
+                       <WhatshotIcon /> Reader who likes {genre} also read: <WhatshotIcon />
+                    </Typography>
+                </Grid>
+              </Grid> 
+
               { numSlides == 1
                   ? (<Grid container spacing={2} className={classes.cardGrid}>
                         <Grid item>
