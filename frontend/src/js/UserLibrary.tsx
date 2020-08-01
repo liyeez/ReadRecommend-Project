@@ -10,6 +10,7 @@ import BookReadStatus from "./BookReadStatus";
 
 // Material UI
 import AddIcon from "@material-ui/icons/Add";
+import Alert from "@material-ui/lab/Alert";
 import Button from "@material-ui/core/Button";
 import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
@@ -17,7 +18,17 @@ import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
 import Container from "@material-ui/core/Container";
 import CssBaseline from "@material-ui/core/CssBaseline";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import FormControl from '@material-ui/core/FormControl';
 import Grid from "@material-ui/core/Grid";
+import InputLabel from '@material-ui/core/InputLabel';
+import LibraryAddIcon from '@material-ui/icons/LibraryAdd';
+import MenuItem from '@material-ui/core/MenuItem';
+import Select from '@material-ui/core/Select';
 import Typography from "@material-ui/core/Typography";
 
 import { makeStyles } from "@material-ui/core/styles";
@@ -50,13 +61,71 @@ const Style = makeStyles((theme) => ({
     cardContent: {
         flexGrow: 1,
     },
+    formControl: {
+        margin: theme.spacing(1),
+        minWidth: 120,
+    },
+    selectEmpty: {
+        marginTop: theme.spacing(2),
+    },
 }));
+
+let bookToAdd;
 
 export default function UserLibrary() {
     const classes = Style();
     const token = CookieService.get("access_token");
 
     let libraryBooks: Array<any> = [];
+
+    let [ userBookCollections, setUserBookCollections ] = useState([]);
+    const [ addToCollectionId, setAddToCollectionId ] = useState("");
+    const [ addToCollectionError, setAddToCollectionError ] = useState("");
+
+    const [ open, setOpen ] = useState(false);
+
+    const handleClickOpen = (bookId) => {
+        bookToAdd = bookId;
+        setOpen(true);
+    }
+
+    const handleClose = () => {
+        setOpen(false);
+    }
+
+    const handleChange = (event: React.ChangeEvent<{value: unknown}>) => {
+        setAddToCollectionId(event.target.value as string);
+    }
+
+    function requestUserCollections() {
+        var data = getUserCollections(function (data) {
+            if (data != null) {
+                userBookCollections = data.collection_list;
+            }
+        });
+    }
+
+    function getUserCollections(callback) {
+        $.ajax({
+            async: false,
+            url: API_URL + "/api/user/my_profile",
+            method: "GET",
+            data : {
+                auth: token,
+            },
+            success: function (data) {
+                if (data != null) {
+                    if (data.message === "Got current user profile data") {
+                        callback(data);
+                    }
+                }
+            },
+            error: function(error) {
+                callback(error);
+                console.log("Get user collections server error!");
+            }
+        })
+    }
 
     function removeBook(id) {
         var data = removeLib(id, function (data) {
@@ -127,7 +196,35 @@ export default function UserLibrary() {
         });
     }
 
+    function addBookToCollection(bookId, collectionId) {
+        handleClose();
+        $.ajax({
+            async: false,
+            url: API_URL + "/api/collections/add_title",
+            data: {
+                auth: token,
+                collection_id: parseInt(collectionId),
+                id: bookId,
+            },
+            method: "POST",
+            success: function (data) {
+                if (data != null) {
+                    console.log(data);
+                    if (data.message === "Book added to collection") {
+                        setAddToCollectionError("Successfully added title to collection!");
+                    } else if (data.message === "Book is already in collection") {
+                        setAddToCollectionError("This book is already in the requested collection!")
+                    }
+                }
+            },
+            error: function () {
+                console.log("Add book to collection server error!");
+            }
+        })
+    }
+
     request();
+    requestUserCollections();
 
     return (
         <React.Fragment>
@@ -151,6 +248,14 @@ export default function UserLibrary() {
 
                 {/* User's Libary Books */}
                 <Container className={classes.cardGrid} maxWidth="md">
+                    {/* User Feedback for Organising Books Into Collections */}
+                    <div>
+                        {addToCollectionError === "Successfully added title to collection!" ? 
+                        (<Alert severity="success">{addToCollectionError}</Alert>) : null}
+                        {addToCollectionError === "This book is already in the requested collection!" ?
+                        (<Alert severity="warning">{addToCollectionError}</Alert>) : null}
+                    </div>
+
                     <Grid container spacing={4}>
                         {libraryBooks.map((libraryBook) => (
                             <Grid item key={libraryBook.id} xs={12} sm={6} md={4}>
@@ -168,7 +273,42 @@ export default function UserLibrary() {
                                     <CardActions>
                                         <Button component={Router.Link} to={"/bookdata/metadata?id=" + libraryBook.id} size="small" color="primary">View</Button>
                                         <Button size="small" color="primary" onClick={() => removeBook(libraryBook.id)}>Remove</Button>
-                                        <Button size="small" color="primary">Move to Collection</Button>
+
+                                        {/*Open Dialog For Adding to Book Collection*/}
+                                        <Button 
+                                            name={libraryBook.id} type="submit" variant="outlined" color="primary"
+                                            onClick={() => handleClickOpen(libraryBook.id)} startIcon={<LibraryAddIcon />}
+                                        >
+                                            Add To
+                                        </Button>
+
+                                        <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+                                            <DialogTitle id="form-dialog-title">Add Book To Collection</DialogTitle>
+                                            <DialogContent>
+                                                <DialogContentText>Select a book collection:</DialogContentText>
+                                                
+                                                {/* Options to Add to Different User Collections */}
+                                                <FormControl variant="outlined" className={classes.formControl} fullWidth>
+                                                    <InputLabel id="add-to-collection">Book Collection</InputLabel>
+                                                    <Select 
+                                                        labelId="add-to-collection-label" id="add-to-collection-options" color="primary"
+                                                        value={addToCollectionId} onChange={handleChange} label="collectionName" fullWidth
+                                                    >
+                                                        <MenuItem value=""><em>Book Collection</em></MenuItem>
+                                                        
+                                                        {userBookCollections.map((userBookCollection : any) => (
+                                                            <MenuItem key={userBookCollection.collection_id} value={userBookCollection.collection_id}>
+                                                                {userBookCollection.collection_name}
+                                                            </MenuItem>
+                                                        ))}
+                                                    </Select>
+                                                </FormControl>
+                                            </DialogContent>
+                                            <DialogActions>
+                                                <Button onClick={handleClose} color="primary">Cancel</Button>
+                                                <Button onClick={() => addBookToCollection(bookToAdd, addToCollectionId)} color="primary" variant="contained">Save</Button>
+                                            </DialogActions>
+                                        </Dialog>
                                     </CardActions>
                                 </Card>
                             </Grid>
