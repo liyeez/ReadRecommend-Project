@@ -69,7 +69,10 @@ def auth_validator(func):
             return Response({"status": "system_error", "message": ex.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         request.user = user
-        return func(request)
+        try:
+            return func(request)
+        except Exception as ex:
+            return Response({"status": "system_error", "message": ex.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     return wrapper
 
@@ -94,6 +97,9 @@ def user_validator(func):
             return Response({"status": "system_error", "message": ex.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         request.user = user
-        return func(request)
+        try:
+            return func(request)
+        except Exception as ex:
+            return Response({"status": "system_error", "message": ex.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     return wrapper
