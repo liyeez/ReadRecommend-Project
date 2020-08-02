@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from api.models import Collection, Book, Tag, MAX_STR_LEN, User, CollectionBookMetadata, UserBookMetadata
 from django.core import serializers
-from .utilities import auth_validator, input_validator
+from .utilities import auth_validator, input_validator, user_validator
 from django.contrib.auth.models import User
 
 
@@ -320,6 +320,78 @@ def get_tagged_collections(request):
         collection_list.append(curr_collection)
 
     return Response({"status": "ok", "message": "Got collections", "collection_list": collection_list}, status=status.HTTP_200_OK)
+
+
+@api_view(["GET"])
+@user_validator
+def get_similar_collections(request):
+    """
+    get_similar_collections
+
+    Gets collections with similar tags to a user’s collections
+
+    Input:
+    user_id (int)
+
+    Returns:
+    collection_list (list):
+        collection_id (int)
+        collection_name (str)
+        collection_owner (int)
+        tag_match_count (int)
+        tag_list (list):
+            tag_name (str)
+        book_list (list):
+            book_id (int)
+            book_title (str)
+
+    """ 
+    user: User = request.user
+
+    # Get the tags for all collections
+    tags = []
+    for collection in user.collection_set.all():
+        for tag in collection.tags.all():
+            if tag not in tags:
+                tags.append(tag)
+    
+    if len(tags) == 0:
+        return Response({"status": "error", "message": "No tags found", "collection_list": []}, status=status.HTTP_200_OK)
+
+    matching_collections = {}
+
+    for tag in tags:
+        collections = tag.collection_set.all()
+
+        for collection in collections:
+            collection_id = collection.collection_id
+            if str(collection_id) not in matching_collections:
+                # Use a dictionary to ensure we dont double up
+                book_list = []
+                for book in collection.books.all():
+                    curr_book = {}
+                    curr_book["book_id"] = book.id
+                    curr_book["book_title"] = book.title
+                    book_list.append(curr_book)
+
+                tag_list = []
+                tag_match_count = 0
+                for tag in collection.tags.all():
+                    tag_list.append(tag.name)
+                    if tag in tags:
+                        tag_match_count += 1
+
+                matching_collections[str(collection_id)] = {
+                    "collection_id": collection_id,
+                    "collection_name": collection.name,
+                    "collection_owner": collection.user.id,
+                    "tag_match_count": tag_match_count,
+                    "tag_list": tag_list,
+                    "book_list": book_list
+                }
+
+    # Flatten and return the dictionary
+    return Response({"status": "ok", "message": "Got collections", "collection_list": matching_collections.values()}, status=status.HTTP_200_OK)
 
 
 @api_view(["GET"])
