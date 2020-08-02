@@ -5,12 +5,13 @@ from rest_framework import status
 from django.core.exceptions import ObjectDoesNotExist
 
 from django.db.models import Q
-from .models import Book, BookInstance, BookStats, Review, Collection
+from .models import Book, BookInstance, BookStats, Review, Collection, UserBookMetadata
 from .utilities import input_validator, auth_validator
 from datetime import datetime
 import requests
 import base64
 import string
+from random import shuffle
 
 
 @api_view(["GET"])
@@ -485,7 +486,47 @@ def keyword(request):
 
     return Response({"status": "ok", "message": "Found matches", "book_list": book_list}, status=status.HTTP_200_OK)
 
+@api_view(["GET"])
+@auth_validator
+def history(request): #recommends based on reading history
+                      #looks at what other users
+    user_books = []
+    books_read = request.user.userbookmetadata_set.filter(has_read = True)
+    for book in books_read:
+        user_books.append(book.book)
+    if not user_books:
+        return Response({"status": "error", "message": "User has no read books"}, status=status.HTTP_200_OK)
 
+    recs = []
+    for book in user_books: #each book user has read
+        users = []
+        for item in UserBookMetadata.objects.filter(book = book, has_read = True):
+            users.append(item.user) #find users that also read the book
+        for user in users: #look at books those users read that are the same genre
+            other_books = user.userbookmetadata_set.filter(has_read = True)
+            for other_book in other_books:
+                if other_book.book not in recs and other_book.book.genre == book.genre:
+                    recs.append(other_book.book)
+    shuffle(recs)
+    book_list = []
+    count = 0
+    for book in recs:
+        count += 1
+        if count > 12:
+            break
+        if book not in user_books:
+            stats = BookStats.objects.filter(book=book).first()
+            if stats:
+                book_list.append({"book_id": book.id, "book_title": book.title,
+                            "book_author": book.author, "book_pub_date": book.pub_date,
+                            "average_review": stats.average_rating,"n_reviews": stats.total_ratings,"n_collections":stats.collection_count, "n_readers": stats.read_count})
+            else:
+                book_list.append({"book_id": book.id, "book_title": book.title,
+                            "book_author": book.author, "book_pub_date": book.pub_date,
+                            "average_review": 0,"n_reviews": 0,"n_collections":0, "n_readers": 0})
+
+
+    return Response({"status": "ok", "message": "recommendations found", "book_list": book_list}, status=status.HTTP_200_OK)
 
 #
 #@api_view(["GET"])
