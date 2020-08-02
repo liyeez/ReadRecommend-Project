@@ -399,8 +399,9 @@ def search_book(request):
         return Response({"status": "ok", "message": "No matches", "results": [], "current_index": index}, status=status.HTTP_200_OK)
 
 @api_view(["GET"])
+@input_validator(["book_id"])
+@auth_validator
 def readers(request):
-    
     try:
         book = Book.objects.get(id=request.GET["book_id"])
     except:
