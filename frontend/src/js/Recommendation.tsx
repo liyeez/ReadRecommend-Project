@@ -67,19 +67,18 @@ const slides = [
     // { backgroundColor: '#ecc6c6', title: 'Slide 6' },
 ];
 
-function viewBook(id){
-
-}
-
-
 interface Props{}
 
 interface SearchForm {
     title: any;
 }
 
-function CardStyle(props){
+function viewBook(id){
+    window.location.href = "/bookdata/metadata?id=" + id;
+}
 
+function CardStyle(props){
+    
     const {books, index} = props;
     const classes = styles();
     console.log("displaying book index: " + index);
@@ -103,7 +102,7 @@ function CardStyle(props){
                 <Button
                   size="small"
                   color="primary"
-                  onClick={() => viewBook(books[index].book_id)}
+                  onClick={() => viewBook(books[index].id)}
                 >
                   View
                 </Button>
@@ -143,12 +142,30 @@ const FindUser: React.FC<Props> = ({}) => {
     };
 
     const classes = styles();
-
     
-    function viewBook(id){
-
-    }
-    
+    function get_() {
+      const token = CookieService.get('access_token');
+        $.ajax({
+            async: false,
+            url: "http://localhost:8000/api/books/recommendations",
+            data: {
+                auth: token,
+            },
+            method: "GET",
+            success: function (data) {
+                if (data != null && data.message == 'Genre found') {
+                    console.log(data);
+                    books = data.book_list;
+                    genre = data.Most_genre
+                    numSlides = books.length;
+                }
+                
+            },
+            error: function () {
+                console.log("server error!");
+            }
+        });
+    }    
 
 
     function getBooks() {
@@ -366,7 +383,7 @@ const FindUser: React.FC<Props> = ({}) => {
               <Grid container spacing={5} className={classes.carousel}>
                 <Grid item>
                     <Typography gutterBottom variant="h4">
-                       <WhatshotIcon /> Reader who likes {genre} also read: <WhatshotIcon />
+                       <WhatshotIcon /> Collections that share the same tags as you: <WhatshotIcon />
                     </Typography>
                 </Grid>
               </Grid> 

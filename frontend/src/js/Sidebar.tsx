@@ -17,6 +17,7 @@ import HomeIcon from '@material-ui/icons/Home';
 import PeopleIcon from '@material-ui/icons/People';
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
+import VpnKeyIcon from '@material-ui/icons/VpnKey';
 import CookieService from "../services/CookieService";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 
@@ -66,6 +67,11 @@ const Sidebar: React.FC = ({}) => {
                 <ListItem button key={"More Books"} component={Router.Link} to="/user/recommendations">
                 <ListItemIcon><MenuBookIcon /></ListItemIcon>
                 <ListItemText primary={'More Books'} />
+                </ListItem>
+
+                <ListItem button key={"Keyword Search"} component={Router.Link} to="/keyword">
+                <ListItemIcon><VpnKeyIcon /></ListItemIcon>
+                <ListItemText primary={'Keyword Search'} />
                 </ListItem>
 
             </List>

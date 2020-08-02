@@ -22,6 +22,7 @@ import RecentlyAddedBooks from "./RecentlyAddedBooks";
 import AddTitles from "./AddTitles";
 import OtherUserProfile from "./OtherUserProfile";
 import FindUser from "./FindUser";
+import Keyword from "./Keyword";
 import Search from "./Search";
 import ExtSearch from "./ExternalSearch";
 import Recommendation from "./Recommendation";
@@ -77,6 +78,9 @@ const Routing: React.FC = ({}) => {
                     </Router.Route>
                     <Router.Route path="/user/recommendations">
                         <Recommendation />
+                    </Router.Route>
+                    <Router.Route path="/keyword">
+                        <Keyword />
                     </Router.Route>
                     <Router.Route path="/bookdata/metadata">
                         <BookDetails />
