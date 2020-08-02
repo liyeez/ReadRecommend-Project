@@ -250,8 +250,8 @@ const Search: React.FC<Props> = ({}) => {
         </div>
         <Container className={classes.cardGrid} maxWidth="md">
           <Grid container spacing={4}>
-            {books.map((card) => (
-              <Grid item key={card} xs={12} sm={6} md={4}>
+            {books.map((book) => (
+              <Grid item key={book} xs={12} sm={6} md={4}>
                 <Card className={classes.card}>
                   <CardMedia
                     className={classes.cardMedia}
@@ -260,16 +260,16 @@ const Search: React.FC<Props> = ({}) => {
                   />
                   <CardContent className={classes.cardContent}>
                     <Typography gutterBottom variant="h5" component="h2">
-                      {card.book_title}
+                      {book.book_title}
                     </Typography>
-                    <Typography>By Author: {card.book_author}</Typography>
-                    <Typography>Published on: {card.book_pub_date}</Typography>
+                    <Typography>By Author: {book.book_author}</Typography>
+                    <Typography>Published on: {book.book_pub_date}</Typography>
                   </CardContent>
                   <CardActions>
                     <Button
                       size="small"
                       color="primary"
-                      onClick={() => viewBook(card.book_id)}
+                      onClick={() => viewBook(book.book_id)}
                     >
                       View
                     </Button>
@@ -278,8 +278,8 @@ const Search: React.FC<Props> = ({}) => {
               </Grid>
             ))}
 
-            {users.map((card) => (
-              <Grid item key={card} xs={12} sm={6} md={4}>
+            {users.map((user) => (
+              <Grid item key={user} xs={12} sm={6} md={4}>
                 <Card className={classes.card}>
                   <CardMedia
                     className={classes.cardMedia}
@@ -288,14 +288,14 @@ const Search: React.FC<Props> = ({}) => {
                   />
                   <CardContent className={classes.cardContent}>
                     <Typography gutterBottom variant="h5" component="h2">
-                      {card.first_name + " " + card.last_name}
+                      {user.first_name + " " + user.last_name}
                     </Typography>
                   </CardContent>
                   <CardActions>
                     <Button
                       size="small"
                       color="primary"
-                      onClick={() => viewUser(card.user_id)}
+                      onClick={() => viewUser(user.user_id)}
                     >
                       View
                     </Button>

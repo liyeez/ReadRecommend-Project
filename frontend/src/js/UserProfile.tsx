@@ -39,8 +39,7 @@ import { useTheme } from "@material-ui/core/styles";
 declare const API_URL: string;
 
 let userGoals : any[] = [];
-let mostRecentGoal : any; 
-let userGoalData : any[] = [];
+let mostRecentGoal : any;
 
 export default function UserProfile() {
     const [userProfileData, setUserProfileData] = useState({
@@ -196,9 +195,9 @@ export default function UserProfile() {
                 </Container>
 
                 {/* User's Book Collections */}
-                <Container className={classes.cardGrid} maxWidth="md">
+                <Container className={classes.cardGrid} maxWidth="lg">
                     <Typography component="h4" variant="h4" align="left" color="textPrimary" gutterBottom>
-                        User Collections
+                        User Collections   {'    '}   
                         <Button 
                             type="submit" variant="outlined" color="primary" startIcon={<AddIcon />}
                             onClick={handleClickOpen}
@@ -274,8 +273,10 @@ const useStyles = makeStyles((theme) => ({
         flex: 1,
     },
     cardGrid: {
-        paddingTop: theme.spacing(8),
         paddingBottom: theme.spacing(8),
+    },
+    createButton: {
+        paddingRight: theme.spacing(8),   
     },
 }));
 
@@ -321,6 +322,8 @@ function Chart() {
 
 function Goal() {
     const token = CookieService.get("access_token");
+    const [goalError, setGoalError] = useState("");
+    const [goalDateError, setGoalDateError] = useState("");
 
     // Dialog for setting a new reading goal.
     const [openGoal, setOpenGoal] = useState(false);
@@ -346,6 +349,11 @@ function Goal() {
 
     const handleCloseEditGoal = () => {
         setOpenEditGoal(false);
+    }
+
+    const handleDeleteGoal = () => {
+        setOpenEditGoal(false);
+        deleteGoal();
     }
 
     // Detects new value typed into dialog box and loads it on the screen.
@@ -393,31 +401,57 @@ function Goal() {
             }
         })
     }
+
+    function deleteGoal() {
+        $.ajax({
+            async: false,
+            url: API_URL + "/api/user/delete_goal",
+            data: {
+                auth: token,
+            },
+            method: "POST",
+            success: function (data) {
+                if (data != null) {
+                    alert(data.message);
+                    window.location.reload();
+                }
+            },
+            error: function () {
+                console.log('delete server error!');
+            }
+        })
+    }
     
     // Format the requested date into string for backend query.
     function formatDate() {
+      
         let dateString = selectedDate?.toISOString().split('T')[0];
         let dateParts = dateString?.split("-");
         let formattedDateString = "";
         if (dateParts != null && dateParts.length == 3) {
-            formattedDateString = dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0];
+            //toISOString is buggy, so the actual date is actually +1 day
+            formattedDateString = (parseInt(dateParts[2])+1) + "-" + dateParts[1] + "-" + dateParts[0];
         }
+        console.log('formatted date is: ');
         return formattedDateString;
     }
     
     function requestNewGoal() {
+        
         let formattedDateString = formatDate();
-
+        console.log(formattedDateString);
         var data = setNewGoal(formattedDateString, function (data) {
             if (data != null) {
                 if (data.message === "Goal created") {
                     console.log(data);
+                    setGoalError("Goal successfully created!");
                 }
             }
         });
     }
 
     function setNewGoal(formattedDate, callback) {
+        console.log(formattedDate);
         $.ajax({
             async: false,
             url: API_URL + "/api/user/set_goal",
@@ -428,7 +462,9 @@ function Goal() {
             },
             method: "POST",
             success: function (data) {
+
                 if (data != null) {
+                    console.log(data);
                     callback(data);
                 } else {
                     callback(null);
@@ -444,18 +480,28 @@ function Goal() {
     function requestEditGoal() {
         var data = editGoal(function(data) {
             if (data != null) {
-                console.log(data);
+                if (data.message === "Goal changed") {
+                    setGoalError("Goal successfully saved!");
+                } else if (data.message === "count_goal not changed") {
+                    setGoalError("Goal not changed.");
+                } else if (data.message === "invalid count_goal") {
+                    setGoalError("Goal must contain at least one book, please try again.");
+                }
             }
         });
     }
 
     function requestEditGoalDate() {
         let formattedDateString = formatDate();
-        console.log("test date");
-        console.log(formattedDateString);
         var data = editGoalDate(formattedDateString, function(data) {
             if (data != null) {
-                console.log(data);
+                if (data.message === "Goal dates changed") {
+                    setGoalDateError("Goal successfully saved!");
+                } else if (data.message === "invalid date") {
+                    setGoalDateError("Starting date of goal cannot be in the past, please try again!");
+                } else if (data.message == "Cannot edit past goals") {
+                    setGoalDateError("The starting date of a past goal cannot be modified, please try again!");
+                }
             }
         });
     }
@@ -507,6 +553,8 @@ function Goal() {
     }
 
     function handleEditGoal() {
+        setGoalError("");
+        setGoalDateError("");
         handleCloseEditGoal();
         requestEditGoal();
         requestEditGoalDate();
@@ -529,15 +577,32 @@ function Goal() {
                 {/*Display user's current reading goal if any.*/}
                 {(typeof mostRecentGoal !== "undefined") ? 
                     (<div>
-                        <Typography component="h6" variant="h6"># Books To Read: {mostRecentGoal.goal}</Typography> 
-                        <Typography component="h6" variant="h6">Deadline: {mostRecentGoal.date_end}</Typography>
+                        <Typography component="p"># Books To Read: {mostRecentGoal.goal}</Typography> 
+                        <Typography component="p">Deadline: {mostRecentGoal.date_end}</Typography>
                     </div>) : 
                     (<Typography component="p">You currently don't have any reading goals.</Typography>)
                 }
                 
             </Container>
             <Container className={classes.container}>
+                {/* Displays relevant user action depending on whether or not they have an active goal */}
                 {(userGoals.length >= 1) ? (<Link onClick={handleClickEditOpenGoal}>Edit Goal</Link>) : (<Link onClick={handleClickOpenGoal}>Set Goal</Link>)}
+                
+                {/* User Feedback for Goals */}
+                <div>
+                    {(goalError === "Goal successfully created!") ? 
+                        (<Alert severity="success">{goalError}</Alert>) : null}
+                    {((goalError === "Goal successfully saved!") && (goalDateError === "Goal successfully saved!")
+                        || (goalError === "Goal not changed.") && (goalDateError === "Goal successfully saved!")) ? 
+                        (<Alert severity="success">{goalDateError}</Alert>) : null}
+                        
+                    {(goalError === "Goal must contain at least one book, please try again.") ? 
+                        (<Alert severity="error">{goalError}</Alert>) : null}
+                    {goalDateError === "Starting date of goal cannot be in the past, please try again!" ? 
+                        (<Alert severity="error">{goalDateError}</Alert>) : null}
+                    {goalDateError === "The starting date of a past goal cannot be modified, please try again!" ? 
+                        (<Alert severity="error">{goalDateError}</Alert>) : null}
+                </div>
                 
                 {/* Dialog For Goal Setting */}
                 <Dialog open={openGoal} onClose={handleCloseGoal} aria-labelledby="form-dialog-title">
@@ -575,9 +640,9 @@ function Goal() {
                     <DialogContent>
                         {(mostRecentGoal !== undefined) ? 
                             (<div>
-                                <Typography>Books to read this period: {mostRecentGoal.goal}</Typography>
-                                <Typography>Current Start Date: {mostRecentGoal.date_start}</Typography>
-                                <Typography>Current End Date: {mostRecentGoal.date_end}</Typography>
+                                <Typography component="p">Books to read this period: {mostRecentGoal.goal}</Typography>
+                                <Typography component="p">Current Start Date: {mostRecentGoal.date_start}</Typography>
+                                <Typography component="p">Current End Date: {mostRecentGoal.date_end}</Typography>
                                 <div>
                                     <TextField id="new-goal" label="New Goal" type="number" fullWidth onChange={onAmountChange} InputLabelProps={{shrink: true}}/>
                                 </div>
@@ -602,6 +667,7 @@ function Goal() {
                     </DialogContent>
                     <DialogActions>
                         <Button onClick={handleCloseEditGoal} color="primary">Cancel</Button>
+                        <Button onClick={handleDeleteGoal} color="primary">Delete</Button>
                         <Button onClick={handleEditGoal} color="primary" variant="contained">Save Changes</Button>
                     </DialogActions>
                 </Dialog>
