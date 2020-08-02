@@ -13,6 +13,7 @@ urlpatterns = [
     path("readers", books.readers),
     path("recommendations", books.recommendations),
     path("filter",books.filter),
-    path("keyword",books.keyword)
+    path("keyword",books.keyword), 
+    path("history",books.history)
    # path("stats", books.stats)
 ]
