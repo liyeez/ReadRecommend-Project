@@ -232,7 +232,7 @@ const Search: React.FC<Props> = ({}) => {
                   color="textSecondary"
                  > 
                  <SentimentSatisfiedAltIcon/>
-                 What books you feel like today? 
+                 {'      '}What books you feel like today? 
                </Typography>)
             
 

@@ -399,9 +399,8 @@ def search_book(request):
         return Response({"status": "ok", "message": "No matches", "results": [], "current_index": index}, status=status.HTTP_200_OK)
 
 @api_view(["GET"])
-@input_validator(["book_id"])
-@auth_validator
 def readers(request):
+    
     try:
         book = Book.objects.get(id=request.GET["book_id"])
     except:
@@ -514,15 +513,16 @@ def history(request): #recommends based on reading history
         return Response({"status": "error", "message": "User has no read books"}, status=status.HTTP_200_OK)
 
     recs = []
+    library = request.user.collection_set.get(library=True)
     for book in user_books: #each book user has read
         users = []
         for item in UserBookMetadata.objects.filter(book = book, has_read = True):
             users.append(item.user) #find users that also read the book
-        for user in users: #look at books those users read that are the same genre
+        for user in users: #look at books those users read 
             other_books = user.userbookmetadata_set.filter(has_read = True)
             for other_book in other_books:
-                if other_book.book not in recs and other_book.book.genre == book.genre:
-                    recs.append(other_book.book)
+                if other_book.book not in recs and other_book not in library.books.all(): #and other_book.book.genre == book.genre:
+                    recs.append(other_book.book)    #genre is not considered here
     shuffle(recs)
     book_list = []
     count = 0

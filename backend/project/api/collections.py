@@ -323,7 +323,6 @@ def get_tagged_collections(request):
 
 
 @api_view(["GET"])
-@user_validator
 def get_similar_collections(request):
     """
     get_similar_collections
