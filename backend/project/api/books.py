@@ -123,11 +123,14 @@ def search(request):
 
     book_list = []
     for book in books.all():
-        stats = BookStats.objects.filter(book=book).first()
-        book_list.append({"book_id": book.id, "book_title": book.title,
+        try: #if the book have a stats object
+            stats = BookStats.objects.filter(book=book).first()
+            book_list.append({"book_id": book.id, "book_title": book.title,
                         "book_author": book.author, "book_pub_date": book.pub_date,
                         "average_review": stats.average_rating,"n_reviews": stats.total_ratings,"n_collections":stats.collection_count, "n_readers": stats.read_count})
-
+        except:
+            book_list.append({"book_id": book.id, "book_title": book.title,
+                        "book_author": book.author, "book_pub_date": book.pub_date})
 
     if len(book_list) > 0:
         message = "Got matching books"

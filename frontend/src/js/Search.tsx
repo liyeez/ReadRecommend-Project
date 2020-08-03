@@ -6,11 +6,15 @@ import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
+import Box from "@material-ui/core/Box";
+import Slider from "@material-ui/core/Slider";
 import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Container from "@material-ui/core/Container";
+import Collapse from "@material-ui/core/Collapse";
 import Grid from "@material-ui/core/Grid";
+import Input from "@material-ui/core/Input";
 import IconButton from "@material-ui/core/IconButton";
 import Paper from "@material-ui/core/Paper";
 import SearchIcon from "@material-ui/icons/Search";
@@ -19,6 +23,15 @@ import LanguageIcon from '@material-ui/icons/Language';
 import { makeStyles } from "@material-ui/core/styles";
 
 declare const API_URL: string;
+
+const marks = [
+    {value: 0, label: '0'},
+    {value: 1, label: '1'},
+    {value: 2, label: '2'},
+    {value: 3, label: '3'},
+    {value: 4, label: '4'},
+    {value: 5, label: '5'},
+];
 
 const Style = makeStyles((theme) => ({
   heroContent: {
@@ -101,13 +114,17 @@ const Search: React.FC<Props> = ({}) => {
 
   function newSearch(event) {
     event.preventDefault();
-   let href = `?title={decodeURIComponent(SearchForm.title)}`;
-    window.location.href = "/search" + href;
+    window.location.href = "/search?title=" + SearchForm.title;
   }
 
   function externalSearch(event) {
     event.preventDefault();
     window.location.href = "/extsearch?title=" + SearchForm.title + "?index=0";
+  }
+
+  function advSearch(event) {
+    event.preventDefault();
+    window.location.href = "/search?title=" + SearchForm.title;
   }
 
   function onSearch(callback) {
@@ -118,10 +135,7 @@ const Search: React.FC<Props> = ({}) => {
       url: api_call,
       data: {
         search: txt,
-        average_rating: averageRating,
-        total_ratings: totalRatings,
-        read_count: readCount,
-        collection_count: collectionCount,
+        
       },
       method: "GET",
       success: function (data) {
@@ -136,6 +150,45 @@ const Search: React.FC<Props> = ({}) => {
         callback(null);
       },
     });
+  }
+
+  const [expanded, setExpanded] = useState(false);
+  const handleExpandClick = () => {
+      setExpanded(!expanded);
+  };
+
+  const [minimumRating, setMinimumRating] = React.useState<number | string | Array<number | string>>(0);
+
+  const handleSliderChange = (event: any, newValue: number | number[]) => {
+      setMinimumRating(newValue);
+  };
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      setMinimumRating(event.target.value === '' ? '' : Number(event.target.value));
+  };
+
+  const handleBlur = () => {
+      if (minimumRating < 0) {
+          setMinimumRating(0);
+      } else if (minimumRating > 5) {
+          setMinimumRating(5);
+      }
+  };
+
+  const [ filterState, setFilterState ] = useState({
+      minimumTotalRatings: 0,
+      minimumReadCount: 0,
+      minimumCollectionCount: 0,
+  });
+
+  const handleFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      setFilterState({...filterState, [event.target.name]: event.target.value});
+  }
+
+  function advSearchLocal(event) { 
+      window.location.href = "/search?title=" + SearchForm.title + "?average_rating=" + minimumRating + 
+          "?total_ratings=" + filterState.minimumTotalRatings + "?read_count=" + filterState.minimumReadCount + 
+          "?collection_count=" + filterState.minimumCollectionCount;
   }
 
   function viewBook(data) {
@@ -179,11 +232,14 @@ const Search: React.FC<Props> = ({}) => {
 
   let api_call: string;
   let s = window.location.href.split("?");
+  console.log("length: " + s.length);
   if (type == "title" && s.length == 2) {
+    console.log('call search API');
     api_call = API_URL + "/api/books/search";
   } else if (type == "finduser") {
     api_call = API_URL + "/api/user/find_users";
   } else if (type == "title" && s.length > 2){
+    console.log('call filter API');
     api_call = API_URL + "/api/books/filter";
   }
 
@@ -219,6 +275,7 @@ const Search: React.FC<Props> = ({}) => {
             <div className={classes.heroButtons}>
               <Grid container spacing={2} justify="center">
                 <Grid item>
+
                   <Paper component="form" className={classes.root}>
                     <TextField
                       className={classes.input}
@@ -244,6 +301,65 @@ const Search: React.FC<Props> = ({}) => {
                       <LanguageIcon />
                     </IconButton>
                   </Paper>
+
+                  <Paper>
+                      <Grid>
+                          <Collapse in={expanded} timeout="auto" unmountOnExit>
+                              <Grid item>
+                                  <Box m={2}>
+                                      <Typography id="input-slider" gutterBottom>Filter By Minimum Rating</Typography>
+                                      <Slider 
+                                          value={typeof minimumRating === 'number' ? minimumRating : 0}
+                                          onChange={handleSliderChange}
+                                          aria-labelledby="input-slider"
+                                          min={0} max={5} step={1}
+                                          marks={marks}
+                                      />
+                                      <Input 
+                                          className={classes.input} 
+                                          value={minimumRating} 
+                                          margin="dense"
+                                          onChange={handleInputChange}
+                                          onBlur={handleBlur}
+                                          inputProps={{step: 1, min: 0, max: 5, type: 'number', 'aria-labelledby': 'input-slider'}}
+                                      />
+                                  </Box>
+                                  <Box m={2}>
+                                      <TextField 
+                                      id="minimumTotalRatings" name="minimumTotalRatings"
+                                      label="Minimum Total Ratings" type="number"
+                                      value={filterState.minimumTotalRatings}
+                                      onChange={handleFilterChange}
+                                      />
+                                  </Box>
+                                  <Box m={2}>
+                                      <TextField
+                                          id="minimumReadCount" name="minimumReadCount"
+                                          label="Minimum Read Count" type="number"
+                                          value={filterState.minimumReadCount}
+                                          onChange={handleFilterChange}
+                                      />
+                                  </Box>
+                                  <Box m={2}>
+                                      <TextField 
+                                      id="minimumCollectionCount" name="minimumCollectionCount"
+                                      label="Minimum Collection Count" type="number"
+                                      value={filterState.minimumCollectionCount}
+                                      onChange={handleFilterChange}
+                                      />
+                                  </Box>
+                              </Grid>
+                              <Grid item>
+                                  <Box m={2}>
+                                      <Button color="primary" onClick={advSearchLocal}>
+                                          Advanced Search
+                                      </Button>
+                                  </Box>
+                              </Grid>
+                          </Collapse>
+                      </Grid>
+                  </Paper>
+
                 </Grid>
               </Grid>
             </div>
