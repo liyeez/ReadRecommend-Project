@@ -101,7 +101,8 @@ const Search: React.FC<Props> = ({}) => {
 
   function newSearch(event) {
     event.preventDefault();
-    window.location.href = "/search?title=" + SearchForm.title;
+   let href = `?title={decodeURIComponent(SearchForm.title)}`;
+    window.location.href = "/search" + href;
   }
 
   function externalSearch(event) {

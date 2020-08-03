@@ -365,8 +365,16 @@ const EditCollection: React.FC<Props> = ({}) => {
         });
     }
 
-    let collectionId = window.location.href.split("?")[1];
-    collectionId = collectionId.split("=")[1];
+
+    let collectionId: any = '';
+    collectionId = window.location.href.split("?")[1];
+    if(collectionId == ''){
+        alert('Sorry something is wrong!');
+        window.location.href ='/user/profile';
+    }else{
+        collectionId = collectionId.split("=")[1];
+    }
+   
     const token = CookieService.get("access_token");
     request();
     requestTags();

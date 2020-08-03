@@ -34,7 +34,8 @@ const useStyles = makeStyles({
 });
 
 function viewCollection(data){
-    window.location.href="/user/viewcollection?collectionid="+data;
+    let s = (`?collectionid=${encodeURIComponent(data)}`);
+    window.location.href="/user/viewcollection" + s;
 }
 
 function editCollection(data){

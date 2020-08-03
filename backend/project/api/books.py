@@ -399,21 +399,17 @@ def search_book(request):
         return Response({"status": "ok", "message": "No matches", "results": [], "current_index": index}, status=status.HTTP_200_OK)
 
 @api_view(["GET"])
-@input_validator(["book_id"])
 @auth_validator
 def readers(request):
-    try:
-        book = Book.objects.get(id=request.GET["book_id"])
-    except:
-        return Response({"status": "error", "message": "Book not found"}, status=status.HTTP_200_OK)
-    book_id = request.GET["book_id"]
     user_library = request.user.collection_set.get(library=True)
+    base_book = user_library.books.all().order_by('?')[0] # get random book from current usr library
+    book_id = base_book.pk
     library_id = user_library.pk
     libraries = Collection.objects.filter(library=True).exclude(pk = library_id)
     suggestions = {} #book suggestions
     for library in libraries:
         try:
-            library.books.get(id = book_id)
+            library.books.get(id = book_id) #if book exists in this user's library
             for book in library.books.all():
                 if book.id != int(book_id) and book not in user_library.books.all():
                     if book in suggestions:
@@ -439,7 +435,7 @@ def readers(request):
             book_list.append({"book_id": book.id, "book_title": book.title,
                         "book_author": book.author, "book_pub_date": book.pub_date,
                         "average_review": 0,"n_reviews": 0,"n_collections":0, "n_readers": 0})
-    return Response({"status": "ok", "message": "Books retrieved", "book_list": book_list}, status=status.HTTP_200_OK)
+    return Response({"status": "ok", "message": "Books retrieved", "book_list": book_list, "based_on": base_book.title}, status=status.HTTP_200_OK)
 
 @api_view(["GET"])
 @auth_validator

@@ -77,7 +77,8 @@ const Search: React.FC<Props> = ({}) => {
 
   function newSearch(event) {
     event.preventDefault();
-    window.location.href = "/keyword?string=" + SearchForm.title;
+    let s = (`${encodeURIComponent(SearchForm.title)}`);
+    window.location.href = "/keyword?string=" + s;
   }
 
   const onTextboxChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -95,9 +96,10 @@ const Search: React.FC<Props> = ({}) => {
   }
 
   let str = '';
-  
-  if(window.location.href.split("?")[1]){
-      str = window.location.href.split("?")[1];
+  let href = `${decodeURIComponent(window.location.href)}`;
+  console.log(href);
+  if(href.split("?")[1]){
+      str = href.split("?")[1];
       str = str.split("=")[1]; //get keyword
   }
 

@@ -2,6 +2,7 @@ import React, {ChangeEvent, useState} from "react";
 import $ = require("jquery");
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
+import Chip from "@material-ui/core/Chip";
 import CookieService from "../services/CookieService";
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
@@ -13,6 +14,7 @@ import IconButton from '@material-ui/core/IconButton';
 import { makeStyles, createStyles, Theme, withStyles, WithStyles } from '@material-ui/core/styles';
 import SearchIcon from '@material-ui/icons/Search';
 import RefreshIcon from '@material-ui/icons/Refresh';
+import SentimentDissatisfiedIcon from '@material-ui/icons/SentimentDissatisfied';
 import Card from "@material-ui/core/Card";
 import WhatshotIcon from '@material-ui/icons/Whatshot';
 import CardActions from "@material-ui/core/CardActions";
@@ -54,7 +56,15 @@ const styles= makeStyles((theme) => ({
     },
     carousel:{ //width doesnt affect
       justifyContent: 'center',
-    }
+
+    },
+    chip: {
+        margin: theme.spacing(0.5),
+    },
+    padding: {
+        paddingTop: '20%',
+        paddingBottom: '20%',
+    },
     
 }));
 
@@ -75,6 +85,11 @@ interface SearchForm {
 
 function viewBook(id){
     window.location.href = "/bookdata/metadata?id=" + id;
+}
+
+function viewCollection(data){
+    let s = (`?collectionid=${encodeURIComponent(data)}`);
+    window.location.href="/user/viewcollection" + s;
 }
 
 function CardStyle(props){
@@ -103,6 +118,47 @@ function CardStyle(props){
                   size="small"
                   color="primary"
                   onClick={() => viewBook(books[index].id)}
+                >
+                  View
+                </Button>
+              </CardActions>
+            </Card>
+          </Grid>
+
+    );
+}
+
+function CollectionStyle(props){
+    
+    const {collection, index} = props;
+    console.log(collection);
+    const classes = styles();
+    console.log("displaying collection index: " + index);
+    console.log(collection[index]);
+    return(
+        <Grid item className={classes.App}>
+            <Card className={classes.card}>
+              <CardMedia
+                className={classes.cardMedia}
+                image="https://source.unsplash.com/random?book"
+                title="Image title"
+              />
+              <CardContent className={classes.cardContent}>
+                <Typography gutterBottom variant="h5" component="h2">
+                  {collection[index].collection_name}
+                </Typography>
+                  
+                { collection[index].tag_list.map((tag)=>
+                   <Chip label={tag} className={classes.chip}/>
+                )}
+                
+                
+              </CardContent>
+              <CardActions>
+                <Button
+                  size="small"
+                  color="primary"
+                  onClick={() => viewCollection(collection[index].collection_id)}
                 >
                   View
                 </Button>
@@ -172,7 +228,7 @@ const FindUser: React.FC<Props> = ({}) => {
   
     };
 
-    const onArrowTag = (direction) => {
+    const onArrowHist = (direction) => {
         const increment = direction === 'left' ? -1 : 1;
         hist = (hist + increment + numHist) % numHist;
         hist2 = (hist2 + increment + numHist) % numHist;
@@ -180,7 +236,7 @@ const FindUser: React.FC<Props> = ({}) => {
   
     };
 
-    const onArrowHist = (direction) => {
+    const onArrowTag = (direction) => {
         const increment = direction === 'left' ? -1 : 1;
         tagCol = (tagCol + increment + numTagCol) % numTagCol;
         tagCol2 = (tagCol2 + increment + numTagCol) % numTagCol;
@@ -217,33 +273,10 @@ const FindUser: React.FC<Props> = ({}) => {
         });
     }
 
-    let TagCollections: any;
-    function getTagCol() {
-      const token = CookieService.get('access_token');
-        $.ajax({
-            async: false,
-            url: "http://localhost:8000/api/collections/get_similar_collections",
-            data: {
-                auth: token,
-            },
-            method: "GET",
-            success: function (data) {
-                if (data != null && data.message == 'Got collections') {
-                    console.log(data);
-                    TagCollections = data.collection_list;
-                    numTagCol = TagCollections.length;
-                }else{
-                  TagCollections = [];
-                }
-                
-            },
-            error: function () {
-                console.log("tag col server error!");
-            }
-        });
-    } 
+    
 
     let readerBooks: any;
+    let basedOn : any;
     function getRead() {
       const token = CookieService.get('access_token');
         $.ajax({
@@ -254,9 +287,11 @@ const FindUser: React.FC<Props> = ({}) => {
             },
             method: "GET",
             success: function (data) {
-                if (data != null && data.message == 'Books retrieved') {
-                    console.log(data);
-                    readerBooks = data.collection_list;
+                console.log(data);
+                if (data != null && data.message == "Books retrieved") {
+                    console.log('storing readerBooks');
+                    readerBooks = data.book_list;
+                    basedOn = data.based_on;
                     numRead = readerBooks.length;
                 }else{
                   readerBooks = [];
@@ -272,56 +307,61 @@ const FindUser: React.FC<Props> = ({}) => {
 
     function getPopularGenre() {
       const token = CookieService.get('access_token');
-        // $.ajax({
-        //     async: false,
-        //     url: "http://localhost:8000/api/books/recommendations",
-        //     data: {
-        //         auth: token,
-        //     },
-        //     method: "GET",
-        //     success: function (data) {
-        //         if (data != null && data.message == 'Genre found') {
-        //             console.log(data);
-        //             books = data.book_list;
-        //             genre = data.Most_genre
-        //             numSlides = books.length;
-        //         }
-                
-        //     },
-        //     error: function () {
-        //         console.log("server error!");
-        //     }
-        // });
-
         $.ajax({
             async: false,
-            url: API_URL + "/api/user/get_library",
+            url: "http://localhost:8000/api/books/recommendations",
             data: {
                 auth: token,
             },
             method: "GET",
             success: function (data) {
-                if (data != null) {
+                if (data != null && data.message == 'Genre found') {
                     console.log(data);
                     books = data.book_list;
                     genre = data.Most_genre
                     numSlides = books.length;
                 }
-               
+                
             },
             error: function () {
                 console.log("server error!");
-            },
+            }
         });
     }
 
+    let TagCollections: any = [];
+    function getTagCol() {
+      const token = CookieService.get('access_token');
+        $.ajax({
+            async: false,
+            url: "http://localhost:8000/api/collections/get_similar_collections",
+            data: {
+                auth: token,
+            },
+            method: "GET",
+            success: function (data) {
+
+                if (data != null && data.message == 'Got collections') {
+                    console.log('Storing TagCollections');
+                    TagCollections = data.collection_list;
+                    numTagCol = TagCollections.length;
+                    console.log(TagCollections);
+                }else{
+                  TagCollections = [];
+                }
+                
+            },
+            error: function () {
+                console.log("tag col server error!");
+            }
+        });
+    } 
     
-  
+    getTagCol();
     getPopularGenre();
     getHistory();
     getRead();
-    getTagCol();
-    console.log("length is: " + books.length);
+    
     return (
     <React.Fragment>
           <CssBaseline />
@@ -330,12 +370,22 @@ const FindUser: React.FC<Props> = ({}) => {
             <Container className={classes.cardGrid} >
               <Grid container spacing={5} className={classes.carousel}>
                 <Grid item>
-                    <Typography gutterBottom variant="h4">
-                       <WhatshotIcon /> Your favourite genre {} <WhatshotIcon />
+                    <Typography gutterBottom variant="h5">
+                       <WhatshotIcon /> Your favourite genre {genre} <WhatshotIcon />
                     </Typography>
                 </Grid>
               </Grid>      
-
+              { numSlides > 0
+                ? (null)
+                : (<Typography 
+                      align='center'
+                      component="h5"
+                      color="textSecondary"
+                     > 
+                     <SentimentDissatisfiedIcon/>
+                      {'    '} No books of your favourite genre!  
+                     </Typography>)
+              }
               
               { numSlides == 1
                   ? (<Grid container spacing={2} className={classes.cardGrid}>
@@ -409,12 +459,22 @@ const FindUser: React.FC<Props> = ({}) => {
               {/*Most Read Genre*/}
               <Grid container spacing={5} className={classes.carousel}>
                 <Grid item>
-                    <Typography gutterBottom variant="h4">
-                       <WhatshotIcon /> Reader who likes {genre} also read: <WhatshotIcon />
+                    <Typography gutterBottom variant="h5">
+                       <WhatshotIcon /> Reader who likes "{basedOn}" also read: <WhatshotIcon />
                     </Typography>
                 </Grid>
               </Grid> 
-
+              { numRead > 0
+                ? (null)
+                : (<Typography 
+                      align='center'
+                      component="h5"
+                      color="textSecondary"
+                     > 
+                     <SentimentDissatisfiedIcon/>
+                      {'    '} No one read "{basedOn}" 
+                     </Typography>)
+              }
               { numRead == 1
                   ? (<Grid container spacing={2} className={classes.cardGrid}>
                         <Grid item>
@@ -487,12 +547,22 @@ const FindUser: React.FC<Props> = ({}) => {
               {/*Shared tags Collection from other users*/}
               <Grid container spacing={5} className={classes.carousel}>
                 <Grid item>
-                    <Typography gutterBottom variant="h4">
+                    <Typography gutterBottom variant="h5">
                        <WhatshotIcon /> Collections that share the same tags as you: <WhatshotIcon />
                     </Typography>
                 </Grid>
               </Grid> 
-
+              { numTagCol > 0
+                ? (null)
+                : (<Typography 
+                      align='center'
+                      component="h5"
+                      color="textSecondary"
+                     > 
+                     <SentimentDissatisfiedIcon/>
+                      {'    '} No collections tagged like yours!  
+                     </Typography>)
+              }
               { numTagCol == 1
                   ? (<Grid container spacing={2} className={classes.cardGrid}>
                         <Grid item>
@@ -502,7 +572,7 @@ const FindUser: React.FC<Props> = ({}) => {
                           />
                         </Grid>
                         
-                          <CardStyle books={TagCollections} index={tagCol}/>
+                          <CollectionStyle collection={TagCollections} index={tagCol}/>
                        
                         <Grid item>  
                           <Arrow
@@ -524,8 +594,8 @@ const FindUser: React.FC<Props> = ({}) => {
                               clickFunction={() => onArrowTag('left')}
                           />
                         </Grid>
-                        <CardStyle books={TagCollections} index={tagCol}/>
-                        <CardStyle books={TagCollections} index={tagCol2}/>
+                        <CollectionStyle collection={TagCollections} index={tagCol}/>
+                        <CollectionStyle collection={TagCollections} index={tagCol2}/>
                           
                         <Grid item>  
                           <Arrow
@@ -547,9 +617,9 @@ const FindUser: React.FC<Props> = ({}) => {
                               clickFunction={() => onArrowTag('left')}
                           />
                         </Grid>
-                        <CardStyle books={TagCollections} index={tagCol}/>
-                        <CardStyle books={TagCollections} index={tagCol2}/>
-                        <CardStyle books={TagCollections} index={tagCol3}/>
+                        <CollectionStyle collection={TagCollections} index={tagCol}/>
+                        <CollectionStyle collection={TagCollections} index={tagCol2}/>
+                        <CollectionStyle collection={TagCollections} index={tagCol3}/>
                         <Grid item>  
                           <Arrow
                               direction='right'
@@ -566,12 +636,22 @@ const FindUser: React.FC<Props> = ({}) => {
               {/*recommendations based on reading history*/}
               <Grid container spacing={5} className={classes.carousel}>
                 <Grid item>
-                    <Typography gutterBottom variant="h4">
+                    <Typography gutterBottom variant="h5">
                        <WhatshotIcon /> Recommendations based on your history: <WhatshotIcon />
                     </Typography>
                 </Grid>
               </Grid> 
-
+              { numHist > 0
+                ? (null)
+                : (<Typography 
+                      align='center'
+                      component="h5"
+                      color="textSecondary"
+                     > 
+                     <SentimentDissatisfiedIcon/>
+                      {'    '} No books!  
+                     </Typography>)
+              }
               { numHist == 1
                   ? (<Grid container spacing={2} className={classes.cardGrid}>
                         <Grid item>

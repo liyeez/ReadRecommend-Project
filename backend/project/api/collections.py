@@ -323,6 +323,7 @@ def get_tagged_collections(request):
 
 
 @api_view(["GET"])
+@auth_validator
 def get_similar_collections(request):
     """
     get_similar_collections
@@ -361,17 +362,17 @@ def get_similar_collections(request):
 
     for tag in tags:
         collections = tag.collection_set.all()
-
+        usr_col = user.collection_set.all()
         for collection in collections:
             collection_id = collection.collection_id
-            if str(collection_id) not in matching_collections:
+            if (collection not in usr_col) and (str(collection_id) not in matching_collections):
                 # Use a dictionary to ensure we dont double up
-                book_list = []
-                for book in collection.books.all():
-                    curr_book = {}
-                    curr_book["book_id"] = book.id
-                    curr_book["book_title"] = book.title
-                    book_list.append(curr_book)
+                # book_list = []
+                # for book in collection.books.all():
+                #     curr_book = {}
+                #     curr_book["book_id"] = book.id
+                #     curr_book["book_title"] = book.title
+                #     book_list.append(curr_book)
 
                 tag_list = []
                 tag_match_count = 0
@@ -386,7 +387,7 @@ def get_similar_collections(request):
                     "collection_owner": collection.user.id,
                     "tag_match_count": tag_match_count,
                     "tag_list": tag_list,
-                    "book_list": book_list
+                    # "book_list": book_list
                 }
 
     # Flatten and return the dictionary
