@@ -344,6 +344,7 @@ def search_book(request):
         book_description (str)
         book_isbn (str)
         book_cover (str)
+        book_publisher(str)
         book_pub_date (datetime)
     current_index (int) [the index for the next search result]
     """
@@ -381,6 +382,10 @@ def search_book(request):
             book["cover"] = match["volumeInfo"]["imageLinks"]["thumbnail"]
         except:
             book["cover"] = ""
+        try:
+            book["book_publisher"] = match["volumeInfo"]["publisher"]
+        except:
+            book["book_publisher"] = ""
         try:
             book["book_pub_date"] = match["volumeInfo"]["publishedDate"]
         except:
