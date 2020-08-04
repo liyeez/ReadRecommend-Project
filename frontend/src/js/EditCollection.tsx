@@ -11,6 +11,7 @@ import BookReadStatus from "./BookReadStatus";
 // Material UI
 import Alert from "@material-ui/lab/Alert";
 import AddIcon from "@material-ui/icons/Add";
+import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
 import Button from "@material-ui/core/Button";
 import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
@@ -466,13 +467,19 @@ const EditCollection: React.FC<Props> = ({}) => {
                                         Recently Added Books
                                     </Button>
                                 </Grid>
-                                {/*<Grid item>
-                                    <Button 
-                                        type="submit" variant="outlined" color="default" startIcon={<ImportExportIcon />}
+                                <Grid item>    
+                                    <Button
+                                        className="buttons"
+                                        variant="outlined"
+                                        color="default"
+                                        component={Router.Link}
+                                        to={"/user/viewcollection?collectionid=" + collectionId}
+                                        startIcon={<ArrowBackIosIcon />}
                                     >
-                                        Import Books
+                                        Back to Viewing
                                     </Button>
-                                </Grid>*/}
+                                </Grid>
+
                             </Grid>
                         </div>
                     </Container>

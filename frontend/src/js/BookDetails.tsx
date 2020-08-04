@@ -123,7 +123,7 @@ const BookDetails: React.FC<Props> = ({}) => {
   str = str.split("=")[1];
   console.log("To find: " + str + " of type: " + type);
   let book: any;
-  let inLibFlag =false; 
+  let inLibFlag =-1; 
 
 
   function request() {
@@ -211,7 +211,9 @@ const BookDetails: React.FC<Props> = ({}) => {
       method: "GET",
       success: function (data) {
         console.log(data);
-        inLibFlag =data.in_library;
+        if(data.in_library){
+          inLibFlag +=1;
+        }
         console.log(inLibFlag);
       },
       error: function () {
@@ -247,7 +249,11 @@ const BookDetails: React.FC<Props> = ({}) => {
     });
   }
 
-  inLib();
+  if(token){
+    inLibFlag = 0;
+    inLib();
+  }
+  
   request();
 
   return (
@@ -295,7 +301,18 @@ const BookDetails: React.FC<Props> = ({}) => {
                   </Typography>
 
                   <Grid container justify="center" className={classes.blockSpacing}>
-                    { inLibFlag
+                    { inLibFlag == 0
+                      ? (<Button
+                          onClick={() => addBook(book.book_id)}
+                          type="submit"
+                          variant="contained"
+                          color="primary"
+                        >
+                          Add to Library
+                        </Button>)
+                      : (null)
+                    }
+                    { inLibFlag == 1
                       ? (<Button
                           onClick={() => removeBook(book.book_id)}
                           type="submit"
@@ -304,14 +321,7 @@ const BookDetails: React.FC<Props> = ({}) => {
                         >
                           Remove from Library
                         </Button>)
-                      : (<Button
-                          onClick={() => addBook(book.book_id)}
-                          type="submit"
-                          variant="contained"
-                          color="primary"
-                        >
-                          Add to Library
-                        </Button>)
+                      : (null)
                     }
                   </Grid>
                 </Grid>

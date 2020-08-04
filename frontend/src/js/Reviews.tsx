@@ -58,7 +58,7 @@ export default function Reviews(props) {
   let {book} = props;
   let read = false;
   let currentUserID: any;
-  let reviewFlag = false;
+  let reviewFlag = -1;
   let currentRev : any;
   let currentRat : any;
 
@@ -67,7 +67,7 @@ export default function Reviews(props) {
       for (var rev of reviews) {
         console.log(rev.user + " " +currentUserID);
         if(rev.user_id == currentUserID){
-            reviewFlag = true; //just to prevent user from writing >1 review
+            reviewFlag = 1; //just to prevent user from writing >1 review
             currentRev = rev.review; // get current user's rating and review
             currentRat = rev.rating;
         }
@@ -131,7 +131,6 @@ export default function Reviews(props) {
       async: false,
       url: API_URL + "/api/reviews/get_reviews",
       data: {
-        auth: token,
         id: book.book_id,
       },
       method: "GET",
@@ -237,8 +236,13 @@ export default function Reviews(props) {
 
   const classes = useStyles();
   
+  
   isReviewed(); //check is user commented alrdy (get all reviews as well)
-  readFlag(); //check if user read the book in library
+  if(token){
+    reviewFlag = 0;
+    readFlag(); //check if user read the book in library
+  }
+
   console.log("checking reviewed; "+reviewFlag);
   return (
     <React.Fragment>
@@ -273,14 +277,18 @@ export default function Reviews(props) {
         </TableBody>
       </Table>
       <div className={classes.seeMore}>
-        
-        { reviewFlag
+       
+        { reviewFlag == 1 
           ?( <Button color="primary" onClick={handleClickOpen}>
               Edit your review
             </Button>)
-          :( <Button color="primary" onClick={handleClickOpen}>
+          :(null)
+        } 
+        { reviewFlag == 0
+          ?(<Button color="primary" onClick={handleClickOpen}>
               Write a review
             </Button>)
+          :(null)
         }  
 
         <Dialog

@@ -60,6 +60,9 @@ const Style = makeStyles((theme) => ({
         alignItems: "center",
         width: 400,
     },
+    buttons:{
+        paddingLeft: theme.spacing(2),
+    }
 }));
 
 interface Props {}
@@ -118,7 +121,10 @@ const RecentlyAddedBooks: React.FC<Props> = ({}) => {
                             <Typography component="h1" variant="h2" align="center" color="textPrimary" gutterBottom>
                                 Recently Added Books
                             </Typography>
+
+
                             <div className={classes.heroButtons}>
+                              <Grid container spacing={2} justify="center">
                                 <Grid item>
                                     <Button
                                         variant="outlined"
@@ -130,6 +136,19 @@ const RecentlyAddedBooks: React.FC<Props> = ({}) => {
                                         Back to Editing
                                     </Button>
                                 </Grid>
+                                <Grid item>    
+                                    <Button
+                                        className="buttons"
+                                        variant="outlined"
+                                        color="default"
+                                        component={Router.Link}
+                                        to={"/user/viewcollection?collectionid=" + collectionId}
+                                        startIcon={<ArrowBackIosIcon />}
+                                    >
+                                        Back to Viewing
+                                    </Button>
+                                </Grid>
+                              </Grid>  
                             </div>
                         </Grid>
                     </Container>

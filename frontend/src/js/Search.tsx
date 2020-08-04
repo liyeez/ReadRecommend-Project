@@ -120,6 +120,7 @@ const Search: React.FC<Props> = ({ userSignedIn }: Props) => {
   let collectionCount : number = 0;
 
   const token = CookieService.get("access_token");
+  
 
   const [SearchForm, setSearchForm] = useState<SearchForm>({
     title: "",

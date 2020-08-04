@@ -404,93 +404,96 @@ const Main: React.FC<Props> = ({ userSignedIn }: Props) => {
                                 )}
 
                                 {/*Search Bar and Buttons*/}
-                                <Grid item>
-                                    <Paper className={classes.root}>
-                                        <TextField
-                                            className={classes.input}
-                                            placeholder="Find a Book"
-                                            value={SearchForm.title}
-                                            name="title"
-                                            label="Search ReadRecommend"
-                                            onChange={onTextboxChange}
-                                        />
-                                        {/* Internal Search */}
-                                        <IconButton type="submit" onClick={searchLocal} className={classes.iconButton} aria-label="search">
-                                            <SearchIcon />
-                                        </IconButton>
-                                        {/*External Search */}
-                                        <IconButton type="submit" onClick={searchWeb} className={classes.iconButton} aria-label="search">
-                                            <LanguageIcon />
-                                        </IconButton>
-                                        {/*Filter Advanced Search */}
-                                        <IconButton
-                                            className={clsx(classes.expand, {[classes.expandOpen]: expanded})}
-                                            onClick={handleExpandClick}
-                                            aria-expanded={expanded} aria-label="show more"
-                                        >
-                                            <FilterListIcon />
-                                        </IconButton>
-                                    </Paper>
-                                
-                                    {/*Inside Collapsible Button -> Filters For Advanced Search */}
-                                    <Paper>
-                                        <Grid>
-                                            <Collapse in={expanded} timeout="auto" unmountOnExit>
-                                                <Grid item>
-                                                    <Box m={2}>
-                                                        <Typography id="input-slider" gutterBottom>Filter By Minimum Rating</Typography>
-                                                        <Slider 
-                                                            value={typeof minimumRating === 'number' ? minimumRating : 0}
-                                                            onChange={handleSliderChange}
-                                                            aria-labelledby="input-slider"
-                                                            min={0} max={5} step={1}
-                                                            marks={marks}
-                                                        />
-                                                        <Input 
-                                                            className={classes.input} 
-                                                            value={minimumRating} 
-                                                            margin="dense"
-                                                            onChange={handleInputChange}
-                                                            onBlur={handleBlur}
-                                                            inputProps={{step: 1, min: 0, max: 5, type: 'number', 'aria-labelledby': 'input-slider'}}
-                                                        />
-                                                    </Box>
-                                                    <Box m={2}>
-                                                        <TextField 
-                                                        id="minimumTotalRatings" name="minimumTotalRatings"
-                                                        label="Minimum Total Ratings" type="number"
-                                                        value={filterState.minimumTotalRatings}
-                                                        onChange={handleFilterChange}
-                                                        />
-                                                    </Box>
-                                                    <Box m={2}>
-                                                        <TextField
-                                                            id="minimumReadCount" name="minimumReadCount"
-                                                            label="Minimum Read Count" type="number"
-                                                            value={filterState.minimumReadCount}
+                                { userSignedIn
+                                    ?(<Grid item>
+                                        <Paper className={classes.root}>
+                                            <TextField
+                                                className={classes.input}
+                                                placeholder="Find a Book"
+                                                value={SearchForm.title}
+                                                name="title"
+                                                label="Search ReadRecommend"
+                                                onChange={onTextboxChange}
+                                            />
+                                            {/* Internal Search */}
+                                            <IconButton type="submit" onClick={searchLocal} className={classes.iconButton} aria-label="search">
+                                                <SearchIcon />
+                                            </IconButton>
+                                            {/*External Search */}
+                                            <IconButton type="submit" onClick={searchWeb} className={classes.iconButton} aria-label="search">
+                                                <LanguageIcon />
+                                            </IconButton>
+                                            {/*Filter Advanced Search */}
+                                            <IconButton
+                                                className={clsx(classes.expand, {[classes.expandOpen]: expanded})}
+                                                onClick={handleExpandClick}
+                                                aria-expanded={expanded} aria-label="show more"
+                                            >
+                                                <FilterListIcon />
+                                            </IconButton>
+                                        </Paper>
+                                    
+                                        {/*Inside Collapsible Button -> Filters For Advanced Search */}
+                                        <Paper>
+                                            <Grid>
+                                                <Collapse in={expanded} timeout="auto" unmountOnExit>
+                                                    <Grid item>
+                                                        <Box m={2}>
+                                                            <Typography id="input-slider" gutterBottom>Filter By Minimum Rating</Typography>
+                                                            <Slider 
+                                                                value={typeof minimumRating === 'number' ? minimumRating : 0}
+                                                                onChange={handleSliderChange}
+                                                                aria-labelledby="input-slider"
+                                                                min={0} max={5} step={1}
+                                                                marks={marks}
+                                                            />
+                                                            <Input 
+                                                                className={classes.input} 
+                                                                value={minimumRating} 
+                                                                margin="dense"
+                                                                onChange={handleInputChange}
+                                                                onBlur={handleBlur}
+                                                                inputProps={{step: 1, min: 0, max: 5, type: 'number', 'aria-labelledby': 'input-slider'}}
+                                                            />
+                                                        </Box>
+                                                        <Box m={2}>
+                                                            <TextField 
+                                                            id="minimumTotalRatings" name="minimumTotalRatings"
+                                                            label="Minimum Total Ratings" type="number"
+                                                            value={filterState.minimumTotalRatings}
                                                             onChange={handleFilterChange}
-                                                        />
-                                                    </Box>
-                                                    <Box m={2}>
-                                                        <TextField 
-                                                        id="minimumCollectionCount" name="minimumCollectionCount"
-                                                        label="Minimum Collection Count" type="number"
-                                                        value={filterState.minimumCollectionCount}
-                                                        onChange={handleFilterChange}
-                                                        />
-                                                    </Box>
-                                                </Grid>
-                                                <Grid item>
-                                                    <Box m={2}>
-                                                        <Button color="primary" onClick={advSearchLocal}>
-                                                            Advanced Search
-                                                        </Button>
-                                                    </Box>
-                                                </Grid>
-                                            </Collapse>
-                                        </Grid>
+                                                            />
+                                                        </Box>
+                                                        <Box m={2}>
+                                                            <TextField
+                                                                id="minimumReadCount" name="minimumReadCount"
+                                                                label="Minimum Read Count" type="number"
+                                                                value={filterState.minimumReadCount}
+                                                                onChange={handleFilterChange}
+                                                            />
+                                                        </Box>
+                                                        <Box m={2}>
+                                                            <TextField 
+                                                            id="minimumCollectionCount" name="minimumCollectionCount"
+                                                            label="Minimum Collection Count" type="number"
+                                                            value={filterState.minimumCollectionCount}
+                                                            onChange={handleFilterChange}
+                                                            />
+                                                        </Box>
+                                                    </Grid>
+                                                    <Grid item>
+                                                        <Box m={2}>
+                                                            <Button color="primary" onClick={advSearchLocal}>
+                                                                Advanced Search
+                                                            </Button>
+                                                        </Box>
+                                                    </Grid>
+                                                </Collapse>
+                                            </Grid>
                                     </Paper>
-                                </Grid>
+                                        </Grid>)
+                                    : (null)
+                                }    
                             </Grid>
                         </div>
                     </Container>

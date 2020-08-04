@@ -17,6 +17,7 @@ import CardMedia from "@material-ui/core/CardMedia";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Container from "@material-ui/core/Container";
 import EditIcon from "@material-ui/icons/Edit";
+import HistoryIcon from "@material-ui/icons/History";
 import Grid from "@material-ui/core/Grid";
 import IconButton from "@material-ui/core/IconButton";
 import InputBase from "@material-ui/core/InputBase";
@@ -223,7 +224,22 @@ const ViewCollection: React.FC<Props> = ({}) => {
                           </li>
                       );
                   })}
+                  
               </Paper>
+              {/* Actions For Editing Collection */}
+              <div className={classes.heroButtons}>
+                  <Grid container spacing={2} justify="center">
+                      <Grid item>
+                          <Button 
+                              component={Router.Link} to={"/user/recent?collectionid=" + str} 
+                              type="submit" variant="outlined" color="primary" startIcon={<HistoryIcon />}
+                          >
+                              Recently Added Books
+                          </Button>
+                      </Grid>
+                      
+                  </Grid>
+              </div>
 
             <div className={classes.heroButtons}>
               <Grid container spacing={2} justify="center">
