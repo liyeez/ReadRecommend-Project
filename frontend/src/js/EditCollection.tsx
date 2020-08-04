@@ -486,9 +486,7 @@ const EditCollection: React.FC<Props> = ({}) => {
                                     <CardContent className={classes.cardContent}>
                                         <Typography gutterBottom variant="h5" component="h2">{book.title}</Typography>
                                         <BookReadStatus bookId={book.id}></BookReadStatus>
-                                        <Typography>
-                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam molestie pellentesque tortor in rhoncus.
-                                        </Typography>
+                                      
                                     </CardContent>
                                     <CardActions>
                                         <Button component={Router.Link} to={"/bookdata/metadata?isbn=" + book.id} size="small" color="primary">

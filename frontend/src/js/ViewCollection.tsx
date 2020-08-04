@@ -6,6 +6,7 @@ import * as Router from "react-router-dom";
 import * as $ from "jquery";
 
 // Material UI
+import CookieService from "../services/CookieService";
 import AddIcon from "@material-ui/icons/Add";
 import Button from "@material-ui/core/Button";
 import Card from "@material-ui/core/Card";
@@ -159,11 +160,12 @@ const ViewCollection: React.FC<Props> = ({}) => {
   }
 
   function onSearch(callback) {
-    
+    const token = CookieService.get('access_token');
     $.ajax({
       async: false,
       url: API_URL + "/api/collections/view_collection",
       data: {
+        auth: token,
         collection_id: str,
       },
       method: "GET",

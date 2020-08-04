@@ -7,8 +7,10 @@ import Button from "@material-ui/core/Button";
 import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
 import Box from "@material-ui/core/Box";
+import clsx from "clsx";
 import Slider from "@material-ui/core/Slider";
 import CardContent from "@material-ui/core/CardContent";
+import FilterListIcon from '@material-ui/icons/FilterList';
 import CardMedia from "@material-ui/core/CardMedia";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Container from "@material-ui/core/Container";
@@ -68,6 +70,16 @@ const Style = makeStyles((theme) => ({
     display: "flex",
     alignItems: "center",
     width: 400,
+  },
+  expand: {
+      transform: 'rotate(0deg)',
+      marginLeft: 'auto',
+      transition: theme.transitions.create('transform', {
+      duration: theme.transitions.duration.shortest,
+      }),
+  },
+  expandOpen: {
+      transform: 'rotate(180deg)',
   },
 }));
 
@@ -135,7 +147,10 @@ const Search: React.FC<Props> = ({}) => {
       url: api_call,
       data: {
         search: txt,
-        
+        average_rating: minimumRating,
+        total_ratings: filterState.minimumTotalRatings,
+        read_count: filterState.minimumReadCount,
+        collection_count: filterState.minimumCollectionCount,
       },
       method: "GET",
       success: function (data) {
@@ -299,6 +314,13 @@ const Search: React.FC<Props> = ({}) => {
                       onClick={externalSearch}
                     >
                       <LanguageIcon />
+                    </IconButton>
+                    <IconButton
+                        className={clsx(classes.expand, {[classes.expandOpen]: expanded})}
+                        onClick={handleExpandClick}
+                        aria-expanded={expanded} aria-label="show more"
+                    >
+                        <FilterListIcon />
                     </IconButton>
                   </Paper>
 
