@@ -10,6 +10,7 @@ import Button from "@material-ui/core/Button";
 import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
 import Box from "@material-ui/core/Box";
+import SentimentVeryDissatisfiedIcon from '@material-ui/icons/SentimentVeryDissatisfied';
 import clsx from "clsx";
 import Slider from "@material-ui/core/Slider";
 import CardContent from "@material-ui/core/CardContent";
@@ -274,8 +275,6 @@ const Search: React.FC<Props> = ({ userSignedIn }: Props) => {
   if (type == "title" && s.length == 2) {
     console.log('call search API');
     api_call = API_URL + "/api/books/search";
-  } else if (type == "finduser") {
-    api_call = API_URL + "/api/user/find_users";
   } else if (type == "title" && s.length > 2){
     console.log('call filter API');
     api_call = API_URL + "/api/books/filter";
@@ -495,6 +494,19 @@ const Search: React.FC<Props> = ({ userSignedIn }: Props) => {
                 (<Alert severity="warning">{addToCollectionError}</Alert>) : null}
             </div>
 
+            { books.length > 0 
+              ? (null)
+              :(<Typography 
+                  align='center'
+                  component="h5"
+                  color="textSecondary"
+                 > 
+                 <SentimentVeryDissatisfiedIcon/>
+                 {'      '}No results for {txt} 
+               </Typography>)
+            }
+
+
           <Grid container spacing={4}>
             {books.map((book) => (
               <Grid item key={book} xs={12} sm={6} md={4}>
@@ -561,31 +573,7 @@ const Search: React.FC<Props> = ({ userSignedIn }: Props) => {
               </Grid>
             ))}
 
-            {users.map((user) => (
-              <Grid item key={user} xs={12} sm={6} md={4}>
-                <Card className={classes.card}>
-                  <CardMedia
-                    className={classes.cardMedia}
-                    image="https://source.unsplash.com/random?book"
-                    title="Image title"
-                  />
-                  <CardContent className={classes.cardContent}>
-                    <Typography gutterBottom variant="h5" component="h2">
-                      {user.first_name + " " + user.last_name}
-                    </Typography>
-                  </CardContent>
-                  <CardActions>
-                    <Button
-                      size="small"
-                      color="primary"
-                      onClick={() => viewUser(user.user_id)}
-                    >
-                      View
-                    </Button>
-                  </CardActions>
-                </Card>
-              </Grid>
-            ))}
+            
           </Grid>
 
           {/* TBD...

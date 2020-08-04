@@ -9,6 +9,7 @@ import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
+import SentimentVeryDissatisfiedIcon from '@material-ui/icons/SentimentVeryDissatisfied';
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
@@ -263,6 +264,17 @@ const Search: React.FC<Props> = ({}) => {
        
         <Container className={classes.cardGrid} maxWidth="md">
             <Grid container spacing={4}>
+                { extBooks.length > 0 
+                  ? (null)
+                  :(<Typography 
+                      align='center'
+                      component="h5"
+                      color="textSecondary"
+                     > 
+                     <SentimentVeryDissatisfiedIcon/>
+                     {'      '}No results for {txt} 
+                   </Typography>)
+                }
                 {extBooks.map((book) => (
                     <Grid item key={book} xs={12} sm={6} md={4}>
                         <Card className={classes.card}>
