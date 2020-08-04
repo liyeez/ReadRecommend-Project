@@ -147,18 +147,13 @@ const RecentlyAddedBooks: React.FC<Props> = ({}) => {
                                             <Typography gutterBottom variant="h5" component="h2">
                                                 {book.title}
                                             </Typography>
-                                            <Typography>
-                                                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                                                Nullam molestie pellentesque tortor in rhoncus.
-                                            </Typography>
+                                            
                                         </CardContent>
                                         <CardActions>
                                             <Button component={Router.Link} to={"/bookdata/metadata?isbn=" + book.id} size="small" color="primary">
                                                 View
                                             </Button>
-                                            <Button>
-                                                Edit Status
-                                            </Button>
+                                           
                                         </CardActions>
                                     </Card>
                                 </Grid>

@@ -206,10 +206,12 @@ const EditCollection: React.FC<Props> = ({}) => {
     }
 
     function getBooks(callback) {
+        const token = CookieService.get('access_token');
         $.ajax({
             async: false,
             url: API_URL + "/api/collections/view_collection",
             data: {
+                auth: token,
                 collection_id: collectionId,
             },
             method: "GET",
@@ -486,9 +488,7 @@ const EditCollection: React.FC<Props> = ({}) => {
                                     <CardContent className={classes.cardContent}>
                                         <Typography gutterBottom variant="h5" component="h2">{book.title}</Typography>
                                         <BookReadStatus bookId={book.id}></BookReadStatus>
-                                        <Typography>
-                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam molestie pellentesque tortor in rhoncus.
-                                        </Typography>
+                                      
                                     </CardContent>
                                     <CardActions>
                                         <Button component={Router.Link} to={"/bookdata/metadata?isbn=" + book.id} size="small" color="primary">

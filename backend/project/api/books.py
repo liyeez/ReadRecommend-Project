@@ -210,7 +210,7 @@ def random_not_library(request):
         book_list.append({"book_id": book.id, "book_title": book.title,
                           "book_author": book.author, "book_pub_date": book.pub_date})
 
-    return Response({"status": "ok", "message": "Got random books", "book_list": book_list}, status=status.HTTP_200_OK)
+    return Response({"status": "ok", "message": "Got random no in library books", "book_list": book_list}, status=status.HTTP_200_OK)
 
 @api_view(["GET"])
 @input_validator(["book_id"])

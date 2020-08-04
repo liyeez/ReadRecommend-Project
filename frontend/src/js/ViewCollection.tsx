@@ -6,6 +6,7 @@ import * as Router from "react-router-dom";
 import * as $ from "jquery";
 
 // Material UI
+import CookieService from "../services/CookieService";
 import AddIcon from "@material-ui/icons/Add";
 import Button from "@material-ui/core/Button";
 import Card from "@material-ui/core/Card";
@@ -87,6 +88,7 @@ function viewBook(data) {
 let tag_list: any[] = [];
 let book_list: any = [];
 let collection: any;
+let owner: any;
 let str = window.location.href.split("?")[1];
 
 const ViewCollection: React.FC<Props> = ({}) => {
@@ -150,6 +152,7 @@ const ViewCollection: React.FC<Props> = ({}) => {
           console.log(data);
           book_list = data.book_list;
           collection = data.collection_name;
+          owner = data.owner;
         } else {
           alert("No Matched Results!");
           window.location.href = "/";
@@ -159,11 +162,12 @@ const ViewCollection: React.FC<Props> = ({}) => {
   }
 
   function onSearch(callback) {
-    
+    const token = CookieService.get('access_token');
     $.ajax({
       async: false,
       url: API_URL + "/api/collections/view_collection",
       data: {
+        auth: token,
         collection_id: str,
       },
       method: "GET",
@@ -224,16 +228,20 @@ const ViewCollection: React.FC<Props> = ({}) => {
             <div className={classes.heroButtons}>
               <Grid container spacing={2} justify="center">
                 <Grid item>
-                  <Button
-                    component={Router.Link}
-                    to={"/user/editcollection?collectionid=" + str}
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    startIcon={<EditIcon />}
-                  >
-                    Edit Collection
-                  </Button>
+                { owner
+                  ? (<Button
+                        component={Router.Link}
+                        to={"/user/editcollection?collectionid=" + str}
+                        type="submit"
+                        variant="contained"
+                        color="primary"
+                        startIcon={<EditIcon />}
+                      >
+                        Edit Collection
+                      </Button>)
+                  : (null)
+                }
+                  
                 </Grid>
               </Grid>
             </div>
