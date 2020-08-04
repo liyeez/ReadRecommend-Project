@@ -206,10 +206,12 @@ const EditCollection: React.FC<Props> = ({}) => {
     }
 
     function getBooks(callback) {
+        const token = CookieService.get('access_token');
         $.ajax({
             async: false,
             url: API_URL + "/api/collections/view_collection",
             data: {
+                auth: token,
                 collection_id: collectionId,
             },
             method: "GET",

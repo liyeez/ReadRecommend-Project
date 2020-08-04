@@ -96,40 +96,27 @@ const AddTitles: React.FC<Props> = ({ userSignedIn }: Props) => {
     window.location.href = "/search?title=" + SearchForm.title;
   }
 
-  // Loads the new titles requested from backend.
-  function getNewTitles() {
-    var data = findNewTitles(function (data) {
-      if (data != null) {
-        if (data.message == "Got random books") {
-          book_list = data.book_list;
-        } else {
-          alert("No Matched Results!");
-          window.location.href = "/";
-        }
-      }
-    });
-  }
-
   // Retrieves new titles from backend.
-  function findNewTitles(callback) {
+  function findNewTitles() {
     $.ajax({
       async: false,
-      url: API_URL + "/api/books/random",
+      url: API_URL + "/api/books/random_not_library",
       data: {
         auth: token,
-        count: 12,
+        count: 9,
       },
       method: "GET",
       success: function (data) {
         console.log(data);
-        if (data != null) {
-          callback(data);
+        if (data != null && data.message == "Got random no in library books") {
+          book_list = data.book_list;
+        }else{
+          console.log('no random books!');
         }
-        callback(null);
       },
       error: function () {
         console.log("random server error!");
-        callback(null);
+        
       },
     });
   }
@@ -148,7 +135,7 @@ const AddTitles: React.FC<Props> = ({ userSignedIn }: Props) => {
       success: function (data) {
         if (data != null) {
           if (data == "Book added to collection") {
-            console.log("Successfully added title to collection!");
+            alert("Successfully added title to collection!");
           }
         }
       },
@@ -159,7 +146,7 @@ const AddTitles: React.FC<Props> = ({ userSignedIn }: Props) => {
   }
 
   const token = CookieService.get("access_token");
-  getNewTitles();
+  findNewTitles();
 
   return (
     <React.Fragment>
