@@ -441,6 +441,61 @@ def readers(request):
                         "average_review": 0,"n_reviews": 0,"n_collections":0, "n_readers": 0})
     return Response({"status": "ok", "message": "Books retrieved", "book_list": book_list, "based_on": base_book.title}, status=status.HTTP_200_OK)
 
+
+
+
+
+@api_view(["GET"])
+@input_validator(["book_id"])
+@auth_validator
+def bookReaders(request):
+    try:
+        base_book = Book.objects.get(id=request.GET["book_id"])
+    except:
+        return Response({"status": "error", "message": "Book not found"}, status=status.HTTP_200_OK)
+    book_id = request.GET["book_id"]
+    user_library = request.user.collection_set.get(library=True)
+    
+    library_id = user_library.pk
+    libraries = Collection.objects.filter(library=True).exclude(pk = library_id)
+    suggestions = {} #book suggestions
+    for library in libraries:
+        try:
+            library.books.get(id = book_id)
+            for book in library.books.all():
+                if book.id != int(book_id) and book not in user_library.books.all():
+                    if book in suggestions:
+                        suggestions[book] += 1
+                    else:
+                        suggestions[book] = 1
+        except:
+            pass
+    sort = sorted(suggestions.items(), key=lambda x: x[1], reverse=True)
+    book_list = []
+    count = 0
+    for item in sort:
+        count += 1
+        if count > 12:
+            break
+        book = item[0]
+        stats = BookStats.objects.filter(book=book).first()
+        if stats:
+            book_list.append({"book_id": book.id, "book_title": book.title,
+                        "book_author": book.author, "book_pub_date": book.pub_date,
+                        "average_review": stats.average_rating,"n_reviews": stats.total_ratings,"n_collections":stats.collection_count, "n_readers": stats.read_count})
+        else:
+            book_list.append({"book_id": book.id, "book_title": book.title,
+                        "book_author": book.author, "book_pub_date": book.pub_date,
+                        "average_review": 0,"n_reviews": 0,"n_collections":0, "n_readers": 0})
+    return Response({"status": "ok", "message": "Books retrieved", "book_list": book_list, "based_on": base_book.title}, status=status.HTTP_200_OK)
+
+
+
+
+
+
+
+
 @api_view(["GET"])
 @auth_validator
 def recommendations(request):
