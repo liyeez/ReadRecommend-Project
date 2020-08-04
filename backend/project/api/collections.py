@@ -46,6 +46,7 @@ def delete_collection(request):
 
 
 @api_view(["GET"])
+@auth_validator
 @input_validator(["collection_id"])
 # given collection id returns collection name, tag list, book list
 def view_collection(request):
@@ -54,7 +55,9 @@ def view_collection(request):
             collection_id=request.GET["collection_id"])
     except:
         return Response({"status": "error", "message": "Collection not found"}, status=status.HTTP_200_OK)
-
+    owner = False
+    if collection.user == request.user:
+        owner = True
     tag_list = []
     for tag in collection.tags.all():
         tag_list.append({'tag': tag.name})
@@ -63,7 +66,7 @@ def view_collection(request):
     for book in collection.books.all():
         book_list.append({"id": book.id, "title": book.title})
     return Response({"status": "ok", "message": "Collection data delivered",
-                     "collection_name": collection.name, "book_list": book_list, "tag_list": tag_list}, status=status.HTTP_200_OK)
+                     "collection_name": collection.name, "book_list": book_list, "tag_list": tag_list, "owner":owner}, status=status.HTTP_200_OK)
 
 
 @api_view(["POST"])
