@@ -88,6 +88,7 @@ function viewBook(data) {
 let tag_list: any[] = [];
 let book_list: any = [];
 let collection: any;
+let owner: any;
 let str = window.location.href.split("?")[1];
 
 const ViewCollection: React.FC<Props> = ({}) => {
@@ -151,6 +152,7 @@ const ViewCollection: React.FC<Props> = ({}) => {
           console.log(data);
           book_list = data.book_list;
           collection = data.collection_name;
+          owner = data.owner;
         } else {
           alert("No Matched Results!");
           window.location.href = "/";
@@ -226,16 +228,20 @@ const ViewCollection: React.FC<Props> = ({}) => {
             <div className={classes.heroButtons}>
               <Grid container spacing={2} justify="center">
                 <Grid item>
-                  <Button
-                    component={Router.Link}
-                    to={"/user/editcollection?collectionid=" + str}
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    startIcon={<EditIcon />}
-                  >
-                    Edit Collection
-                  </Button>
+                { owner
+                  ? (<Button
+                        component={Router.Link}
+                        to={"/user/editcollection?collectionid=" + str}
+                        type="submit"
+                        variant="contained"
+                        color="primary"
+                        startIcon={<EditIcon />}
+                      >
+                        Edit Collection
+                      </Button>)
+                  : (null)
+                }
+                  
                 </Grid>
               </Grid>
             </div>
