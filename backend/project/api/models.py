@@ -59,11 +59,17 @@ class BookStatsManager(models.Manager):
         return bookStats
 
     def update_all(self):
-        for book in self.all():
-            book.update_book()
-            
+        for book_stat in self.all():
+            bStatQuerySet = BookStats.objects.filter(id=book_stat.id)
 
+            avg = Review.objects.filter(book=book_stat.book).aggregate(Avg('score'))
+            if avg['score__avg'] == None:
+                avg['score__avg'] = 0
 
+            bStatQuerySet.update(total_ratings=Review.objects.filter(book=book_stat.book).count(),
+                                 average_rating=avg['score__avg'],
+                                 read_count=UserBookMetadata.objects.filter(book=book_stat.book,has_read=True).count(),
+                                 collection_count = CollectionBookMetadata.objects.filter(book=book_stat.book).count())
 
 
 class BookStats(models.Model):
@@ -76,11 +82,6 @@ class BookStats(models.Model):
 
     objects = BookStatsManager()
     
-    def update_book(self):            
-        self.average_rating = Review.objects.filter(book=self.book).aggregate(Avg('score'))
-        self.total_ratings = Review.objects.filter(book=self.book).count()
-        self.read_count = UserBookMetadata.objects.filter(book=self.book,has_read=True).count()
-        self.collection_count = CollectionBookMetadata.objects.filter(book=self.book).count()
 
 
 
