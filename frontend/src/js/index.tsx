@@ -86,7 +86,7 @@ const Routing: React.FC = ({}) => {
                         <BookDetails />
                     </Router.Route>
                     <Router.Route path="/search">
-                        <Search />
+                        <Search userSignedIn={signedInStatus}/>
                     </Router.Route>
                     <Router.Route path="/extsearch">
                         <ExtSearch />

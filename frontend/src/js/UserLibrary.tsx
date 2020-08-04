@@ -225,6 +225,7 @@ export default function UserLibrary() {
 
     request();
     requestUserCollections();
+    console.log(userBookCollections);
 
     return (
         <React.Fragment>
