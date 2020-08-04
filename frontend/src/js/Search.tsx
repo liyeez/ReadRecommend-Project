@@ -2,7 +2,10 @@ import $ = require("jquery");
 import React, { ChangeEvent, useState } from "react";
 import * as Router from "react-router-dom";
 
+import CookieService from "../services/CookieService";
+
 import TextField from "@material-ui/core/TextField";
+import Alert from "@material-ui/lab/Alert";
 import Button from "@material-ui/core/Button";
 import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
@@ -15,11 +18,21 @@ import CardMedia from "@material-ui/core/CardMedia";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Container from "@material-ui/core/Container";
 import Collapse from "@material-ui/core/Collapse";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import FormControl from '@material-ui/core/FormControl';
 import Grid from "@material-ui/core/Grid";
 import Input from "@material-ui/core/Input";
+import InputLabel from '@material-ui/core/InputLabel';
 import IconButton from "@material-ui/core/IconButton";
+import LibraryAddIcon from '@material-ui/icons/LibraryAdd';
+import MenuItem from '@material-ui/core/MenuItem';
 import Paper from "@material-ui/core/Paper";
 import SearchIcon from "@material-ui/icons/Search";
+import Select from '@material-ui/core/Select';
 import Typography from "@material-ui/core/Typography";
 import LanguageIcon from '@material-ui/icons/Language';
 import { makeStyles } from "@material-ui/core/styles";
@@ -65,6 +78,10 @@ const Style = makeStyles((theme) => ({
   cardContent: {
     flexGrow: 1,
   },
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 120,
+  },
   root: {
     padding: "2px 4px",
     display: "flex",
@@ -83,19 +100,25 @@ const Style = makeStyles((theme) => ({
   },
 }));
 
-interface Props {}
+interface Props {
+    userSignedIn: boolean;
+}
 
 interface SearchForm {
   title: any;
 }
 
-const Search: React.FC<Props> = ({}) => {
+let bookToAdd;
+
+const Search: React.FC<Props> = ({ userSignedIn }: Props) => {
   let books: Array<any> = [];
   let users: Array<any> = [];
   let averageRating : number = 0;
   let totalRatings : number = 0;
   let readCount : number = 0;
   let collectionCount : number = 0;
+
+  const token = CookieService.get("access_token");
 
   const [SearchForm, setSearchForm] = useState<SearchForm>({
     title: "",
@@ -258,7 +281,83 @@ const Search: React.FC<Props> = ({}) => {
     api_call = API_URL + "/api/books/filter";
   }
 
+    const [ open, setOpen ] = useState(false);
+    let [ userBookCollections, setUserBookCollections ] = useState([]);
+    const [ addToCollectionId, setAddToCollectionId ] = useState("");
+    const [ addToCollectionError, setAddToCollectionError ] = useState("");
+
+    const handleClickOpen = (bookId) => {
+        bookToAdd = bookId;
+        setOpen(true);
+    }
+
+    const handleClose = () => {
+        setOpen(false);
+    }
+
+    const handleChange = (event: React.ChangeEvent<{value: unknown}>) => {
+        setAddToCollectionId(event.target.value as string);
+    }
+
+    function requestUserCollections() {
+        var data = getUserCollections(function (data) {
+            if (data != null) {
+                userBookCollections = data.collection_list;
+            }
+        });
+    }
+
+    function getUserCollections(callback) {
+        $.ajax({
+            async: false,
+            url: API_URL + "/api/user/my_profile",
+            method: "GET",
+            data : {
+                auth: token,
+            },
+            success: function (data) {
+                if (data != null) {
+                    if (data.message === "Got current user profile data") {
+                        callback(data);
+                    }
+                }
+            },
+            error: function(error) {
+                callback(error);
+                console.log("Get user collections server error!");
+            }
+        })
+    }
+
+    function addBookToCollection(bookId, collectionId) {
+        handleClose();
+        $.ajax({
+            async: false,
+            url: API_URL + "/api/collections/add_title",
+            data: {
+                auth: token,
+                collection_id: parseInt(collectionId),
+                id: bookId,
+            },
+            method: "POST",
+            success: function (data) {
+                if (data != null) {
+                    console.log(data);
+                    if (data.message === "Book added to collection") {
+                        setAddToCollectionError("Successfully added title to collection!");
+                    } else if (data.message === "Book is already in collection") {
+                        setAddToCollectionError("This book is already in the requested collection!")
+                    }
+                }
+            },
+            error: function () {
+                console.log("Add book to collection server error!");
+            }
+        })
+    }
+
   onSearch(request);
+  requestUserCollections();
 
   return (
     <React.Fragment>
@@ -388,6 +487,14 @@ const Search: React.FC<Props> = ({}) => {
           </Container>
         </div>
         <Container className={classes.cardGrid} maxWidth="md">
+            {/* User Feedback for Organising Books Into Collections */}
+            <div>
+                {addToCollectionError === "Successfully added title to collection!" ? 
+                (<Alert severity="success">{addToCollectionError}</Alert>) : null}
+                {addToCollectionError === "This book is already in the requested collection!" ?
+                (<Alert severity="warning">{addToCollectionError}</Alert>) : null}
+            </div>
+
           <Grid container spacing={4}>
             {books.map((book) => (
               <Grid item key={book} xs={12} sm={6} md={4}>
@@ -412,6 +519,43 @@ const Search: React.FC<Props> = ({}) => {
                     >
                       View
                     </Button>
+
+                    {userSignedIn ? (<Button
+                        name={book.book_id} type="submit" variant="outlined" color="primary"
+                        onClick={() => handleClickOpen(book.book_id)} startIcon={<LibraryAddIcon />}
+                    >
+                        Add To
+                    </Button>) : null}
+                    
+                    {/*Open Dialog For Adding to Book Collection*/}
+
+                    <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+                        <DialogTitle id="form-dialog-title">Add Book To Collection</DialogTitle>
+                        <DialogContent>
+                            <DialogContentText>Select a book collection:</DialogContentText>
+                            
+                            {/* Options to Add to Different User Collections */}
+                            <FormControl variant="outlined" className={classes.formControl} fullWidth>
+                                <InputLabel id="add-to-collection">Book Collection</InputLabel>
+                                <Select 
+                                    labelId="add-to-collection-label" id="add-to-collection-options" color="primary"
+                                    value={addToCollectionId} onChange={handleChange} label="collectionName" fullWidth
+                                >
+                                    <MenuItem value=""><em>Book Collection</em></MenuItem>
+                                    
+                                    {userBookCollections.map((userBookCollection : any) => (
+                                        <MenuItem key={userBookCollection.collection_id} value={userBookCollection.collection_id}>
+                                            {userBookCollection.collection_name}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={handleClose} color="primary">Cancel</Button>
+                            <Button onClick={() => addBookToCollection(bookToAdd, addToCollectionId)} color="primary" variant="contained">Save</Button>
+                        </DialogActions>
+                    </Dialog>
                   </CardActions>
                 </Card>
               </Grid>
