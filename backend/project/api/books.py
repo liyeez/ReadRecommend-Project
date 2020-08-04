@@ -120,6 +120,7 @@ def search(request):
     if 'genre' in request.GET:
         books = books.filter(genre=request.GET['genre'])
 
+    BookStats.objects.update_all()
 
     book_list = []
     for book in books.all():
