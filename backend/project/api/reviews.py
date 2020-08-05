@@ -42,8 +42,11 @@ def new_review(request):
     except:
         return Response({"status": "error", "message": "invalid book"}, status=status.HTTP_200_OK)
               
-    Review.objects.create_review(book, user, rating,review)     
-    return Response({"status": "ok", "message": "review successfully created"}, status=status.HTTP_200_OK)
+
+    if not Review.objects.filter(user=user,book=book):
+        Review.objects.create_review(book, user, rating,review)     
+        return Response({"status": "ok", "message": "review successfully created"}, status=status.HTTP_200_OK)
+    return Response({"status": "ok", "message": "review unsuccessfully created"}, status=status.HTTP_200_OK)
     
 @api_view(["POST"])
 @auth_validator
