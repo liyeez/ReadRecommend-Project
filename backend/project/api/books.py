@@ -32,6 +32,7 @@ def data(request):
     book_author (str)
     book_genre (str)
     book_description (str)
+    book_publisher (str)
     book_pub_date (datetime)
     
     """
@@ -44,7 +45,7 @@ def data(request):
     
     book_stats = BookStats.objects.filter(book=book).first()
     if book_stats:
-        return Response({"status": "ok", "message": "Got book data", "book_id": book.id, "book_title": book.title, "book_cover": book.cover, "book_author": book.author, "book_genre": book.genre, "book_description": book.description, "book_pub_date": book.pub_date, "last_review_id": 3, "average_rating": book_stats.average_rating, "n_reviews": book_stats.total_ratings, "n_readers": book_stats.read_count, "n_collections": book_stats.collection_count}, status=status.HTTP_200_OK)
+        return Response({"status": "ok", "message": "Got book data", "book_id": book.id, "book_title": book.title, "book_cover": book.cover, "book_author": book.author, "book_genre": book.genre, "book_description": book.description, "book_publisher": book.publisher, "book_pub_date": book.pub_date, "last_review_id": 3, "average_rating": book_stats.average_rating, "n_reviews": book_stats.total_ratings, "n_readers": book_stats.read_count, "n_collections": book_stats.collection_count}, status=status.HTTP_200_OK)
     else:
         return Response({"status": "ok", "message": "Got book data", "book_id": book.id, "book_title": book.title, "book_cover": book.cover, "book_author": book.author, "book_genre": book.genre, "book_description": book.description, "book_pub_date": book.pub_date, "last_review_id": 3}, status=status.HTTP_200_OK)
 
@@ -292,7 +293,7 @@ def set_read(request):
 
 
 @api_view(["POST"])
-@input_validator(["book_title", "book_author", "book_genre", "book_description", "book_isbn", "book_cover", "book_pub_date"])
+@input_validator(["book_title", "book_author"])
 @auth_validator
 def add_book(request):
     """
@@ -304,11 +305,14 @@ def add_book(request):
     auth (str)
     book_title (str)
     book_author (str)
+
+    Optional Input:
     book_genre (str)
     book_description (str)
     book_isbn (str)
-    book_cover (str)
+    book_publisher (str)
     book_pub_date (datetime)
+    book_cover (str)
 
     Returns:
     """
@@ -318,11 +322,51 @@ def add_book(request):
     except ObjectDoesNotExist:
         pass
 
-    try:    
-        book_instance = BookInstance.objects.create_book(request.POST["book_title"], request.POST["book_author"], request.POST["book_genre"], request.POST["book_description"], request.POST["book_isbn"], request.POST["book_pub_date"], request.POST["book_cover"])
-        return Response({"status": "ok", "message": "Book added to system", "book_id": book_instance.book.id}, status=status.HTTP_200_OK)
+    # Optional parameters
+    try:
+        book_genre = request.POST["book_genre"]
     except:
-        return Response({"status": "error", "message": "Fail to create book in system"}, status=status.HTTP_200_OK)
+        book_genre = ""
+
+    try:
+        book_description = request.POST["book_description"]
+    except:
+        book_description = ""
+
+    try:
+        book_isbn = request.POST["book_isbn"]
+    except:
+        book_isbn = "0000000000"
+
+    try:
+        book_publisher = request.POST["book_publisher"]
+    except:
+        book_publisher = ""
+
+    try:
+        # Multiple possible time representations
+        try:
+            book_pub_date = datetime.strptime(request.POST["book_pub_date"], "%Y-%m-%d")
+        except:
+            try:
+                # When only the year is there
+                book_pub_date = datetime(int(request.POST["book_pub_date"]), 1, 1)
+            except:
+                # When all else fails
+                book_pub_date = datetime(1900, 1, 1)
+    except:
+        book_pub_date = datetime(1900, 1, 1)
+
+    try:
+        book_cover = request.POST["book_cover"]
+    except:
+        book_cover = ""
+
+    try:    
+        book_instance = BookInstance.objects.create_book(request.POST["book_title"], request.POST["book_author"], request.POST["book_genre"], book_description, book_isbn, book_publisher, book_pub_date, book_cover)
+        return Response({"status": "ok", "message": "Book added to system", "book_id": book_instance.book.id}, status=status.HTTP_200_OK)
+    except Exception as ex:
+        return Response({"status": "error", "message": "Fail to create book in system: " + str(ex.args)}, status=status.HTTP_200_OK)
 
     
 @api_view(["GET"])
@@ -346,7 +390,7 @@ def search_book(request):
         book_description (str)
         book_isbn (str)
         book_cover (str)
-        book_publisher(str)
+        book_publisher (str)
         book_pub_date (datetime)
     current_index (int) [the index for the next search result]
     """

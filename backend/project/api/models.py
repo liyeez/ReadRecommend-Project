@@ -10,8 +10,8 @@ MAX_STR_LEN = 100
 
 
 class BookManager(models.Manager):
-    def create_book(self, title, author, genre, description, pub_date, cover):
-        book = self.get_or_create(title=title, author=author, defaults={"pub_date": pub_date, "cover": cover, "genre": genre, "description": description})
+    def create_book(self, title, author, genre, description, publisher, pub_date, cover):
+        book = self.get_or_create(title=title, author=author, defaults={"publisher": publisher, "pub_date": pub_date, "cover": cover, "genre": genre, "description": description})
         BookStats.objects.create_book_stats(book=book)
         return book
 
@@ -23,21 +23,23 @@ class Book(models.Model):
     author = models.CharField(max_length=100)
     genre = models.CharField(max_length=100)
     description = models.CharField(max_length=1024)
+    publisher = models.CharField(max_length=100)
     pub_date = models.DateField()
+
     objects = BookManager()
 
     # since this review and book instance are compositions of Book, we have these as Model methods rather than table methods
 
-    def create_instance(self, isbn, pub_date, cover):
-        return BookInstance.objects.create_book(self.title, self.author, self.genre, self.description, isbn, pub_date, cover)
+    def create_instance(self, isbn, publisher,  pub_date, cover):
+        return BookInstance.objects.create_book(self.title, self.author, self.genre, self.description, isbn, publisher, pub_date, cover)
 
     def create_review(self, user, score, text):
         return Review.objects.create_review(self, user, score, text)
 
 
 class BookInstanceManager(models.Manager):
-    def create_book(self, title, author, genre, description, isbn, pub_date, cover):
-        book = Book.objects.create_book(title=title, author=author, genre=genre, description=description, pub_date=pub_date, cover=cover)
+    def create_book(self, title, author, genre, description, isbn, publisher, pub_date, cover):
+        book = Book.objects.create_book(title=title, author=author, genre=genre, description=description, publisher=publisher, pub_date=pub_date, cover=cover)
         bookInstance = self.create(book=book[0], title=title, author=author,
                                    isbn=isbn, pub_date=pub_date, cover=cover)
         return bookInstance
