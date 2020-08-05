@@ -102,6 +102,11 @@ const Style = makeStyles((theme) => ({
   },
 }));
 
+
+function viewBook(data) {
+    window.location.href = "/bookdata/metadata?id=" + data;
+}
+
 interface Props {
     userSignedIn: boolean;
 }
@@ -109,23 +114,27 @@ interface Props {
 interface SearchForm {
   title: any;
 }
+
 let bookToAdd;
+let temp_books: any = [];
+let averageRating : number = 0;
+let totalRatings : number = 0;
+let readCount : number = 0;
+let collectionCount : number = 0;
+const token = CookieService.get("access_token");
 
 const Search: React.FC<Props> = ({ userSignedIn }: Props) => {
-  let books: Array<any> = [];
-  let users: Array<any> = [];
-  let averageRating : number = 0;
-  let totalRatings : number = 0;
-  let readCount : number = 0;
-  let collectionCount : number = 0;
-  
-
-  const token = CookieService.get("access_token");
-
+  const classes = Style(); 
 
   const [SearchForm, setSearchForm] = useState<SearchForm>({
     title: "",
   });
+
+  function advSearchLocal(event) { 
+    window.location.href = "/search?title=" + SearchForm.title + "?average_rating=" + minimumRating + 
+        "?total_ratings=" + filterState.minimumTotalRatings + "?read_count=" + filterState.minimumReadCount + 
+        "?collection_count=" + filterState.minimumCollectionCount;
+  }
 
   const onTextboxChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -208,22 +217,7 @@ const Search: React.FC<Props> = ({ userSignedIn }: Props) => {
   const handleFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       setFilterState({...filterState, [event.target.name]: event.target.value});
   }
-
-  function advSearchLocal(event) { 
-      window.location.href = "/search?title=" + SearchForm.title + "?average_rating=" + minimumRating + 
-          "?total_ratings=" + filterState.minimumTotalRatings + "?read_count=" + filterState.minimumReadCount + 
-          "?collection_count=" + filterState.minimumCollectionCount;
-  }
-
-  function viewBook(data) {
-      window.location.href = "/bookdata/metadata?id=" + data;
-  }
-
-  function viewUser(data) {
-      window.location.href = "/user/otherusers?userid=" + data;
-  }
-
-  const classes = Style();
+  
   let parameters = window.location.href.split("?");
   
   if (parameters.length === 6) {
@@ -233,14 +227,15 @@ const Search: React.FC<Props> = ({ userSignedIn }: Props) => {
       collectionCount = parseFloat(parameters[5].split("=")[1])
   }
 
-  console.log(averageRating);
-  console.log(totalRatings);
-  console.log(readCount);
-  console.log(collectionCount);
+    console.log(averageRating);
+    console.log(totalRatings);
+    console.log(readCount);
+    console.log(collectionCount);
 
-  
-
+    
     const [ open, setOpen ] = useState(false);
+    const [ loadTimes, setLoadTimes ] = useState(false);
+    const [ books, setBooks ] = useState([]);
     let [ userBookCollections, setUserBookCollections ] = useState([]);
     const [ addToCollectionId, setAddToCollectionId ] = useState("");
     const [ addToCollectionError, setAddToCollectionError ] = useState("");
@@ -319,8 +314,7 @@ const Search: React.FC<Props> = ({ userSignedIn }: Props) => {
   let str = window.location.href.split("?")[1];
   let type = str.split("=")[0];
   str = str.split("=")[1];
-  const load = 1;
-  
+
   let array = str.split("%20"); // %20 in search string are spaces by href parameters
   console.log(array); 
   var txt = "";
@@ -332,36 +326,39 @@ const Search: React.FC<Props> = ({ userSignedIn }: Props) => {
       console.log(txt);
   }
 
-  console.log("To find: " + txt + " of type: " + type);
+  //console.log("To find: " + txt + " of type: " + type);
 
   let api_call: string;
   let s = window.location.href.split("?");
-  console.log("length: " + s.length);
-  if (type == "title" && s.length == 2) {
-    console.log('call search API');
-    api_call = API_URL + "/api/books/search";
-  } else if (type == "title" && s.length > 2){
-    console.log('call filter API');
-    api_call = API_URL + "/api/books/filter";
+  if(s){
+      if (type == "title" && s.length == 2) {
+        console.log('call search API');
+        api_call = API_URL + "/api/books/search";
+      } else if (type == "title" && s.length > 2){
+        console.log('call filter API');
+        api_call = API_URL + "/api/books/filter";
+      }
+  }else{
+
   }
+  
 
   function request() {
-    // if(n){
 
-    // } 
-
-    var data = onSearch(function (data) {
+    if(!loadTimes){
+      setLoadTimes(true);
+      var data = onSearch(function (data) {
       console.log(data);
-   
       if (data != null) {
         if (data.message == "Got matching books") {
-            books = data.book_list;
-        } else if (data.message == "Got users") {
-            users = data.user_list;
-        } 
+            setBooks(data.book_list);
+            console.log(books);
+        }
       }
     });
-     
+    } 
+
+    console.log(books);
   }
 
   function onSearch(callback) {
@@ -392,8 +389,9 @@ const Search: React.FC<Props> = ({ userSignedIn }: Props) => {
     });
   }
 
-  onSearch(request);
+  request();
   requestUserCollections();
+  temp_books = books;
 
   return (
     <React.Fragment>
@@ -548,7 +546,7 @@ const Search: React.FC<Props> = ({ userSignedIn }: Props) => {
 
 
           <Grid container spacing={4}>
-            {books.map((book) => (
+            {temp_books.map((book) => (
               <Grid item key={book} xs={12} sm={6} md={4}>
                 <Card className={classes.card}>
                   <CardMedia

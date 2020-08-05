@@ -77,14 +77,17 @@ interface SearchForm {
 }
 
 var index= 0;
+let tempExtBooks: any = [];
 
 const Search: React.FC<Props> = ({}) => {
-  let extBooks: Array<any> = [];
-
+  
   const classes = Style();
   const [SearchForm, setSearchForm] = useState<SearchForm>({
       title: "",
   });
+
+  const [ loadTimes, setLoadTimes ] = useState(false);
+  const [ extBooks, setExtBooks ] = useState([]);
 
   const onTextboxChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -108,7 +111,8 @@ const Search: React.FC<Props> = ({}) => {
       method: "GET",
       success: function (data) {
         if (data != null && data.message == "Success") {
-          extBooks = data.results;
+          setLoadTimes(true); //to stop re-rendering
+          setExtBooks(data.results);
           index = data.current_index;
         }
        
@@ -200,7 +204,12 @@ const Search: React.FC<Props> = ({}) => {
     window.location.href = "/extsearch?title=" + txt + "?index=" + index;
   }
 
-  extSearch();
+  if(!loadTimes){
+    extSearch();
+
+  }
+  tempExtBooks = extBooks;
+
   return (
     <React.Fragment>
       <CssBaseline />
@@ -264,7 +273,7 @@ const Search: React.FC<Props> = ({}) => {
        
         <Container className={classes.cardGrid} maxWidth="md">
             <Grid container spacing={4}>
-                { extBooks.length > 0 
+                { tempExtBooks.length > 0 
                   ? (null)
                   :(<Typography 
                       align='center'
@@ -275,7 +284,7 @@ const Search: React.FC<Props> = ({}) => {
                      {'      '}No results for {txt} 
                    </Typography>)
                 }
-                {extBooks.map((book) => (
+                {tempExtBooks.map((book) => (
                     <Grid item key={book} xs={12} sm={6} md={4}>
                         <Card className={classes.card}>
                         <CardMedia
