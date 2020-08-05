@@ -72,7 +72,7 @@ const SignIn: React.FC<Props> = ({}) => {
       url: API_URL + "/api/auth/signin",
       method: "POST",
       data: {
-        username: signInForm.signInEmail,
+        email: signInForm.signInEmail,
         password: signInForm.signInPassword,
       },
       success: function (data) {
