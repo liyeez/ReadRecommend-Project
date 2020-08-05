@@ -531,18 +531,17 @@ const Main: React.FC<Props> = ({ userSignedIn }: Props) => {
 
                                         {/*User can only add book to library and collections if signed in.*/}
                                         {userSignedIn ? (
-                                            <Button size="small" color="primary" startIcon={<AddIcon />} onClick={() => addLib(book.book_id)}>
-                                                {" "}
-                                                Add to Libary{" "}
-                                            </Button>
-                                            ) : null}
+                                          <Button size="small" color="primary" startIcon={<AddIcon />} onClick={() => addLib(book.book_id)}>
+                                              {" "}
+                                              Libary{" "}
+                                          </Button>
+                                          ) : null}
 
-                                        {userSignedIn ? (
-                                        <Button 
-                                            name={book.book_id} type="submit" variant="outlined" color="primary"
+                                        {userSignedIn ? (<Button
+                                            name={book.book_id} size="small" type="submit"  color="primary"
                                             onClick={() => handleClickOpen(book.book_id)} startIcon={<LibraryAddIcon />}
                                         >
-                                            Add To
+                                            Collection
                                         </Button>) : null}
 
                                         {/*Open Dialog For Adding to Book Collection*/}

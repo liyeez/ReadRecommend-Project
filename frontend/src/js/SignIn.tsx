@@ -42,7 +42,7 @@ interface Props {}
 interface SignInForm {
   token: string;
   signInError: string;
-  signInEmail: string;
+  signInUsername: string;
   signInPassword: string;
 }
 
@@ -50,7 +50,7 @@ const SignIn: React.FC<Props> = ({}) => {
   const [signInForm, setSignInForm] = useState<SignInForm>({
     token: "",
     signInError: "",
-    signInEmail: "",
+    signInUsername: "",
     signInPassword: "",
   });
 
@@ -72,7 +72,7 @@ const SignIn: React.FC<Props> = ({}) => {
       url: API_URL + "/api/auth/signin",
       method: "POST",
       data: {
-        email: signInForm.signInEmail,
+        username: signInForm.signInUsername,
         password: signInForm.signInPassword,
       },
       success: function (data) {
@@ -115,10 +115,10 @@ const SignIn: React.FC<Props> = ({}) => {
               margin="normal"
               required
               fullWidth
-              name="signInEmail"
-              type="email"
-              label="Email"
-              value={signInForm.signInEmail}
+              name="signInUsername"
+              type="username"
+              label="User Name"
+              value={signInForm.signInUsername}
               onChange={onTextboxChange}
               autoFocus
             />

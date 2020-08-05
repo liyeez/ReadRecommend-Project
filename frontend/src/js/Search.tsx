@@ -12,6 +12,7 @@ import CardActions from "@material-ui/core/CardActions";
 import Box from "@material-ui/core/Box";
 import SentimentVeryDissatisfiedIcon from '@material-ui/icons/SentimentVeryDissatisfied';
 import clsx from "clsx";
+import AddIcon from "@material-ui/icons/Add";
 import Slider from "@material-ui/core/Slider";
 import CardContent from "@material-ui/core/CardContent";
 import FilterListIcon from '@material-ui/icons/FilterList';
@@ -120,7 +121,7 @@ const Search: React.FC<Props> = ({ userSignedIn }: Props) => {
   let collectionCount : number = 0;
 
   const token = CookieService.get("access_token");
-  
+
 
   const [SearchForm, setSearchForm] = useState<SearchForm>({
     title: "",
@@ -148,6 +149,30 @@ const Search: React.FC<Props> = ({ userSignedIn }: Props) => {
       }
     });
   }
+
+  function addLib(id) {
+        $.ajax({
+            async: false,
+            url: API_URL + "/api/collections/add_to_library",
+            data: {
+                auth: token,
+                id: id,
+            },
+            method: "POST",
+            success: function (data) {
+                if (data != null) {
+                    if (data.message == "Book added to library") {
+                        alert("Book Successfully added to library");
+                    } else {
+                        alert(data.message);
+                    }
+                }
+            },
+            error: function () {
+                console.log("server error!");
+            },
+        });
+    }
 
   function newSearch(event) {
     event.preventDefault();
@@ -532,12 +557,18 @@ const Search: React.FC<Props> = ({ userSignedIn }: Props) => {
                     >
                       View
                     </Button>
+                    {userSignedIn ? (
+                      <Button size="small" color="primary" startIcon={<AddIcon />} onClick={() => addLib(book.book_id)}>
+                          {" "}
+                          Libary{" "}
+                      </Button>
+                      ) : null}
 
                     {userSignedIn ? (<Button
-                        name={book.book_id} type="submit" variant="outlined" color="primary"
+                        name={book.book_id} size="small" type="submit"  color="primary"
                         onClick={() => handleClickOpen(book.book_id)} startIcon={<LibraryAddIcon />}
                     >
-                        Add To
+                        Collection
                     </Button>) : null}
                     
                     {/*Open Dialog For Adding to Book Collection*/}
