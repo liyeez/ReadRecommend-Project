@@ -280,7 +280,19 @@ const BookDetails: React.FC<Props> = ({}) => {
                     component="p"
                     align="center"
                   >
-                    Published by {book.book_pub_date}
+                    Published by: {book.book_pub_date}
+                  </Typography>
+                  <Typography
+                    component="p"
+                    align="center"
+                  >
+                    Genre: {book.book_genre}
+                  </Typography>
+                  <Typography
+                    component="p"
+                    align="center"
+                  >
+                    Publisher: {book.book_publisher}
                   </Typography>
                   <Typography
                     component="p"
