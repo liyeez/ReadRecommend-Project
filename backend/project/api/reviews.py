@@ -43,7 +43,7 @@ def get_reviews_auth(request):
     else:
         message = "No matches found"
 
-    return Response({"status": "ok", "message": message, "review_list": review_list, "currentUser": request.user.id}, status=status.HTTP_200_OK)
+    return Response({"status": "ok", "message": message, "review_list": review_list, "current_user": request.user.id}, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
 @auth_validator
