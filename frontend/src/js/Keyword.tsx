@@ -90,6 +90,7 @@ const Search: React.FC<Props> = ({}) => {
       };
     });
   };
+  
 
   function viewBook(data) {
       window.location.href = "/bookdata/metadata?id=" + data;
@@ -220,6 +221,8 @@ const Search: React.FC<Props> = ({}) => {
                             >
                               View
                             </Button>
+
+                           
                           </CardActions>
                         </Card>
                       </Grid>

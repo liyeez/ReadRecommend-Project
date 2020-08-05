@@ -47,14 +47,14 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(3),
   },
   ratingStyle: {
-    width: 200,
+    width: 560,
     display: 'flex',
     alignItems: 'center',
   },
 }));
 
 export default function Reviews(props) {
-  let reviews: Array<any> = [];
+  let reviews: any = [];
   let {book} = props;
   let read = false;
   let currentUserID: any;
@@ -62,17 +62,7 @@ export default function Reviews(props) {
   let currentRev : any;
   let currentRat : any;
 
-  function isReviewed(){
-      getReviews();
-      for (var rev of reviews) {
-        console.log(rev.user + " " +currentUserID);
-        if(rev.user_id == currentUserID){
-            reviewFlag = 1; //just to prevent user from writing >1 review
-            currentRev = rev.review; // get current user's rating and review
-            currentRat = rev.rating;
-        }
-      } 
-  }
+
 
   const token = CookieService.get("access_token");
   const [openReview, setOpenReview] = useState(false);
@@ -109,9 +99,19 @@ export default function Reviews(props) {
     
     var data = onReviews(function (data) {
       if (data != null && data.message == "Got matching reviews") {
+        console.log(data);
         currentUserID = data.currentUser;
         reviews = data.review_list;
-        console.log("recorded: " + currentUserID+" "+reviews);
+       
+        for (var i = 0; i < reviews.length; ++i) {
+            console.log(reviews[i]);
+            if(reviews[i].user_id == currentUserID){
+                reviewFlag = 1; //just to prevent user from writing >1 review
+                currentRev = reviews[i].review; // get current user's rating and review
+                currentRat = reviews[i].rating;
+            }
+        }
+        console.log("recorded: " + currentUserID+" "+reviewFlag);
       }else{
         console.log('did not return any reviews');
       }
@@ -131,6 +131,7 @@ export default function Reviews(props) {
       async: false,
       url: API_URL + "/api/reviews/get_reviews",
       data: {
+        auth: token,
         id: book.book_id,
       },
       method: "GET",
@@ -235,13 +236,13 @@ export default function Reviews(props) {
   }
 
   const classes = useStyles();
-  
-  
-  isReviewed(); //check is user commented alrdy (get all reviews as well)
   if(token){
     reviewFlag = 0;
     readFlag(); //check if user read the book in library
   }
+  
+  getReviews(); //check is user commented alrdy (get all reviews as well)
+  
 
   console.log("checking reviewed; "+reviewFlag);
   return (
