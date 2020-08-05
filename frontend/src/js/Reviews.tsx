@@ -61,7 +61,7 @@ export default function Reviews(props) {
   let reviewFlag = -1;
   let currentRev : any;
   let currentRat : any;
-
+  let api_call : any;
 
 
   const token = CookieService.get("access_token");
@@ -100,7 +100,7 @@ export default function Reviews(props) {
     var data = onReviews(function (data) {
       if (data != null && data.message == "Got matching reviews") {
         console.log(data);
-        currentUserID = data.currentUser;
+        currentUserID = data.current_user;
         reviews = data.review_list;
        
         for (var i = 0; i < reviews.length; ++i) {
@@ -118,6 +118,7 @@ export default function Reviews(props) {
     });
   }
 
+
   function readFlag(){
     var res = isRead(function (res) {
       if (res != null && res.message == "Success") {
@@ -129,7 +130,7 @@ export default function Reviews(props) {
   function onReviews(callback) {
     $.ajax({
       async: false,
-      url: API_URL + "/api/reviews/get_reviews",
+      url: api_call,
       data: {
         auth: token,
         id: book.book_id,
@@ -239,11 +240,14 @@ export default function Reviews(props) {
   if(token){
     reviewFlag = 0;
     readFlag(); //check if user read the book in library
+    api_call =  API_URL + "/api/reviews/get_reviews_auth";
+    getReviews(); //check is user commented alrdy (get all reviews as well)
+  }else{
+    api_call = API_URL + "/api/reviews/get_reviews" //display reviews for non users
+    getReviews();
   }
   
-  getReviews(); //check is user commented alrdy (get all reviews as well)
   
-
   console.log("checking reviewed; "+reviewFlag);
   return (
     <React.Fragment>
