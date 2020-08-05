@@ -191,9 +191,7 @@ export default function Profile() {
                       View
                     </Button>
 
-                    <Button size="small" color="primary">
-                      Import to My Collections
-                    </Button>
+                   
                   </CardActions>
                 </Card>
               </Grid>
