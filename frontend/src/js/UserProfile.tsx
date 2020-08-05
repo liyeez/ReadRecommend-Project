@@ -429,8 +429,7 @@ function Goal() {
         let dateParts = dateString?.split("-");
         let formattedDateString = "";
         if (dateParts != null && dateParts.length == 3) {
-            //toISOString is buggy, so the actual date is actually +1 day
-            formattedDateString = (parseInt(dateParts[2])+1) + "-" + dateParts[1] + "-" + dateParts[0];
+            formattedDateString = (parseInt(dateParts[2])) + "-" + dateParts[1] + "-" + dateParts[0];
         }
         console.log('formatted date is: ');
         return formattedDateString;
