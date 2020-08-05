@@ -22,8 +22,6 @@ import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Container from "@material-ui/core/Container";
-import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import SentimentVeryDissatisfiedIcon from '@material-ui/icons/SentimentVeryDissatisfied';
 import * as Router from 'react-router-dom';
 declare const API_URL: string;
@@ -67,15 +65,6 @@ const styles= makeStyles((theme) => ({
     
 }));
 
-const slides = [
-    { backgroundColor: '#ff7c7c', title: 'Slide 1' },
-    { backgroundColor: '#ffb6b9', title: 'Slide 2' },
-    // { backgroundColor: '#8deaff', title: 'Slide 3' },
-    // { backgroundColor: '#ffe084', title: 'Slide 4' },
-    // { backgroundColor: '#d9d9d9', title: 'Slide 5' },
-    // { backgroundColor: '#ecc6c6', title: 'Slide 6' },
-];
-
 interface Props{}
 
 interface SearchForm {
@@ -93,10 +82,9 @@ function viewCollection(data){
 
 function CardStyle(props){
     
-    const {books, index} = props;
+    const {books} = props;
     const classes = styles();
-    console.log("displaying book index: " + index);
-    console.log(books[index]);
+  
     return(
         <Grid item className={classes.App}>
             <Card className={classes.card}>
@@ -107,16 +95,16 @@ function CardStyle(props){
               />
               <CardContent className={classes.cardContent}>
                 <Typography gutterBottom variant="h5" component="h2">
-                  {books[index].book_title}
+                  {books.book_title}
                 </Typography>
-                <Typography>By Author: {books[index].book_author}</Typography>
-                <Typography>Published on: {books[index].book_pub_date}</Typography>
+                <Typography>By Author: {books.book_author}</Typography>
+                <Typography>Published on: {books.book_pub_date}</Typography>
               </CardContent>
               <CardActions>
                 <Button
                   size="small"
                   color="primary"
-                  onClick={() => viewBook(books[index].id)}
+                  onClick={() => viewBook(books.id)}
                 >
                   View
                 </Button>
@@ -128,12 +116,10 @@ function CardStyle(props){
 }
 
 function CollectionStyle(props){
-    
-    const {collection, index} = props;
+          
+    const {collection} = props;
     console.log(collection);
     const classes = styles();
-    console.log("displaying collection index: " + index);
-    console.log(collection[index]);
     return(
         <Grid item className={classes.App}>
             <Card className={classes.card}>
@@ -144,10 +130,10 @@ function CollectionStyle(props){
               />
               <CardContent className={classes.cardContent}>
                 <Typography gutterBottom variant="h5" component="h2">
-                  {collection[index].collection_name}
+                  {collection.collection_name}
                 </Typography>
                   
-                { collection[index].tag_list.map((tag)=>
+                { collection.tag_list.map((tag)=>
                    <Chip label={tag} className={classes.chip}/>
                 )}
                 
@@ -157,7 +143,7 @@ function CollectionStyle(props){
                 <Button
                   size="small"
                   color="primary"
-                  onClick={() => viewCollection(collection[index].collection_id)}
+                  onClick={() => viewCollection(collection.collection_id)}
                 >
                   View
                 </Button>
@@ -168,81 +154,24 @@ function CollectionStyle(props){
     );
 }
 
-function Arrow(props) {
-    const { direction, clickFunction } = props;
-    const icon = direction === 'left' ? <IconButton><ArrowBackIcon /></IconButton> : <IconButton><ArrowForwardIcon /></IconButton>;
-
-    return <div onClick={clickFunction}>{icon}</div>;
-}
-
 // export interface ContentProps extends WithStyles<typeof styles> {}
 const FindUser: React.FC<Props> = ({}) => {
+   
     let books: any = [];
     let genre: any = [];
-    // const [index, setIndex] = useState(0);
-    // const [index2, setIndex2] = useState(1);
-    // const [index3, setIndex3] = useState(2);
     
     //for your fav genre suggestions
-    let index =0;
-    let index2 = 1;
-    let index3 = 2;
-
     let numSlides =0;
 
     //for readers who read the same genre suggestions
-    let read =0;
-    let read2 = 1;
-    let read3 = 2;
-
     let numRead =0;
 
     //for suggestions based on reading history
-    let hist =0;
-    let hist2 = 1;
-    let hist3 = 2;
-
     let numHist =0;
 
     //for collections that share same tags as the user 
-    let tagCol =0;
-    let tagCol2 = 1;
-    let tagCol3 = 2;
-
     let numTagCol =0;
     
-    const onArrowGenre = (direction) => {
-        const increment = direction === 'left' ? -1 : 1;
-        index = (index + increment + numSlides) % numSlides;
-        index2 = (index2 + increment + numSlides) % numSlides;
-        index3 = (index3 + increment + numSlides) % numSlides;
-  
-    };
-
-    const onArrowRead = (direction) => {
-        const increment = direction === 'left' ? -1 : 1;
-        read = (read + increment + numRead) % numRead;
-        read2 = (read2 + increment + numRead) % numRead;
-        read3 = (read3 + increment + numRead) % numRead;
-  
-    };
-
-    const onArrowHist = (direction) => {
-        const increment = direction === 'left' ? -1 : 1;
-        hist = (hist + increment + numHist) % numHist;
-        hist2 = (hist2 + increment + numHist) % numHist;
-        hist3 = (hist3 + increment + numHist) % numHist;
-  
-    };
-
-    const onArrowTag = (direction) => {
-        const increment = direction === 'left' ? -1 : 1;
-        tagCol = (tagCol + increment + numTagCol) % numTagCol;
-        tagCol2 = (tagCol2 + increment + numTagCol) % numTagCol;
-        tagCol3 = (tagCol3 + increment + numTagCol) % numTagCol;
-  
-    };
-
     const classes = styles();
     
     //it checks what other readers read same book as you, then check 
@@ -355,6 +284,9 @@ const FindUser: React.FC<Props> = ({}) => {
             }
         });
     } 
+
+
+    
     
     getTagCol();
     getPopularGenre();
@@ -369,7 +301,7 @@ const FindUser: React.FC<Props> = ({}) => {
             <Container className={classes.cardGrid} >
               <Grid container spacing={5} className={classes.carousel}>
                 <Grid item>
-                    <Typography gutterBottom variant="h5">
+                    <Typography gutterBottom variant="h4">
                        <WhatshotIcon /> Your favourite genre {genre} <WhatshotIcon />
                     </Typography>
                 </Grid>
@@ -378,7 +310,7 @@ const FindUser: React.FC<Props> = ({}) => {
                 ? (null)
                 : (<Typography 
                       align='center'
-                      component="h5"
+                      component="h4"
                       color="textSecondary"
                      > 
                      <SentimentDissatisfiedIcon/>
@@ -386,69 +318,13 @@ const FindUser: React.FC<Props> = ({}) => {
                      </Typography>)
               }
               
-              { numSlides == 1
-                  ? (<Grid container spacing={2} className={classes.cardGrid}>
-                        <Grid item>
-                          <Arrow
-                              direction='left'
-                              clickFunction={() => onArrowGenre('left')}
-                          />
-                        </Grid>
-                        
-                          <CardStyle books={books} index={index}/>
-                       
-                        <Grid item>  
-                          <Arrow
-                              direction='right'
-                              clickFunction={() => onArrowGenre('right')}
-                          />
-                        </Grid>
-                     </Grid>
-
-                     )
-                  : (null)
-              } 
-
-              { numSlides == 2
-                  ? (<Grid container spacing={2} className={classes.cardGrid}>
-                        <Grid item>
-                          <Arrow
-                              direction='left'
-                              clickFunction={() => onArrowGenre('left')}
-                          />
-                        </Grid>
-                        <CardStyle books={books} index={index}/>
-                        <CardStyle books={books} index={index2}/>
-                          
-                        <Grid item>  
-                          <Arrow
-                              direction='right'
-                              clickFunction={() => onArrowGenre('right')}
-                          />
-                        </Grid>
-                     </Grid>
-
-                     )
-                  : (null)
-              }
 
               { numSlides > 2
                   ? (<Grid container spacing={2} className={classes.cardGrid}>
-                        <Grid item>
-                          <Arrow
-                              direction='left'
-                              clickFunction={() => onArrowGenre('left')}
-                          />
-                        </Grid>
-                        <CardStyle books={books} index={index}/>
-                        <CardStyle books={books} index={index2}/>
-                        <CardStyle books={books} index={index3}/>
-                        <Grid item>  
-                          <Arrow
-                              direction='right'
-                              clickFunction={() => onArrowGenre('right')}
-                          />
-                        </Grid>
+                      { books.map((book) => (
+                          <CardStyle books={book}/>
+                      ))}  
+                        
                      </Grid>
 
                      )
@@ -458,7 +334,7 @@ const FindUser: React.FC<Props> = ({}) => {
               {/*Most Read Genre*/}
               <Grid container spacing={5} className={classes.carousel}>
                 <Grid item>
-                    <Typography gutterBottom variant="h5">
+                    <Typography gutterBottom variant="h4">
                        <WhatshotIcon /> Reader who likes "{basedOn}" also read: <WhatshotIcon />
                     </Typography>
                 </Grid>
@@ -474,69 +350,13 @@ const FindUser: React.FC<Props> = ({}) => {
                       {'    '} No one read "{basedOn}" 
                      </Typography>)
               }
-              { numRead == 1
-                  ? (<Grid container spacing={2} className={classes.cardGrid}>
-                        <Grid item>
-                          <Arrow
-                              direction='left'
-                              clickFunction={() => onArrowRead('left')}
-                          />
-                        </Grid>
-                        
-                          <CardStyle books={readerBooks} index={read}/>
-                       
-                        <Grid item>  
-                          <Arrow
-                              direction='right'
-                              clickFunction={() => onArrowRead('right')}
-                          />
-                        </Grid>
-                     </Grid>
-
-                     )
-                  : (null)
-              } 
-
-              { numRead == 2
-                  ? (<Grid container spacing={2} className={classes.cardGrid}>
-                        <Grid item>
-                          <Arrow
-                              direction='left'
-                              clickFunction={() => onArrowRead('left')}
-                          />
-                        </Grid>
-                        <CardStyle books={readerBooks} index={read}/>
-                        <CardStyle books={readerBooks} index={read2}/>
-                          
-                        <Grid item>  
-                          <Arrow
-                              direction='right'
-                              clickFunction={() => onArrowRead('right')}
-                          />
-                        </Grid>
-                     </Grid>
-
-                     )
-                  : (null)
-              }
 
               { numRead > 2
                   ? (<Grid container spacing={2} className={classes.cardGrid}>
-                        <Grid item>
-                          <Arrow
-                              direction='left'
-                              clickFunction={() => onArrowRead('left')}
-                          />
-                        </Grid>
-                        <CardStyle books={readerBooks} index={read}/>
-                        <CardStyle books={readerBooks} index={read2}/>
-                        <CardStyle books={readerBooks} index={read3}/>
-                        <Grid item>  
-                          <Arrow
-                              direction='right'
-                              clickFunction={() => onArrowRead('right')}
-                          />
-                        </Grid>
+                       {readerBooks.map((read) =>(
+                           <CardStyle books={read}/>
+                       ))}
+                        
                      </Grid>
 
                      )
@@ -546,7 +366,7 @@ const FindUser: React.FC<Props> = ({}) => {
               {/*Shared tags Collection from other users*/}
               <Grid container spacing={5} className={classes.carousel}>
                 <Grid item>
-                    <Typography gutterBottom variant="h5">
+                    <Typography gutterBottom variant="h4">
                        <WhatshotIcon /> Collections that share the same tags as you: <WhatshotIcon />
                     </Typography>
                 </Grid>
@@ -562,69 +382,13 @@ const FindUser: React.FC<Props> = ({}) => {
                       {'    '} No collections tagged like yours!  
                      </Typography>)
               }
-              { numTagCol == 1
-                  ? (<Grid container spacing={2} className={classes.cardGrid}>
-                        <Grid item>
-                          <Arrow
-                              direction='left'
-                              clickFunction={() => onArrowTag('left')}
-                          />
-                        </Grid>
-                        
-                          <CollectionStyle collection={TagCollections} index={tagCol}/>
-                       
-                        <Grid item>  
-                          <Arrow
-                              direction='right'
-                              clickFunction={() => onArrowTag('right')}
-                          />
-                        </Grid>
-                     </Grid>
-
-                     )
-                  : (null)
-              } 
-
-              { numTagCol == 2
-                  ? (<Grid container spacing={2} className={classes.cardGrid}>
-                        <Grid item>
-                          <Arrow
-                              direction='left'
-                              clickFunction={() => onArrowTag('left')}
-                          />
-                        </Grid>
-                        <CollectionStyle collection={TagCollections} index={tagCol}/>
-                        <CollectionStyle collection={TagCollections} index={tagCol2}/>
-                          
-                        <Grid item>  
-                          <Arrow
-                              direction='right'
-                              clickFunction={() => onArrowTag('right')}
-                          />
-                        </Grid>
-                     </Grid>
-
-                     )
-                  : (null)
-              }
 
               { numTagCol > 2
                   ? (<Grid container spacing={2} className={classes.cardGrid}>
-                        <Grid item>
-                          <Arrow
-                              direction='left'
-                              clickFunction={() => onArrowTag('left')}
-                          />
-                        </Grid>
-                        <CollectionStyle collection={TagCollections} index={tagCol}/>
-                        <CollectionStyle collection={TagCollections} index={tagCol2}/>
-                        <CollectionStyle collection={TagCollections} index={tagCol3}/>
-                        <Grid item>  
-                          <Arrow
-                              direction='right'
-                              clickFunction={() => onArrowTag('right')}
-                          />
-                        </Grid>
+                      {TagCollections.map((tagCol) =>(
+                        <CollectionStyle collection={tagCol}/>
+                      ))}
+                        
                      </Grid>
 
                      )
@@ -635,7 +399,7 @@ const FindUser: React.FC<Props> = ({}) => {
               {/*recommendations based on reading history*/}
               <Grid container spacing={5} className={classes.carousel}>
                 <Grid item>
-                    <Typography gutterBottom variant="h5">
+                    <Typography gutterBottom variant="h4">
                        <WhatshotIcon /> Recommendations based on your history: <WhatshotIcon />
                     </Typography>
                 </Grid>
@@ -651,80 +415,19 @@ const FindUser: React.FC<Props> = ({}) => {
                       {'    '} No books!  
                      </Typography>)
               }
-              { numHist == 1
-                  ? (<Grid container spacing={2} className={classes.cardGrid}>
-                        <Grid item>
-                          <Arrow
-                              direction='left'
-                              clickFunction={() => onArrowHist('left')}
-                          />
-                        </Grid>
-                        
-                          <CardStyle books={histRec} index={hist}/>
-                       
-                        <Grid item>  
-                          <Arrow
-                              direction='right'
-                              clickFunction={() => onArrowHist('right')}
-                          />
-                        </Grid>
-                     </Grid>
-
-                     )
-                  : (null)
-              } 
-
-              { numHist == 2
-                  ? (<Grid container spacing={2} className={classes.cardGrid}>
-                        <Grid item>
-                          <Arrow
-                              direction='left'
-                              clickFunction={() => onArrowHist('left')}
-                          />
-                        </Grid>
-                        <CardStyle books={histRec} index={hist}/>
-                        <CardStyle books={histRec} index={hist2}/>
-                          
-                        <Grid item>  
-                          <Arrow
-                              direction='right'
-                              clickFunction={() => onArrowHist('right')}
-                          />
-                        </Grid>
-                     </Grid>
-
-                     )
-                  : (null)
-              }
-
+           
               { numHist > 2
                   ? (<Grid container spacing={2} className={classes.cardGrid}>
-                        <Grid item>
-                          <Arrow
-                              direction='left'
-                              clickFunction={() => onArrowHist('left')}
-                          />
-                        </Grid>
-                        <CardStyle books={histRec} index={hist}/>
-                        <CardStyle books={histRec} index={hist2}/>
-                        <CardStyle books={histRec} index={hist3}/>
-                        <Grid item>  
-                          <Arrow
-                              direction='right'
-                              clickFunction={() => onArrowHist('right')}
-                          />
-                        </Grid>
+                      { histRec.map((hist) => (
+                        <CardStyle books={hist}/>
+                      ))}  
+                        
+                        
                      </Grid>
-
                      )
                   : (null)
               }
               
-             
-            </Container>
-
-            <Container className={classes.cardGrid} maxWidth="md">
-
              
             </Container>
             
