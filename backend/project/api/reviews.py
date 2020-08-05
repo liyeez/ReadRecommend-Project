@@ -90,20 +90,11 @@ def remove_review(request):
 @input_validator(["id"])
 def user_reviews(request):
 
-    
-   # for user in User.objects.all():
-    #    print(user.id)
-    try:
-        user = User.objects.get(id=id)
-        
-    except:
-        return Response({"status": "error", "message": "invalid user"}, status=status.HTTP_200_OK)
-
-    reviews = Review.objects.filter(user=user)
+    reviews = Review.objects.filter(user=request.user)
 
     review_list = []
     for review in reviews.all():
-        review_list.append({"id": book_id, "review": review.text,
+        review_list.append({"id": review.book_id, "review": review.text,
                             "rating": review.score})
 
     if len(review_list) > 0:
