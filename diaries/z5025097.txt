@@ -64,3 +64,6 @@ Week 9
 - This week we aimed to finalise our code for the project. I worked on the frontend features for editing reading goals, as well as filtering capabilities in book search.
 
 Week 10
+
+- This week I worked on minor bug fixes and adding user feedback for a range of actions to make our website more user-friendly. 
+I also worked on the "Functionalities" section of the project report and prepared for final submission.
