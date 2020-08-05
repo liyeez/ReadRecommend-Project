@@ -86,24 +86,22 @@ interface Props {}
 function viewBook(data) {
   window.location.href = "/bookdata/metadata?id=" + data;
 }
+
 let tag_list: any[] = [];
 let book_list: any = [];
 let collection: any;
 let owner: any;
-let str = window.location.href.split("?")[1];
+
 
 const ViewCollection: React.FC<Props> = ({}) => {
   const classes = Style();
 
-  
+  let str = window.location.href.split("?")[1];
+
   if(str != null && str != ''){
     str = window.location.href.split("=")[1];
     console.log("To find collection: " + str);
-  }else{
-    
-    window.location.href = "/";
-  }  
-  
+  }
   function requestTags() {
       var result = getTags(function (result) {
           if (result != null) {
@@ -117,8 +115,8 @@ const ViewCollection: React.FC<Props> = ({}) => {
               } else if (result.message == "Collection has no tags") {
                   console.log("Do nothing, continue loading the page.");
               } else {
-                  alert("No Matched Results!");
-                  window.location.href = "/";
+                  alert("Error! Redirecting....");
+                  //window.location.href = "/";
               }
           }
       });
@@ -157,7 +155,7 @@ const ViewCollection: React.FC<Props> = ({}) => {
           collection = data.collection_name;
           owner = data.owner;
         } else {
-          alert("No Matched Results!");
+          alert("Error! Redirecting....");
           window.location.href = "/";
         }
       }
@@ -188,12 +186,15 @@ const ViewCollection: React.FC<Props> = ({}) => {
       },
     });
   }
-  console.log(str);
+
   
-  if(str){
+  if(window.location.href.split("=")[1]){
     request();
     requestTags();
-  }
+  }  
+  // }else{
+  //   window.location.href = "/";
+  // }
   
 
   return (

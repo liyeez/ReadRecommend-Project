@@ -64,6 +64,8 @@ export default function Reviews(props) {
   let api_call : any;
 
 
+  //const [revi, setOpenReview] = useState(false);
+
   const token = CookieService.get("access_token");
   const [openReview, setOpenReview] = useState(false);
   const [newReview, setReview] = useState("");
