@@ -101,11 +101,7 @@ const ViewCollection: React.FC<Props> = ({}) => {
   if(str != null && str != ''){
     str = window.location.href.split("=")[1];
     console.log("To find collection: " + str);
-  }else{
-    alert("Cannot find the collection! Redirecting....");
-    window.location.href = "/";
-  }  
-  
+  }
   function requestTags() {
       var result = getTags(function (result) {
           if (result != null) {
@@ -120,7 +116,7 @@ const ViewCollection: React.FC<Props> = ({}) => {
                   console.log("Do nothing, continue loading the page.");
               } else {
                   alert("Error! Redirecting....");
-                  window.location.href = "/";
+                  //window.location.href = "/";
               }
           }
       });
@@ -191,12 +187,14 @@ const ViewCollection: React.FC<Props> = ({}) => {
     });
   }
 
-  console.log(str);
   
-  if(str){
+  if(window.location.href.split("=")[1]){
     request();
     requestTags();
-  }
+  }  
+  // }else{
+  //   window.location.href = "/";
+  // }
   
 
   return (
