@@ -302,7 +302,7 @@ const FindUser: React.FC<Props> = ({}) => {
               <Grid container spacing={5} className={classes.carousel}>
                 <Grid item>
                     <Typography gutterBottom variant="h4">
-                       <WhatshotIcon /> Your favourite genre {genre} <WhatshotIcon />
+                       <WhatshotIcon /> Your favourite genre "{genre}" <WhatshotIcon />
                     </Typography>
                 </Grid>
               </Grid>      
