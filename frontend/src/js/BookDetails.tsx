@@ -366,36 +366,3 @@ const BookDetails: React.FC<Props> = ({}) => {
 
 export default BookDetails;
 
-// <React.Fragment>
-//           <Grid container component="main" className={classes.root}>
-//             <CssBaseline />
-//               <Grid item xs={false} sm={4} md={7} className={classes.image} />
-//                  <CarouselProvider
-//                     naturalSlideWidth={100}
-//                     naturalSlideHeight={125}
-//                     totalSlides={3}
-//                   >
-//                     <Slider>
-//                       <Slide index={0}>I am the first Slide.</Slide>
-//                       <Slide index={1}>I am the second Slide.</Slide>
-//                       <Slide index={2}>I am the third Slide.</Slide>
-//                     </Slider>
-//                     <ButtonBack>Back</ButtonBack>
-//                     <ButtonNext>Next</ButtonNext>
-//                   </CarouselProvider>
-//               </Grid>
-//       </React.Fragment>
-
-// <CarouselProvider
-//                     naturalSlideWidth={100}
-//                     naturalSlideHeight={125}
-//                     totalSlides={3}
-//                   >
-//                     <Slider>
-//                       <Slide index={0}>I am the first Slide.</Slide>
-//                       <Slide index={1}>I am the second Slide.</Slide>
-//                       <Slide index={2}>I am the third Slide.</Slide>
-//                     </Slider>
-//                     <ButtonBack>Back</ButtonBack>
-//                     <ButtonNext>Next</ButtonNext>
-//                   </CarouselProvider>

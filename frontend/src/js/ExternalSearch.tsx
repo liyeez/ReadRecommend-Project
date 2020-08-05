@@ -118,6 +118,7 @@ const Search: React.FC<Props> = ({}) => {
        
       },
       error: function () {
+        setLoadTimes(true); //to stop re-rendering
         console.log("external search server error!");
       },
     });
@@ -314,6 +315,7 @@ const Search: React.FC<Props> = ({}) => {
                 ))}
             </Grid>
 
+
             <IconButton
               type="submit"
               className={classes.iconButton}
@@ -332,3 +334,17 @@ const Search: React.FC<Props> = ({}) => {
 };
 
 export default Search;
+
+ // { tempExtBooks.length > 0 
+ //              ? (<IconButton
+ //              type="submit"
+ //              className={classes.iconButton}
+ //              aria-label="search"
+ //              onClick={moreResults}
+ //            > 
+ //              More Results 
+ //              <MoreHorizIcon/>
+            
+ //            </IconButton>)
+ //              :(null)
+ //            }

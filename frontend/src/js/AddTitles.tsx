@@ -1,3 +1,7 @@
+
+// AddTitles.tsx displays books for user to add to collection
+
+
 import React, { ChangeEvent, useState } from "react";
 import * as Router from "react-router-dom";
 import $ = require("jquery");
@@ -25,56 +29,59 @@ import { makeStyles } from "@material-ui/core/styles";
 declare const API_URL: string;
 
 const Style = makeStyles((theme) => ({
-  heroContent: {
-    backgroundColor: theme.palette.background.paper,
-    padding: theme.spacing(8, 0, 6),
-  },
-  heroButtons: {
-    marginTop: theme.spacing(4),
-  },
-  input: {
-    marginLeft: theme.spacing(1),
-    flex: 1,
-  },
-  iconButton: {
-    padding: 10,
-  },
-  cardGrid: {
-    paddingTop: theme.spacing(8),
-    paddingBottom: theme.spacing(8),
-  },
-  card: {
-    height: "100%",
-    display: "flex",
-    flexDirection: "column",
-  },
-  cardMedia: {
-    paddingTop: "56.25%", // 16:9
-  },
-  cardContent: {
-    flexGrow: 1,
-  },
-  root: {
-    padding: "2px 4px",
-    display: "flex",
-    alignItems: "center",
-    width: 400,
-  },
+    heroContent: {
+        backgroundColor: theme.palette.background.paper,
+        padding: theme.spacing(8, 0, 6),
+    },
+    heroButtons: {
+        marginTop: theme.spacing(4),
+    },
+    input: {
+        marginLeft: theme.spacing(1),
+        flex: 1,
+    },
+        iconButton: {
+        padding: 10,
+    },
+    cardGrid: {
+        paddingTop: theme.spacing(8),
+        paddingBottom: theme.spacing(8),
+    },
+    card: {
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+    },
+    cardMedia: {
+        paddingTop: "56.25%", // 16:9
+    },
+    cardContent: {
+        flexGrow: 1,
+    },
+    root: {
+        padding: "2px 4px",
+        display: "flex",
+        alignItems: "center",
+        width: 400,
+    },
 }));
 
-const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+// to store search string
 interface SearchForm {
-  title: string;
+    title: string;
 }
+
+// to detect if user is signed in
 interface Props {
   userSignedIn: boolean;
 }
 
 const AddTitles: React.FC<Props> = ({ userSignedIn }: Props) => {
-  const classes = Style();
+  const classes = Style(); 
 
   let book_list: any = [];
-
+  
+  // get collection_id from url
   let collectionId = window.location.href.split("?")[1];
   collectionId = collectionId.split("=")[1];
 
@@ -82,6 +89,7 @@ const AddTitles: React.FC<Props> = ({ userSignedIn }: Props) => {
     title: "",
   });
 
+  // to update frontend display of search bar text box
   const onTextboxChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setSearchForm((prevSearchForm) => {
@@ -92,7 +100,8 @@ const AddTitles: React.FC<Props> = ({ userSignedIn }: Props) => {
     });
   };
 
-  function preventDefault(event) {
+  
+  function redirectSearch(event) {
     window.location.href = "/search?title=" + SearchForm.title;
   }
 
@@ -121,7 +130,7 @@ const AddTitles: React.FC<Props> = ({ userSignedIn }: Props) => {
     });
   }
 
-  // TODO: Add title to collection on backend.
+  // Add title to collection on backend.
   function addTitleToCollection(idToAdd) {
     $.ajax({
       async: false,
@@ -145,14 +154,16 @@ const AddTitles: React.FC<Props> = ({ userSignedIn }: Props) => {
     });
   }
 
+  // get user logged in token
   const token = CookieService.get("access_token");
+  // get random books that are not in current user library
   findNewTitles();
 
   return (
     <React.Fragment>
       <CssBaseline />
       <main>
-        {/* Hero unit */}
+        {/* Title of page */}
         <div className={classes.heroContent}>
           <Container maxWidth="sm">
             <Typography
@@ -172,10 +183,11 @@ const AddTitles: React.FC<Props> = ({ userSignedIn }: Props) => {
             >
               Browse through books to add to your collection.
             </Typography>
+ 
+             {/*Search bar*/}
             <div className={classes.heroButtons}>
               <Grid container spacing={2} justify="center">
-                {/*Search Bar*/}
-
+                
                 <Grid item>
                   <Paper className={classes.root}>
                     <TextField
@@ -188,7 +200,7 @@ const AddTitles: React.FC<Props> = ({ userSignedIn }: Props) => {
                     />
                     <IconButton
                       type="submit"
-                      onClick={preventDefault}
+                      onClick={redirectSearch}
                       className={classes.iconButton}
                       aria-label="search"
                     >
@@ -196,6 +208,8 @@ const AddTitles: React.FC<Props> = ({ userSignedIn }: Props) => {
                     </IconButton>
                   </Paper>
                 </Grid>
+
+                {/* Editing page redirect button */}
                 <Grid item>
                   <Button
                     variant="outlined"
@@ -207,13 +221,16 @@ const AddTitles: React.FC<Props> = ({ userSignedIn }: Props) => {
                     Back to Editing
                   </Button>
                 </Grid>
+
               </Grid>
             </div>
           </Container>
         </div>
+
+         {/*Display books not inside the collection.*/}
         <Container className={classes.cardGrid} maxWidth="md">
           <Grid container spacing={4}>
-            {/*TODO: Display book if not already inside the collection.*/}
+           
             {book_list.map((book) => (
               <Grid item key={book.book_id} xs={12} sm={6} md={4}>
                 <Card className={classes.card}>
