@@ -18,3 +18,5 @@ Week 8
 Prepping for demo and having final discussions/retrospective on any changes we would like before most things were finalized
 Week 9
 Final touches for before submission overall general thoughts on expections we had throughout the trimester and how they lived up, overall things went fine!, discussed how we were going to complete the final report before submission
+Week 10
+Finished the final report with the team, personally focused on the report overview and architectural overview and implementation challenges, mainly bugfixing and polishing performed on the codebase.

@@ -11,10 +11,10 @@ Week 5: Due to unexpected technical issues on the backend, some user stories are
 
 Week 6: There is not much progress as week 6 is the flexibility week and all members have to utilize the week to focus on other commitments & subjects. The next sprint is planned to last the whole of week 7 instead. 
 
-Week 7:
+Week 7: Front end for "external search" that find books using Google API. This feature allows users to import books that are not in the current database. However there are bugs and issues with essential database keys missing from the API info. Hence more test cases should be run in future.
 
-Week 8:
+Week 8: Demo B is held where new features such as goals and reviews are added.
 
-Week 9:
+Week 9: Recommendations and Keyword search are implemented as the novelty features. It was challenging completing carousel slide frontend effect such that users are able to scroll past books
 
-Week 10:
+Week 10: The Final demo is thursday and hence everyone worked diligently on the report as well as testing the systems. Several bugs are found and fixed. Wish us all the best for the demo

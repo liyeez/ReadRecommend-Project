@@ -22,7 +22,7 @@ SOURCE_DIRECTORY = "./src"
 TARGET_DIRECTORY = "/var/www/capstone"
 
 FILE_TYPES = [".html", ".css"]
-ADDITIONAL_FILES = ["./src/js/index.js"]
+ADDITIONAL_FILES = ["./src/js/index.js", "./src/js/index.js.map"]
 
 
 # Upload progress
