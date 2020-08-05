@@ -353,6 +353,8 @@ function Goal() {
 
     const handleDeleteGoal = () => {
         setOpenEditGoal(false);
+        // Update the most recent goal to be nothing.
+        mostRecentGoal = undefined;
         deleteGoal();
     }
 
