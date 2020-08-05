@@ -309,7 +309,6 @@ def add_book(request):
     Optional Input:
     book_genre (str)
     book_description (str)
-    book_isbn (str)
     book_publisher (str)
     book_pub_date (datetime)
     book_cover (str)
@@ -332,11 +331,6 @@ def add_book(request):
         book_description = request.POST["book_description"]
     except:
         book_description = ""
-
-    try:
-        book_isbn = request.POST["book_isbn"]
-    except:
-        book_isbn = "0000000000"
 
     try:
         book_publisher = request.POST["book_publisher"]
@@ -363,8 +357,8 @@ def add_book(request):
         book_cover = ""
 
     try:    
-        book_instance = BookInstance.objects.create_book(request.POST["book_title"], request.POST["book_author"], request.POST["book_genre"], book_description, book_isbn, book_publisher, book_pub_date, book_cover)
-        return Response({"status": "ok", "message": "Book added to system", "book_id": book_instance.book.id}, status=status.HTTP_200_OK)
+        book = Book.objects.create_book(request.POST["book_title"], request.POST["book_author"], request.POST["book_genre"], book_description, book_publisher, book_pub_date, book_cover)
+        return Response({"status": "ok", "message": "Book added to system", "book_id": book[0].id}, status=status.HTTP_200_OK)
     except Exception as ex:
         return Response({"status": "error", "message": "Fail to create book in system: " + str(ex.args)}, status=status.HTTP_200_OK)
 
@@ -389,9 +383,9 @@ def search_book(request):
         book_genre (str)
         book_description (str)
         book_isbn (str)
-        book_cover (str)
         book_publisher (str)
         book_pub_date (datetime)
+        book_cover (str)
     current_index (int) [the index for the next search result]
     """
     try:
@@ -425,10 +419,6 @@ def search_book(request):
         except:
             book["book_genre"] = ""
         try:
-            book["cover"] = match["volumeInfo"]["imageLinks"]["thumbnail"]
-        except:
-            book["cover"] = ""
-        try:
             book["book_publisher"] = match["volumeInfo"]["publisher"]
         except:
             book["book_publisher"] = ""
@@ -436,17 +426,22 @@ def search_book(request):
             book["book_pub_date"] = match["volumeInfo"]["publishedDate"]
         except:
             book["book_pub_date"] = ""
+        try:
+            book["cover"] = match["volumeInfo"]["imageLinks"]["thumbnail"]
+        except:
+            book["cover"] = ""
             
         # Look for isbn
         # json doesnt guarantee list order so loop through the possibilities
         try:
+            book["book_isbn"] = ""
             for identifier in match["volumeInfo"]["industryIdentifiers"]:
                 if identifier["type"] == "ISBN_10":
                     book["book_isbn"] = identifier["identifier"]
             # Do not allow books without isbn numbers to be returned
             results.append(book)
         except:
-            pass
+            book["book_isbn"] = ""
 
         count += 1
         
