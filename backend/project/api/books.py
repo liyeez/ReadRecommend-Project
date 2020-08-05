@@ -281,6 +281,8 @@ def set_read(request):
             goal = request.user.goal_set.get(current = True)
             if goal.is_active() and goal.date_start<= prev_date and goal.date_end >= prev_date:
                 goal.book_count -= 1
+                if goal.book_count <0:
+                    goal.book_count = 0
                 goal.save()
         except:
             pass
