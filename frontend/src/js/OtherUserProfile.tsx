@@ -89,7 +89,7 @@ export default function Profile() {
             lib = data.library_books;
         }else{
             alert("No Matched Results!");
-            window.location.href='/';
+            //window.location.href='/';
         }
         
     });
@@ -119,11 +119,13 @@ export default function Profile() {
     }
 
     function viewCollection(data){
-        window.location.href="/user/viewcollection?collectionid="+data;
+       //console.log("col_id" + data);
+       window.location.href="/user/viewcollection?collectionid="+data;
     }
 
     function viewBook(data) {
-        window.location.href = "/bookdata/metadata?id=" + data;
+      //console.log("book_id" + data);
+       window.location.href = "/bookdata/metadata?id=" + data;
     }
 
   request();
@@ -240,7 +242,7 @@ export default function Profile() {
                     <Button
                       size="small"
                       color="primary"
-                      onClick={() => viewBook(book.book_id)}
+                      onClick={() => viewBook(book.id)}
                     >
                       View
                     </Button>

@@ -476,6 +476,7 @@ const Search: React.FC<Props> = ({ userSignedIn }: Props) => {
                                       label="Minimum Total Ratings" type="number"
                                       value={filterState.minimumTotalRatings}
                                       onChange={handleFilterChange}
+                                      InputProps={{ inputProps: { min: 0} }}
                                       />
                                   </Box>
                                   <Box m={2}>
@@ -484,6 +485,7 @@ const Search: React.FC<Props> = ({ userSignedIn }: Props) => {
                                           label="Minimum Read Count" type="number"
                                           value={filterState.minimumReadCount}
                                           onChange={handleFilterChange}
+                                          InputProps={{ inputProps: { min: 0} }}
                                       />
                                   </Box>
                                   <Box m={2}>
@@ -492,6 +494,7 @@ const Search: React.FC<Props> = ({ userSignedIn }: Props) => {
                                       label="Minimum Collection Count" type="number"
                                       value={filterState.minimumCollectionCount}
                                       onChange={handleFilterChange}
+                                      InputProps={{ inputProps: { min: 0} }}
                                       />
                                   </Box>
                               </Grid>
