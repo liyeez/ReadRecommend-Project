@@ -34,8 +34,8 @@ const useStyles = makeStyles({
 });
 
 function viewCollection(data){
-    let s = (`?collectionid=${encodeURIComponent(data)}`);
-    window.location.href="/user/viewcollection" + s;
+    console.log(data);
+    window.location.href="/user/viewcollection?collectionid=" + data;
 }
 
 function editCollection(data){
@@ -89,7 +89,6 @@ export default function Collections(props) {
             }
         });
     }
-
 
     return (
         <Grid item xs={12} md={6}>

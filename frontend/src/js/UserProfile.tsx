@@ -153,13 +153,14 @@ export default function UserProfile() {
                 userProfileData.userBookCollections = result.collection_list;
                 Name = result.first_name + " " + result.last_name;
             } else {
-                alert("Sth wrong!");
+                alert("Something wrong!");
                 window.location.href = "/";
             }
         });
     }
 
     request();
+
     return (
         <React.Fragment>
             <CssBaseline />
