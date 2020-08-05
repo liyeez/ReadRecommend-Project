@@ -96,12 +96,13 @@ const ViewCollection: React.FC<Props> = ({}) => {
   const classes = Style();
 
   
-  //if(str != null && str != ''){
-    str = str.split("=")[1];
-    console.log("To find: " + str);
-  //}else{
-    //window.location.href = "/";
-  //}  
+  if(str != null && str != ''){
+    str = window.location.href.split("=")[1];
+    console.log("To find collection: " + str);
+  }else{
+    
+    window.location.href = "/";
+  }  
   
   function requestTags() {
       var result = getTags(function (result) {
@@ -125,6 +126,7 @@ const ViewCollection: React.FC<Props> = ({}) => {
 
 
   function getTags(callback) {
+
         $.ajax({
             async: false,
             url: API_URL + "/api/collections/get_tags",
@@ -163,6 +165,7 @@ const ViewCollection: React.FC<Props> = ({}) => {
   }
 
   function onSearch(callback) {
+
     const token = CookieService.get('access_token');
     $.ajax({
       async: false,
@@ -185,8 +188,13 @@ const ViewCollection: React.FC<Props> = ({}) => {
       },
     });
   }
-  requestTags();
-  request();
+  console.log(str);
+  
+  if(str){
+    request();
+    requestTags();
+  }
+  
 
   return (
     <React.Fragment>

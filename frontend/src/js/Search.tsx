@@ -109,7 +109,6 @@ interface Props {
 interface SearchForm {
   title: any;
 }
-
 let bookToAdd;
 
 const Search: React.FC<Props> = ({ userSignedIn }: Props) => {
@@ -119,6 +118,7 @@ const Search: React.FC<Props> = ({ userSignedIn }: Props) => {
   let totalRatings : number = 0;
   let readCount : number = 0;
   let collectionCount : number = 0;
+  
 
   const token = CookieService.get("access_token");
 
@@ -129,26 +129,13 @@ const Search: React.FC<Props> = ({ userSignedIn }: Props) => {
 
   const onTextboxChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setSearchForm((prevSearchForm) => {
+    setSearchForm((prevSearchForm) => {    
       return {
         ...prevSearchForm,
         [name]: value,
       };
     });
   };
-
-  function request() {
-    var data = onSearch(function (data) {
-      console.log(data);
-      if (data != null) {
-        if (data.message == "Got matching books") {
-            books = data.book_list;
-        } else if (data.message == "Got users") {
-            users = data.user_list;
-        } 
-      }
-    });
-  }
 
   function addLib(id) {
         $.ajax({
@@ -187,34 +174,6 @@ const Search: React.FC<Props> = ({ userSignedIn }: Props) => {
   function advSearch(event) {
     event.preventDefault();
     window.location.href = "/search?title=" + SearchForm.title;
-  }
-
-  function onSearch(callback) {
-    console.log('search for: ' + txt);
-    console.log(api_call);
-    $.ajax({
-      async: false,
-      url: api_call,
-      data: {
-        search: txt,
-        average_rating: minimumRating,
-        total_ratings: filterState.minimumTotalRatings,
-        read_count: filterState.minimumReadCount,
-        collection_count: filterState.minimumCollectionCount,
-      },
-      method: "GET",
-      success: function (data) {
-        console.log(data);
-        if (data != null) {
-          callback(data);
-        }
-        callback(null);
-      },
-      error: function () {
-        console.log("server error!");
-        callback(null);
-      },
-    });
   }
 
   const [expanded, setExpanded] = useState(false);
@@ -279,32 +238,7 @@ const Search: React.FC<Props> = ({ userSignedIn }: Props) => {
   console.log(readCount);
   console.log(collectionCount);
 
-  let str = window.location.href.split("?")[1];
-  let type = str.split("=")[0];
-  str = str.split("=")[1];
-  let array = str.split("%20");
-  console.log(array);
-  var txt = "";
-  for(let i=0; i < array.length; i++ ){
-      txt = txt.concat(array[i]);
-      if(i != array.length-1){
-          txt = txt.concat(" ");
-      }
-      console.log(txt);
-  }
   
-  console.log("To find: " + txt + " of type: " + type);
-
-  let api_call: string;
-  let s = window.location.href.split("?");
-  console.log("length: " + s.length);
-  if (type == "title" && s.length == 2) {
-    console.log('call search API');
-    api_call = API_URL + "/api/books/search";
-  } else if (type == "title" && s.length > 2){
-    console.log('call filter API');
-    api_call = API_URL + "/api/books/filter";
-  }
 
     const [ open, setOpen ] = useState(false);
     let [ userBookCollections, setUserBookCollections ] = useState([]);
@@ -380,6 +314,83 @@ const Search: React.FC<Props> = ({ userSignedIn }: Props) => {
             }
         })
     }
+
+  //splitting href parameters to find search string
+  let str = window.location.href.split("?")[1];
+  let type = str.split("=")[0];
+  str = str.split("=")[1];
+  const load = 1;
+  
+  let array = str.split("%20"); // %20 in search string are spaces by href parameters
+  console.log(array); 
+  var txt = "";
+  for(let i=0; i < array.length; i++ ){
+      txt = txt.concat(array[i]);
+      if(i != array.length-1){
+          txt = txt.concat(" ");
+      }
+      console.log(txt);
+  }
+
+  console.log("To find: " + txt + " of type: " + type);
+
+  let api_call: string;
+  let s = window.location.href.split("?");
+  console.log("length: " + s.length);
+  if (type == "title" && s.length == 2) {
+    console.log('call search API');
+    api_call = API_URL + "/api/books/search";
+  } else if (type == "title" && s.length > 2){
+    console.log('call filter API');
+    api_call = API_URL + "/api/books/filter";
+  }
+
+  function request() {
+    // if(n){
+
+    // } 
+
+    var data = onSearch(function (data) {
+      console.log(data);
+   
+      if (data != null) {
+        if (data.message == "Got matching books") {
+            books = data.book_list;
+        } else if (data.message == "Got users") {
+            users = data.user_list;
+        } 
+      }
+    });
+     
+  }
+
+  function onSearch(callback) {
+    console.log('search for: ' + txt);
+    console.log(api_call);
+    $.ajax({
+      async: false,
+      url: api_call,
+      data: {
+        search: txt,
+        average_rating: minimumRating,
+        total_ratings: filterState.minimumTotalRatings,
+        read_count: filterState.minimumReadCount,
+        collection_count: filterState.minimumCollectionCount,
+      },
+      method: "GET",
+      success: function (data) {
+        console.log(data);
+        if (data != null) {
+          callback(data);
+        }
+        callback(null);
+      },
+      error: function () {
+        console.log("server error!");
+        callback(null);
+      },
+    });
+  }
 
   onSearch(request);
   requestUserCollections();
