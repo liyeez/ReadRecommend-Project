@@ -517,7 +517,7 @@ def recommendations(request):
             genres[book.genre] = 1
     sort = sorted(genres.items(), key=lambda x: x[1], reverse=True)
     genre = sort[0][0]
-    books = Book.objects.filter(genre = genre)
+    books = Book.objects.filter(genre__contains = genre)
     book_list = []
     count = 0
     for book in books:
