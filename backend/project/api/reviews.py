@@ -17,9 +17,27 @@ def get_reviews(request):
 
     review_list = []
     for review in reviews.all():
-        review_list.append({"user_id":review.user.id,"user_name": (review.user.first_name + " " + review.user.last_name), 
-                            "review": review.text,"rating": review.score})
+        review_list.append({"user_id": review.user.id, "user_name": review.user.first_name + ' ' + review.user.last_name, "review": review.text, "rating": review.score})
 
+    if len(review_list) > 0:
+        message = "Got matching reviews"
+    else:
+        message = "No matches found"
+
+    return Response({"status": "ok", "message": message, "review_list": review_list}, status=status.HTTP_200_OK)
+
+@api_view(["GET"])
+@auth_validator
+@input_validator(["id"])
+def get_reviews_auth(request):
+
+    book_id = request.GET["id"]
+    reviews = Review.objects.filter(book=book_id)
+
+    review_list = []
+    for review in reviews.all():
+        review_list.append({"user_id": review.user.id, "user_name": review.user.first_name + ' ' + review.user.last_name, "review": review.text, "rating": review.score})
+        
     if len(review_list) > 0:
         message = "Got matching reviews"
     else:
