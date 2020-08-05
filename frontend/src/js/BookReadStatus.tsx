@@ -19,17 +19,11 @@ interface Props {
 
 const BookReadStatus: React.FC<Props> = ({ bookId }: Props) => {
     const token = CookieService.get("access_token");
+    const [status, setStatus] = useState<boolean>(false);
     const [statusChanged, setStatusChanged] = useState<boolean>(false);
+    const [load, setLoad] = useState<boolean>(false);
 
-    function initialiseReadStatus(bookId) : boolean {
-        let status = false;
-        var data = getReadStatus(bookId, function (data) {
-            status = data.is_read;
-        });
-        return status;
-    }
-
-    function getReadStatus(bookId, callback) {
+    function getReadStatus(bookId) {
         $.ajax({
             async: false,
             url: API_URL + "/api/books/is_read",
@@ -41,14 +35,12 @@ const BookReadStatus: React.FC<Props> = ({ bookId }: Props) => {
             success: function (data) {
                 if (data != null) {
                     console.log(data.is_read);
-                    callback(data);
-                } else {
-                    callback(null);
+                    setStatus(data.is_read);
                 }
             },
             error: function() {
                 console.log("server error!");
-                callback(null);
+              
             }
         })
     }
@@ -83,12 +75,16 @@ const BookReadStatus: React.FC<Props> = ({ bookId }: Props) => {
             }
         })
     }
+    if(!load){
+        setLoad(true); // to stop re-rendering
+        getReadStatus(bookId);
+    }
 
     return (
         <React.Fragment>
             {/* Switch To Display Read Status of Book */}
             <FormGroup row>
-                <FormControlLabel control={<Switch checked={initialiseReadStatus(bookId)} onChange={() => toggleRead(bookId)} color="primary"/>} label="Read Status"/>
+                <FormControlLabel control={<Switch checked={status} onChange={() => toggleRead(bookId)} color="primary"/>} label="Read Status"/>
             </FormGroup>
         </React.Fragment>
     )
