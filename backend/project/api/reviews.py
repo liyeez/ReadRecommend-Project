@@ -17,15 +17,33 @@ def get_reviews(request):
 
     review_list = []
     for review in reviews.all():
-        review_list.append({"user_id":review.user.id,"user_name": (review.user.first_name + " " + review.user.last_name), 
-                            "review": review.text,"rating": review.score})
+        review_list.append({"user_id": review.user.id, "user_name": review.user.first_name + ' ' + review.user.last_name, "review": review.text, "rating": review.score})
 
     if len(review_list) > 0:
         message = "Got matching reviews"
     else:
         message = "No matches found"
 
-    return Response({"status": "ok", "message": message, "review_list": review_list, "currentUser": request.user.id}, status=status.HTTP_200_OK)
+    return Response({"status": "ok", "message": message, "review_list": review_list}, status=status.HTTP_200_OK)
+
+@api_view(["GET"])
+@auth_validator
+@input_validator(["id"])
+def get_reviews_auth(request):
+
+    book_id = request.GET["id"]
+    reviews = Review.objects.filter(book=book_id)
+
+    review_list = []
+    for review in reviews.all():
+        review_list.append({"user_id": review.user.id, "user_name": review.user.first_name + ' ' + review.user.last_name, "review": review.text, "rating": review.score})
+        
+    if len(review_list) > 0:
+        message = "Got matching reviews"
+    else:
+        message = "No matches found"
+
+    return Response({"status": "ok", "message": message, "review_list": review_list, "current_user": request.user.id}, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
 @auth_validator
@@ -72,20 +90,11 @@ def remove_review(request):
 @input_validator(["id"])
 def user_reviews(request):
 
-    
-   # for user in User.objects.all():
-    #    print(user.id)
-    try:
-        user = User.objects.get(id=id)
-        
-    except:
-        return Response({"status": "error", "message": "invalid user"}, status=status.HTTP_200_OK)
-
-    reviews = Review.objects.filter(user=user)
+    reviews = Review.objects.filter(user=request.user)
 
     review_list = []
     for review in reviews.all():
-        review_list.append({"id": book_id, "review": review.text,
+        review_list.append({"id": review.book_id, "review": review.text,
                             "rating": review.score})
 
     if len(review_list) > 0:

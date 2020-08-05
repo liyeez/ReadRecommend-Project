@@ -26,5 +26,7 @@ Week 8
 Worked with Stephanie to make a few requested changes like additional fields for book data, changing cover from base64 encoded image to url, etc. Added a few additional requested features like returning all collections with a tag, etc.
 
 Week 9
-Added a few more requested features from frontend. Prepped + deployed vms for the project. Set up deployment pipeline, web servers, hosts, https, etc.
+Added a few more requested features from frontend. Prepped + deployed vms for the project. Set up deployment pipeline, web servers, hosts, https, etc. Modified book adding pipeline for additional book data and functionality.
 
+Week 10
+Prep for final presentation and report. Made requested changes to backend, especially to the external api book lookup which was being problematic. Identified and fixed a few small bugs. Worked on final report. Should be all prepared for presentation.
