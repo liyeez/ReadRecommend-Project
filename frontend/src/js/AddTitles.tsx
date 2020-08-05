@@ -73,209 +73,209 @@ interface SearchForm {
 
 // to detect if user is signed in
 interface Props {
-  userSignedIn: boolean;
+    userSignedIn: boolean;
 }
 
 const AddTitles: React.FC<Props> = ({ userSignedIn }: Props) => {
-  const classes = Style(); 
+    const classes = Style(); 
 
-  let book_list: any = [];
+    let book_list: any = [];
   
-  // get collection_id from url
-  let collectionId = window.location.href.split("?")[1];
-  collectionId = collectionId.split("=")[1];
+    // get collection_id from url
+    let collectionId = window.location.href.split("?")[1];
+    collectionId = collectionId.split("=")[1];
 
-  const [SearchForm, setSearchForm] = useState<SearchForm>({
-    title: "",
-  });
+    const [SearchForm, setSearchForm] = useState<SearchForm>({
+      title: "",
+    });
 
   // to update frontend display of search bar text box
-  const onTextboxChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setSearchForm((prevSearchForm) => {
-      return {
-        ...prevSearchForm,
-        [name]: value,
-      };
-    });
-  };
+    const onTextboxChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setSearchForm((prevSearchForm) => {
+            return {
+                ...prevSearchForm,
+                [name]: value,
+            };
+        });
+    };
 
   
-  function redirectSearch(event) {
-    window.location.href = "/search?title=" + SearchForm.title;
-  }
+    function redirectSearch(event) {
+        window.location.href = "/search?title=" + SearchForm.title;
+    }
 
   // Retrieves new titles from backend.
-  function findNewTitles() {
-    $.ajax({
-      async: false,
-      url: API_URL + "/api/books/random_not_library",
-      data: {
-        auth: token,
-        count: 9,
-      },
-      method: "GET",
-      success: function (data) {
-        console.log(data);
-        if (data != null && data.message == "Got random no in library books") {
-          book_list = data.book_list;
-        }else{
-          console.log('no random books!');
-        }
-      },
-      error: function () {
-        console.log("random server error!");
-        
-      },
-    });
-  }
+    function findNewTitles() {
+        $.ajax({
+            async: false,
+            url: API_URL + "/api/books/random_not_library",
+            data: {
+                auth: token,
+                count: 9,
+            },
+            method: "GET",
+            success: function (data) {
+          
+                if (data != null && data.message == "Got random no in library books") {
+                    book_list = data.book_list;
+                }else{
+                    console.log('no random books!');
+                }
+            },
+            error: function () {
+                console.log("random server error!");
+            },
+        });
+    }
 
   // Add title to collection on backend.
-  function addTitleToCollection(idToAdd) {
-    $.ajax({
-      async: false,
-      url: API_URL + "/api/collections/add_title",
-      data: {
-        auth: token,
-        collection_id: collectionId,
-        id: idToAdd,
-      },
-      method: "POST",
-      success: function (data) {
-        if (data != null) {
-          if (data == "Book added to collection") {
-            alert("Successfully added title to collection!");
-          }
-        }
-      },
-      error: function () {
-        console.log("server error!");
-      },
-    });
-  }
+    function addTitleToCollection(idToAdd) {
+        $.ajax({
+            async: false,
+            url: API_URL + "/api/collections/add_title",
+            data: {
+                auth: token,
+                collection_id: collectionId,
+                id: idToAdd,
+            },
+            method: "POST",
+            success: function (data) {
+                if (data != null) {
+                    if (data == "Book added to collection") {
+                        alert("Successfully added title to collection!");
+                      }
+                }
+            },
+            error: function () {
+                console.log("server error!");
+            },
+        });
+    }
 
-  // get user logged in token
-  const token = CookieService.get("access_token");
-  // get random books that are not in current user library
-  findNewTitles();
+    // get user logged in token
+    const token = CookieService.get("access_token");
+    // get random books that are not in current user library
+    findNewTitles();
 
-  return (
-    <React.Fragment>
-      <CssBaseline />
-      <main>
-        {/* Title of page */}
-        <div className={classes.heroContent}>
-          <Container maxWidth="sm">
-            <Typography
-              component="h1"
-              variant="h2"
-              align="center"
-              color="textPrimary"
-              gutterBottom
-            >
-              Add Titles
-            </Typography>
-            <Typography
-              variant="h5"
-              align="center"
-              color="textSecondary"
-              paragraph
-            >
-              Browse through books to add to your collection.
-            </Typography>
- 
-             {/*Search bar*/}
-            <div className={classes.heroButtons}>
-              <Grid container spacing={2} justify="center">
+    return (
+        <React.Fragment>
+            <CssBaseline />
+                <main>
+                    {/* Title of page */}
+                        <div className={classes.heroContent}>
+                            <Container maxWidth="sm">
+                                <Typography
+                                  component="h1"
+                                  variant="h2"
+                                  align="center"
+                                  color="textPrimary"
+                                  gutterBottom
+                                >
+                                    Add Titles
+                                </Typography>
+                                <Typography
+                                  variant="h5"
+                                  align="center"
+                                  color="textSecondary"
+                                  paragraph
+                                >
+                                    Browse through books to add to your collection.
+                                </Typography>
+     
+                                 {/*Search bar*/}
+                                <div className={classes.heroButtons}>
+                                    <Grid container spacing={2} justify="center">
                 
-                <Grid item>
-                  <Paper className={classes.root}>
-                    <TextField
-                      className={classes.input}
-                      placeholder="Find a Book"
-                      value={SearchForm.title}
-                      name="title"
-                      label="Search ReadRecommend"
-                      onChange={onTextboxChange}
-                    />
-                    <IconButton
-                      type="submit"
-                      onClick={redirectSearch}
-                      className={classes.iconButton}
-                      aria-label="search"
-                    >
-                      <SearchIcon />
-                    </IconButton>
-                  </Paper>
-                </Grid>
+                                        <Grid item>
+                                            <Paper className={classes.root}>
+                                                <TextField
+                                                  className={classes.input}
+                                                  placeholder="Find a Book"
+                                                  value={SearchForm.title}
+                                                  name="title"
+                                                  label="Search ReadRecommend"
+                                                  onChange={onTextboxChange}
+                                                />
+                                                <IconButton
+                                                  type="submit"
+                                                  onClick={redirectSearch}
+                                                  className={classes.iconButton}
+                                                  aria-label="search"
+                                                >
+                                                    <SearchIcon />
+                                                </IconButton>
+                                            </Paper>
+                                        </Grid>
 
-                {/* Editing page redirect button */}
-                <Grid item>
-                  <Button
-                    variant="outlined"
-                    color="default"
-                    component={Router.Link}
-                    to={"/user/editcollection?collectionid=" + collectionId}
-                    startIcon={<ArrowBackIosIcon />}
-                  >
-                    Back to Editing
-                  </Button>
-                </Grid>
+                                        {/* Editing page redirect button */}
+                                        <Grid item>
+                                            <Button
+                                            variant="outlined"
+                                            color="default"
+                                            component={Router.Link}
+                                            to={"/user/editcollection?collectionid=" + collectionId}
+                                            startIcon={<ArrowBackIosIcon />}
+                                            >
+                                                Back to Editing
+                                            </Button>
+                                        </Grid>
 
-              </Grid>
-            </div>
-          </Container>
-        </div>
+                                    </Grid>
+                                </div>
+                            </Container>
+                        </div>
 
-         {/*Display books not inside the collection.*/}
-        <Container className={classes.cardGrid} maxWidth="md">
-          <Grid container spacing={4}>
+                        {/*Display books not inside the collection.*/}
+                        <Container className={classes.cardGrid} maxWidth="md">
+                            <Grid container spacing={4}>
            
-            {book_list.map((book) => (
-              <Grid item key={book.book_id} xs={12} sm={6} md={4}>
-                <Card className={classes.card}>
-                  <CardMedia
-                    className={classes.cardMedia}
-                    image="https://source.unsplash.com/random?book"
-                    title="Image title"
-                  />
-                  <CardContent className={classes.cardContent}>
-                    <Typography gutterBottom variant="h5" component="h2">
-                      {book.book_title}
-                    </Typography>
-                    <Typography>
-                      {book.book_description}
-                    </Typography>
-                  </CardContent>
-                  <CardActions>
-                    <Button
-                      size="small"
-                      color="primary"
-                      component={Router.Link}
-                      to={"/bookdata/metadata?id=" + book.book_id}
-                    >
-                      View
-                    </Button>
-                    {userSignedIn ? (
-                      <Button
-                        size="small"
-                        color="primary"
-                        onClick={() => addTitleToCollection(book.book_id)}
-                        endIcon={<AddIcon />}
-                      >
-                        {" "}
-                        Add to Collection{" "}
-                      </Button>
-                    ) : null}
-                  </CardActions>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
-        </Container>
-      </main>
-    </React.Fragment>
-  );
+                                {book_list.map((book) => (
+                                    <Grid item key={book.book_id} xs={12} sm={6} md={4}>
+                                        <Card className={classes.card}>
+                                            <CardMedia
+                                                className={classes.cardMedia}
+                                                image="https://source.unsplash.com/random?book"
+                                                title="Image title"
+                                            />
+                                            <CardContent className={classes.cardContent}>
+                                                <Typography gutterBottom variant="h5" component="h2">
+                                                    {book.book_title}
+                                                </Typography>
+                                                <Typography>
+                                                    {book.book_description}
+                                                </Typography>
+                                            </CardContent>
+                                            <CardActions>
+                                                <Button
+                                                    size="small"
+                                                    color="primary"
+                                                    component={Router.Link}
+                                                    to={"/bookdata/metadata?id=" + book.book_id}
+                                                >
+                                                    View
+                                                </Button>
+                                                {userSignedIn ? (
+                                                    <Button
+                                                    size="small"
+                                                    color="primary"
+                                                    onClick={() => addTitleToCollection(book.book_id)}
+                                                    endIcon={<AddIcon />}
+                                                    >
+                                                        {" "}
+                                                        Add to Collection{" "}
+                                                    </Button>
+                                                ) : null}
+
+                                            </CardActions>
+                                        </Card>
+                                    </Grid>
+                                ))}
+                            </Grid>
+                        </Container>
+                    </main>
+                </React.Fragment>
+          );
 };
 
 export default AddTitles;

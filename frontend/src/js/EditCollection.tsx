@@ -185,7 +185,8 @@ const EditCollection: React.FC<Props> = ({}) => {
             }
         });
     }
-
+    
+    // callback function for getting Tags from backend
     function requestTags() {
         var result = getTags(function (result) {
             if (result != null) {
@@ -205,7 +206,8 @@ const EditCollection: React.FC<Props> = ({}) => {
             }
         });
     }
-
+    
+    //get the books currently in the collection
     function getBooks(callback) {
         const token = CookieService.get('access_token');
         $.ajax({
@@ -228,7 +230,8 @@ const EditCollection: React.FC<Props> = ({}) => {
             },
         });
     }
-
+    
+    // function for getting Tags from backend
     function getTags(callback) {
         $.ajax({
             async: false,

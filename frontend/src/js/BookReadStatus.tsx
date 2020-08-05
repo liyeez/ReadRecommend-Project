@@ -19,8 +19,10 @@ interface Props {
 
 const BookReadStatus: React.FC<Props> = ({ bookId }: Props) => {
     const token = CookieService.get("access_token");
+    // to store the read status of books display
     const [statusChanged, setStatusChanged] = useState<boolean>(false);
-
+    
+    //check the current read status
     function initialiseReadStatus(bookId) : boolean {
         let status = false;
         var data = getReadStatus(bookId, function (data) {
@@ -59,7 +61,8 @@ const BookReadStatus: React.FC<Props> = ({ bookId }: Props) => {
             setStatusChanged(!statusChanged);
         });
     }
-
+    
+    //mark the read status per trigger
     function setReadStatus(bookId, callback) {
         $.ajax({
             async: false,

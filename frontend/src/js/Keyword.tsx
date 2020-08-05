@@ -47,7 +47,7 @@ const Style = makeStyles((theme) => ({
     flexDirection: "column",
   },
   cardMedia: {
-    paddingTop: "56.25%", // 16:9
+    paddingTop: "56.25%", 
   },
   cardContent: {
     flexGrow: 1,
@@ -77,8 +77,7 @@ const Search: React.FC<Props> = ({}) => {
 
   function newSearch(event) {
     event.preventDefault();
-    let s = (`${encodeURIComponent(SearchForm.title)}`);
-    window.location.href = "/keyword?string=" + s;
+    window.location.href = "/keyword?string=" + SearchForm.title;
   }
 
   const onTextboxChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -91,21 +90,22 @@ const Search: React.FC<Props> = ({}) => {
     });
   };
   
-
+  
   function viewBook(data) {
       window.location.href = "/bookdata/metadata?id=" + data;
   }
-
+  
+  //split string and get keyword
   let str = '';
   let href = `${decodeURIComponent(window.location.href)}`;
   console.log(href);
   if(href.split("?")[1]){
       str = href.split("?")[1];
-      str = str.split("=")[1]; //get keyword
+      str = str.split("=")[1]; 
   }
 
   let books: any;
-  let flag = false;
+  let flag = false; // used to display user feedback
 
   function keywordSearch() {
     console.log('search for: ' + str);
@@ -144,7 +144,7 @@ const Search: React.FC<Props> = ({}) => {
       <CssBaseline />
 
       <main>
-        {/* Hero unit */}
+        {/* Title of page */}
         <div className={classes.heroContent}>
           <Container maxWidth="sm">
             <Typography
@@ -165,7 +165,8 @@ const Search: React.FC<Props> = ({}) => {
             >
               Find a book with a keyword "{str}"
             </Typography>
-
+            
+            {/*Search bar*/}
             <div className={classes.heroButtons}>
               <Grid container spacing={2} justify="center">
                 <Grid item>
@@ -193,7 +194,8 @@ const Search: React.FC<Props> = ({}) => {
           </Container>
         </div>
 
-        { flag
+        
+        { flag //user feedback 
 
             ? ( 
                 <Container className={classes.cardGrid} maxWidth="md">

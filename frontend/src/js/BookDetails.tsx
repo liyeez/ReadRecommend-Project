@@ -35,11 +35,6 @@ const useStyles = makeStyles((theme) => ({
   image: {
     backgroundImage: "url(https://source.unsplash.com/random)",
     backgroundRepeat: "no-repeat",
-    // backgroundColor:
-    //   theme.palette.type === "light"
-    //     ? theme.palette.grey[50]
-    //     : theme.palette.grey[900],
-    // backgroundSize: "cover",
     height: 500,
     width: 700,
     justify: "center",
@@ -81,56 +76,31 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-
-function Item(props) {
-  const classes = useStyles();
-  return (
-    <Card className={classes.cardGrid}>
-      <Typography component="p" align="center">
-        {props.item.name}
-      </Typography>
-      <Typography component="p" align="center">
-        {props.item.description}
-      </Typography>
-      <Grid container justify="center" className={classes.blockSpacing}>
-        <Button
-          component={Router.Link}
-          to="/bookdata/metadata"
-          type="submit"
-          variant="contained"
-          color="primary"
-        >
-          Check it out!
-        </Button>
-      </Grid>
-    </Card>
-  );
-}
-
 interface Props {}
 
-function viewBook(data) {
-  window.location.href = "/bookdata/metadata?id=" + data;
-}
 
 const BookDetails: React.FC<Props> = ({}) => {
+  //styling
   const classes = useStyles();
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
   const token = CookieService.get("access_token");
+  
+  //getting book id from url
   let str = window.location.href.split("?")[1];
   let type = str.split("=")[0];
   str = str.split("=")[1];
   console.log("To find: " + str + " of type: " + type);
+  
   let book: any;
-  let inLibFlag =-1; 
+  let inLibFlag =-1; // to check if the book is in user's library
 
-
+  // search for the book details
   function request() {
     var data = onSearch(function (data) {
       if (data != null) {
         console.log(data);
-        book = data;
+        book = data; //store book
       } else {
         alert("Failed to get book data!");
         window.location.href = "/";
@@ -138,6 +108,7 @@ const BookDetails: React.FC<Props> = ({}) => {
     });
   }
 
+  // add book to library
   function addBook(id) {
     var data = addLib(id, function (data) {
       if (data != null) {
@@ -174,6 +145,7 @@ const BookDetails: React.FC<Props> = ({}) => {
     });
   }
 
+  // remove book from library
   function removeBook(id) {
     $.ajax({
       async: false,
@@ -197,6 +169,7 @@ const BookDetails: React.FC<Props> = ({}) => {
     });
   }
 
+  // check if the book is in the library
   function inLib() {
     let str = window.location.href.split("?")[1];
     str = str.split("=")[1];
@@ -212,7 +185,7 @@ const BookDetails: React.FC<Props> = ({}) => {
       success: function (data) {
         console.log(data);
         if(data.in_library){
-          inLibFlag +=1;
+          inLibFlag +=1; //change flag accordingly
         }
         console.log(inLibFlag);
       },
@@ -221,8 +194,10 @@ const BookDetails: React.FC<Props> = ({}) => {
       },
     });
   }
-
+  
+  // get book data from backend
   function onSearch(callback) {
+    //get book id 
     let str = window.location.href.split("?")[1];
     str = str.split("=")[1];
     console.log("getting data for bookID: " + str);
@@ -248,7 +223,8 @@ const BookDetails: React.FC<Props> = ({}) => {
       },
     });
   }
-
+  
+  // only check if book is in user library if the current user is signed in
   if(token){
     inLibFlag = 0;
     inLib();
@@ -260,6 +236,7 @@ const BookDetails: React.FC<Props> = ({}) => {
     <React.Fragment>
       <CssBaseline />
       <main>
+
          <Container maxWidth="xl">
           <Grid container spacing={3} className={classes.container}>
             {/*Book Cover*/}
@@ -313,6 +290,7 @@ const BookDetails: React.FC<Props> = ({}) => {
                   </Typography>
 
                   <Grid container justify="center" className={classes.blockSpacing}>
+                    {/*Displays add or remove from library depending on flag*/}
                     { inLibFlag == 0
                       ? (<Button
                           onClick={() => addBook(book.book_id)}
@@ -337,13 +315,12 @@ const BookDetails: React.FC<Props> = ({}) => {
                     }
                   </Grid>
                 </Grid>
-              </Paper>
-
-              
+              </Paper>  
             </Grid>
           </Grid>
         </Container>
 
+      {/*Displays Reviews*/}
         <Container maxWidth="xl">
           <Grid container spacing={3} className={classes.container}>
           
@@ -352,11 +329,7 @@ const BookDetails: React.FC<Props> = ({}) => {
                 <Reviews book={book}/>
               </Paper>
             </Grid>
-            {/*Carousel*/} {/*TBD feature*/}
-            <Grid item xs={12} md={8} lg={9}>
-              
-              
-            </Grid>
+            
           </Grid>
         </Container>
       </main>

@@ -76,19 +76,20 @@ interface SearchForm {
   title: any;
 }
 
-var index= 0;
-let tempExtBooks: any = [];
+var index = 0; //to record the size of the results returned by externalSearch
+let tempExtBooks: any = []; //to temporary store books returned
 
 const Search: React.FC<Props> = ({}) => {
   
   const classes = Style();
-  const [SearchForm, setSearchForm] = useState<SearchForm>({
+  const [SearchForm, setSearchForm] = useState<SearchForm>({ // for search string
       title: "",
   });
+  
+  const [ loadTimes, setLoadTimes ] = useState(false); // to ensure render only once
+  const [ extBooks, setExtBooks ] = useState([]); // to store reviews returned from render
 
-  const [ loadTimes, setLoadTimes ] = useState(false);
-  const [ extBooks, setExtBooks ] = useState([]);
-
+  // setState for search string 
   const onTextboxChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setSearchForm((prevSearchForm) => {
@@ -99,6 +100,8 @@ const Search: React.FC<Props> = ({}) => {
     });
   };
 
+
+  //search for books externally (does not create book obj in backend)
   function extSearch() {
     $.ajax({
       async: false,
@@ -123,26 +126,24 @@ const Search: React.FC<Props> = ({}) => {
       },
     });
   }
- 
+
+  // to store book in the backend when user decide to view the book
   function storeBook(book) {
-    console.log("In storeBook");
+
+    // to fill in incomplete fields
     if(book.book_author == ""){
       book.book_author = 'Unknown';
     }
+
     let date = book.book_pub_date.split("-");
-    if(date.length < 3){ //incomplete pub date
+    if(date.length < 3){ //incomplete published date
       if(parseInt(date[0]) > 1000){ //check if its year
           book.book_pub_date = date[0] + '-' + '01' + '-' + '01'; //default jan first
       }else{
           book.book_pub_date = '2000' + '-' + '01' + '-' + '01'; 
       }
     }
-    // console.log(book.book_cover);  TODO book_cover
-    // if(!isUrl(book.book_cover)){
-    //     book.book_cover = '';
-    // }
 
-    console.log(book);
     $.ajax({
       async: false,
       url: API_URL + "/api/books/add_book",
@@ -173,12 +174,14 @@ const Search: React.FC<Props> = ({}) => {
       },
     });
   }
-
+  
+  //redirect to search locally
   function localSearch(event) {
     event.preventDefault();
     window.location.href = "/search?title=" + SearchForm.title;
   }
 
+  //redirect to search externally
   function externalSearch(event) {
     event.preventDefault();
     window.location.href = "/extsearch?title=" + SearchForm.title + "?index=0";
@@ -187,10 +190,13 @@ const Search: React.FC<Props> = ({}) => {
   let type = (window.location.href.split("?")[1]).split("=")[0];
   let index = (window.location.href.split("?")[2]).split("=")[1];
   let array = ((window.location.href.split("?")[1]).split("=")[1]).split("%20");
+  let check = ((window.location.href.split("?")[1]).split("=")[1]).split("%27");
 
-  console.log(index);
-  console.log(array);
+  if(check){
+    alert("Apostrophe degrades our performance! Please try another search string");
+  }
 
+  //split string to append with string
   var txt = "";
   for(let i=0; i < array.length; i++ ){
       txt = txt.concat(array[i]);
@@ -198,17 +204,17 @@ const Search: React.FC<Props> = ({}) => {
         txt = txt.concat(" ");
       }  
   }
-  console.log("To find ext: " + txt + " of type: " + type);
-
+  
+  //get more results using index
   function moreResults() {
     console.log("more results with: " + index);
     window.location.href = "/extsearch?title=" + txt + "?index=" + index;
   }
 
-  if(!loadTimes){
+  if(!loadTimes){ // to prevent re-rendering
     extSearch();
-
   }
+  
   tempExtBooks = extBooks;
 
   return (
@@ -216,7 +222,7 @@ const Search: React.FC<Props> = ({}) => {
       <CssBaseline />
 
       <main>
-        {/* Hero unit */}
+        {/* Title of Page and Search bar */}
         <div className={classes.heroContent}>
           <Container maxWidth="sm">
             <Typography
@@ -272,6 +278,7 @@ const Search: React.FC<Props> = ({}) => {
           </Container>
         </div>
        
+        {/*Display results*/}
         <Container className={classes.cardGrid} maxWidth="md">
             <Grid container spacing={4}>
                 { tempExtBooks.length > 0 
@@ -334,17 +341,3 @@ const Search: React.FC<Props> = ({}) => {
 };
 
 export default Search;
-
- // { tempExtBooks.length > 0 
- //              ? (<IconButton
- //              type="submit"
- //              className={classes.iconButton}
- //              aria-label="search"
- //              onClick={moreResults}
- //            > 
- //              More Results 
- //              <MoreHorizIcon/>
-            
- //            </IconButton>)
- //              :(null)
- //            }

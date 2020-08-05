@@ -226,107 +226,105 @@ const Search: React.FC<Props> = ({ userSignedIn }: Props) => {
       readCount = parseFloat(parameters[4].split("=")[1]);
       collectionCount = parseFloat(parameters[5].split("=")[1])
   }
-
-    console.log(averageRating);
-    console.log(totalRatings);
-    console.log(readCount);
-    console.log(collectionCount);
-
     
-    const [ open, setOpen ] = useState(false);
-    const [ loadTimes, setLoadTimes ] = useState(false);
-    const [ books, setBooks ] = useState([]);
-    let [ userBookCollections, setUserBookCollections ] = useState([]);
-    const [ addToCollectionId, setAddToCollectionId ] = useState("");
-    const [ addToCollectionError, setAddToCollectionError ] = useState("");
+  const [ open, setOpen ] = useState(false);
+  const [ loadTimes, setLoadTimes ] = useState(false);
+  const [ books, setBooks ] = useState([]);
+  let [ userBookCollections, setUserBookCollections ] = useState([]);
+  const [ addToCollectionId, setAddToCollectionId ] = useState("");
+  const [ addToCollectionError, setAddToCollectionError ] = useState("");
 
-    const handleClickOpen = (bookId) => {
-        bookToAdd = bookId;
-        setOpen(true);
-    }
+  const handleClickOpen = (bookId) => {
+      bookToAdd = bookId;
+      setOpen(true);
+  }
 
-    const handleClose = () => {
-        setOpen(false);
-    }
+  const handleClose = () => {
+      setOpen(false);
+  }
 
-    const handleChange = (event: React.ChangeEvent<{value: unknown}>) => {
-        setAddToCollectionId(event.target.value as string);
-    }
+  const handleChange = (event: React.ChangeEvent<{value: unknown}>) => {
+      setAddToCollectionId(event.target.value as string);
+  }
 
-    function requestUserCollections() {
-        var data = getUserCollections(function (data) {
-            if (data != null) {
-                userBookCollections = data.collection_list;
-            }
-        });
-    }
+  function requestUserCollections() {
+      var data = getUserCollections(function (data) {
+          if (data != null) {
+              userBookCollections = data.collection_list;
+          }
+      });
+  }
 
-    function getUserCollections(callback) {
-        $.ajax({
-            async: false,
-            url: API_URL + "/api/user/my_profile",
-            method: "GET",
-            data : {
-                auth: token,
-            },
-            success: function (data) {
-                if (data != null) {
-                    if (data.message === "Got current user profile data") {
-                        callback(data);
-                    }
-                }
-            },
-            error: function(error) {
-                callback(error);
-                console.log("Get user collections server error!");
-            }
-        })
-    }
+  function getUserCollections(callback) {
+      $.ajax({
+          async: false,
+          url: API_URL + "/api/user/my_profile",
+          method: "GET",
+          data : {
+              auth: token,
+          },
+          success: function (data) {
+              if (data != null) {
+                  if (data.message === "Got current user profile data") {
+                      callback(data);
+                  }
+              }
+          },
+          error: function(error) {
+              callback(error);
+              console.log("Get user collections server error!");
+          }
+      })
+  }
 
-    function addBookToCollection(bookId, collectionId) {
-        handleClose();
-        $.ajax({
-            async: false,
-            url: API_URL + "/api/collections/add_title",
-            data: {
-                auth: token,
-                collection_id: parseInt(collectionId),
-                id: bookId,
-            },
-            method: "POST",
-            success: function (data) {
-                if (data != null) {
-                    console.log(data);
-                    if (data.message === "Book added to collection") {
-                        setAddToCollectionError("Successfully added title to collection!");
-                    } else if (data.message === "Book is already in collection") {
-                        setAddToCollectionError("This book is already in the requested collection!")
-                    }
-                }
-            },
-            error: function () {
-                console.log("Add book to collection server error!");
-            }
-        })
-    }
+  function addBookToCollection(bookId, collectionId) {
+      handleClose();
+      $.ajax({
+          async: false,
+          url: API_URL + "/api/collections/add_title",
+          data: {
+              auth: token,
+              collection_id: parseInt(collectionId),
+              id: bookId,
+          },
+          method: "POST",
+          success: function (data) {
+              if (data != null) {
+                  console.log(data);
+                  if (data.message === "Book added to collection") {
+                      setAddToCollectionError("Successfully added title to collection!");
+                  } else if (data.message === "Book is already in collection") {
+                      setAddToCollectionError("This book is already in the requested collection!")
+                  }
+              }
+          },
+          error: function () {
+              console.log("Add book to collection server error!");
+          }
+      })
+  }
 
   //splitting href parameters to find search string
   let str = window.location.href.split("?")[1];
   let type = str.split("=")[0];
   str = str.split("=")[1];
 
-  let array = str.split("%20"); // %20 in search string are spaces by href parameters
-  console.log(array); 
+  let array = str.split("%20"); 
+  // %20 in search string are spaces by href parameters
+
   var txt = "";
   for(let i=0; i < array.length; i++ ){
       txt = txt.concat(array[i]);
       if(i != array.length-1){
           txt = txt.concat(" ");
       }
-      console.log(txt);
   }
+  
+  let check = ((window.location.href.split("?")[1]).split("=")[1]).split("%27");
 
-  //console.log("To find: " + txt + " of type: " + type);
+  if(check){
+    alert("Apostrophe degrades our performance! Please try another search string");
+  }
 
   let api_call: string;
   let s = window.location.href.split("?");
@@ -388,7 +386,9 @@ const Search: React.FC<Props> = ({ userSignedIn }: Props) => {
       },
     });
   }
+  
 
+  
   request();
   requestUserCollections();
   temp_books = books;

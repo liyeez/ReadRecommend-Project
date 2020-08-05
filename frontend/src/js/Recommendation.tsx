@@ -285,9 +285,7 @@ const FindUser: React.FC<Props> = ({}) => {
         });
     } 
 
-
-    
-    
+    //get all recommendations
     getTagCol();
     getPopularGenre();
     getHistory();
@@ -300,6 +298,8 @@ const FindUser: React.FC<Props> = ({}) => {
             
             <Container className={classes.cardGrid} >
               <Grid container spacing={5} className={classes.carousel}>
+
+              {/*Fav Genre*/}
                 <Grid item>
                     <Typography gutterBottom variant="h4">
                        <WhatshotIcon /> Your favourite genre "{genre}" <WhatshotIcon />

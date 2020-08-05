@@ -48,7 +48,7 @@ export default function Collections(props) {
     const [collectionData, setCollectionData] = useState({
         collectionError: '',
     });
-
+    
     function deleteCollection(collectionid, collection_name) {
         var data = deleteCollectionHelper(collectionid, collection_name, function(data){
             if (data != null) {
@@ -90,23 +90,17 @@ export default function Collections(props) {
     }
 
     return (
+
         <Grid item xs={12} md={6}>
             <CardActionArea>
             <Card className={classes.card}>
                 <div className={classes.cardDetails}>
+                    {/* Display Collection Style and Content*/}
                     <CardContent className={classes.cardContent}>
                         <Typography component="h2" variant="h5">
                             {collection.collection_name}
                         </Typography>
-                        {/*}    only have name ...
-                        <Typography variant="subtitle1" color="textSecondary">
-                            {collection.date}
-                        </Typography>
-                        <Typography variant="subtitle1" paragraph>
-                            {collection.description}
-                        </Typography>
-                        */}
-                        {/* TODO: Dynamically change the router link to match the requested collection by collection id.*/}
+                        
                         <Button size="small" color="primary" component={Router.Link} to="/user/viewcollection" onClick={() => viewCollection(collection.collection_id)}>
                             <Typography variant="subtitle1" color="primary" >
                                 View

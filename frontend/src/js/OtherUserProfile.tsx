@@ -73,14 +73,14 @@ export default function Profile() {
   let str = window.location.href.split('?')[1];
   str = str.split('=')[1];
   console.log("To find user id : "+str);
-
+  
   const [userForm, setUserForm] = useState<userForm>({
     firstName: '',
     lastName: '',
   });
 
   function request() {
-    
+    //get specified user profile data
     var data = onSearch(function(data){ 
         if(data.message == "Got user profile data") {
             cards = data.collection_list;
@@ -89,45 +89,44 @@ export default function Profile() {
             lib = data.library_books;
         }else{
             alert("No Matched Results!");
-            //window.location.href='/';
         }
         
     });
   }
 
-    function onSearch(callback) {
-        
-        $.ajax({
-            async: false,
-            url: 'http://localhost:8000/api/user/get_profile',
-            data: {
-                user_id: str,
-            },
-            method: "GET",
-            success: function (data) {
-                if(data!= null) {
-                    console.log(data);
-                    callback(data);                
-                }
-                callback(null);
-            },
-            error: function () {
-                console.log("server error!");
-                callback(null);    
-            } 
-        });
-    }
+  function onSearch(callback) {
+      
+      $.ajax({
+          async: false,
+          url: 'http://localhost:8000/api/user/get_profile',
+          data: {
+              user_id: str,
+          },
+          method: "GET",
+          success: function (data) {
+              if(data!= null) {
+                  console.log(data);
+                  callback(data);                
+              }
+              callback(null);
+          },
+          error: function () {
+              console.log("server error!");
+              callback(null);    
+          } 
+      });
+  }
 
-    function viewCollection(data){
-       //console.log("col_id" + data);
-       window.location.href="/user/viewcollection?collectionid="+data;
-    }
+  // redirect functions
+  function viewCollection(data){
+     window.location.href="/user/viewcollection?collectionid="+data;
+  }
 
-    function viewBook(data) {
-      //console.log("book_id" + data);
-       window.location.href = "/bookdata/metadata?id=" + data;
-    }
+  function viewBook(data) {
+     window.location.href = "/bookdata/metadata?id=" + data;
+  }
 
+  //ask for data
   request();
 
   return (
@@ -135,7 +134,8 @@ export default function Profile() {
       <CssBaseline />
       
       <main>
-        {/* Hero unit */}
+        
+      {/*Title of the profile*/}
         <div className={classes.heroContent} >
           <Container>
           <Grid container spacing={3} className={classes.container}>
@@ -152,7 +152,7 @@ export default function Profile() {
           </Container>
 
         </div>
-
+        {/*display collections of the user*/} 
         <Container className={classes.cardGrid} maxWidth="md">
             <Typography
               variant="h4"
@@ -173,6 +173,8 @@ export default function Profile() {
                  {userForm.firstName + " " + userForm.lastName} have no collections yet
                  </Typography>)
             }
+
+           
           <Grid container spacing={4}>
             {cards.map((collection) => (
               <Grid item key={collection} xs={12} sm={6} md={4}>
@@ -200,7 +202,8 @@ export default function Profile() {
             ))}
           </Grid>
         </Container>
-
+        
+        {/*display library of the user*/}
         <Container className={classes.cardGrid} maxWidth="md">
           <Typography
               variant="h4"
@@ -221,8 +224,10 @@ export default function Profile() {
                  No books in {userForm.firstName + " " + userForm.lastName}'s library 
                  </Typography>)
             }
-          <Grid container spacing={4}>
 
+         
+          <Grid container spacing={4}>
+            
             {lib.map((book) => (
               <Grid item key={book} xs={12} sm={6} md={4}>
                 <Card className={classes.card}>

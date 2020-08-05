@@ -86,13 +86,11 @@ function handleLogout() {
         }
     });
     window.location.href="/";
-    //window.location.reload();
 }
 
 interface Props {
     userSignedIn: boolean;
 }
-//<Button component={Router.Link} to="/" color="inherit" startIcon={<CollectionsBookmarkIcon />}/>
 
 const Header: React.FC<Props> = ({userSignedIn} : Props) => {
     const classes = Style();

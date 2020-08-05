@@ -36,7 +36,7 @@ const Style = makeStyles((theme) => ({
     },
 }));
 
-// 
+
 const Sidebar: React.FC = ({}) => {
     const classes = Style();    
     const theme = useTheme();

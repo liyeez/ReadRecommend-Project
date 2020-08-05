@@ -96,14 +96,21 @@ const FindUser: React.FC<Props> = ({}) => {
         });
     }
 
-    function preventDefault(event) {
+    function viewUser(id){
+        window.location.href = "/user/otherusers?userid=" + id;
+    }
+
+    // new search 
+    function redirect(event) {
         event.preventDefault
         window.location.href="/user/findusers?"+SearchForm.title;
     }
+     
+    let results = false; // flag to display user feedback
+    let txt = ""; // search string
+    let users: any= []; // results
 
-    let results = false;
-    let txt = "";
-    let users: any= [];
+    
     function onSearch() {
       $.ajax({
         async: false,
@@ -129,6 +136,7 @@ const FindUser: React.FC<Props> = ({}) => {
       });
     }
 
+    // string splitting to find search string
     let array = window.location.href.split("?");
     if(array.length > 1){
         console.log("looking for user: " + array[1]);
@@ -143,17 +151,14 @@ const FindUser: React.FC<Props> = ({}) => {
         }else{
             txt = array[1];
         }
-        onSearch();
+        onSearch(); //search user
     }
-    
-    function viewUser(id){
-        window.location.href = "/user/otherusers?userid=" + id;
-    }
+   
 
     return (
     <React.Fragment>
           <CssBaseline />
-           
+            {/*Search Bar*/}
             <Grid container spacing={3} className={classes.container}>
                 <Paper className={classes.paper}>
                   <AppBar className={classes.searchBar} position="static" color="default" elevation={0}>
@@ -174,7 +179,7 @@ const FindUser: React.FC<Props> = ({}) => {
                           />
                         </Grid>
                         <Grid item>
-                          <Button variant="contained" color="primary" className={classes.addUser} onClick={preventDefault}>
+                          <Button variant="contained" color="primary" className={classes.addUser} onClick={redirect}>
                             Search
                           </Button>
                         </Grid>
@@ -184,6 +189,8 @@ const FindUser: React.FC<Props> = ({}) => {
                   </AppBar>       
                 </Paper>
             </Grid>
+
+          {/*display results*/}
             <Container className={classes.cardGrid} maxWidth="md">
               { results
                   ? (null)

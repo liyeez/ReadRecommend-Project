@@ -134,6 +134,7 @@ const Main: React.FC<Props> = ({ userSignedIn }: Props) => {
     const [ addToCollectionId, setAddToCollectionId ] = useState("");
     const [ addToCollectionError, setAddToCollectionError ] = useState("");
 
+    // to cater add to collection button
     const handleClickOpen = (bookId) => {
         bookToAdd = bookId;
         setAddDialogIsOpen(true);
@@ -155,6 +156,22 @@ const Main: React.FC<Props> = ({ userSignedIn }: Props) => {
         });
     }
 
+    // redirect functions
+    function advSearchLocal(event) { 
+        window.location.href = "/search?title=" + SearchForm.title + "?average_rating=" + minimumRating + 
+            "?total_ratings=" + filterState.minimumTotalRatings + "?read_count=" + filterState.minimumReadCount + 
+            "?collection_count=" + filterState.minimumCollectionCount;
+    }
+
+    function searchLocal(event) { 
+        window.location.href = "/search?title=" + SearchForm.title;
+    }
+
+    function searchWeb(event) {
+        window.location.href = "/extsearch?title=" + SearchForm.title + "?index=0";
+    }
+
+    // to find what collections owned by current user in order to add book to collection
     function getUserCollections(callback) {
         $.ajax({
             async: false,
@@ -228,6 +245,7 @@ const Main: React.FC<Props> = ({ userSignedIn }: Props) => {
         });
     }
 
+   // Add to library action
     function addLib(id) {
         $.ajax({
             async: false,
@@ -252,6 +270,7 @@ const Main: React.FC<Props> = ({ userSignedIn }: Props) => {
         });
     }
 
+    // to record search string typed
     const onTextboxChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setSearchForm((prevSearchForm) => {
@@ -261,7 +280,8 @@ const Main: React.FC<Props> = ({ userSignedIn }: Props) => {
             };
         });
     };
-
+    
+    // callback function for getting random books to display in the main page
     function request() {
         var data = randomBooks(function (data) {
             if (data != null) {
@@ -293,31 +313,6 @@ const Main: React.FC<Props> = ({ userSignedIn }: Props) => {
             error: function () {
                 console.log("server error!");
                 callback(null);
-            },
-        });
-    }
-
-    //TODO cannot use my profile to get collections as book cannot exist in the collection alrdy
-    function retrieveCollections(callback) {
-        $.ajax({
-            async: false,
-            url: API_URL + "/api/user/my_profile",
-            method: "GET",
-            data: {
-                auth: token,
-            },
-            success: function (data) {
-                if (data != null) {
-                    if (data.message == "Got current user profile data") {
-                        callback(data);
-                    } else {
-                        callback(null);
-                    }
-                }
-            },
-            error: function (error) {
-                callback(error);
-                console.log("Server error!");
             },
         });
     }
@@ -359,24 +354,12 @@ const Main: React.FC<Props> = ({ userSignedIn }: Props) => {
         setFilterState({...filterState, [event.target.name]: event.target.value});
     }
 
-    function advSearchLocal(event) { 
-        window.location.href = "/search?title=" + SearchForm.title + "?average_rating=" + minimumRating + 
-            "?total_ratings=" + filterState.minimumTotalRatings + "?read_count=" + filterState.minimumReadCount + 
-            "?collection_count=" + filterState.minimumCollectionCount;
-    }
-
-    function searchLocal(event) { 
-        window.location.href = "/search?title=" + SearchForm.title;
-    }
-
-    function searchWeb(event) {
-        window.location.href = "/extsearch?title=" + SearchForm.title + "?index=0";
-    }
-
+    // request data
     request();
     if (userSignedIn) {
         requestUserCollections();
     }
+
     return (
         <React.Fragment>
             <CssBaseline />

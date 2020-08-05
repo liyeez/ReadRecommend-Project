@@ -191,20 +191,16 @@ const ViewCollection: React.FC<Props> = ({}) => {
   if(window.location.href.split("=")[1]){
     request();
     requestTags();
-  }  
-  // }else{
-  //   window.location.href = "/";
-  // }
-  
+  }    
 
   return (
     <React.Fragment>
       <CssBaseline />
       <main>
-        {/* Hero unit */}
+       
         <div className={classes.heroContent}>
           <Container maxWidth="sm">
-            {/*TODO: Dynamically render the collection's title */}
+            {/*Dynamically render the collection's title */}
             <Typography
               component="h1"
               variant="h2"
