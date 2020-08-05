@@ -48,7 +48,7 @@ def signup(request):
 
 
 @api_view(["POST"])
-@input_validator(["username", "password"])
+@input_validator(["email", "password"])
 def signin(request):
     """
     signin
@@ -64,7 +64,7 @@ def signin(request):
     """
     # Try to log in and generate/get a token
     user = authenticate(
-        request, username=request.POST["username"], password=request.POST["password"])
+        request, username=request.POST["email"], password=request.POST["password"])
     if user is not None:
         user_id = user.id
         token, _ = Token.objects.get_or_create(user=user)

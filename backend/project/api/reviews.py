@@ -9,7 +9,6 @@ from .utilities import input_validator, user_validator,auth_validator
 
 
 @api_view(["GET"])
-@auth_validator
 @input_validator(["id"])
 def get_reviews(request):
 
