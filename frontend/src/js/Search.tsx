@@ -359,7 +359,7 @@ const Search: React.FC<Props> = ({ userSignedIn }: Props) => {
       url: api_call,
       data: {
         search: txt,
-        average_rating: minimumRating,
+        average_rating: averageRating,
         total_ratings: totalRatings, //filterState.minimumTotalRatings,
         read_count: readCount, //filterState.minimumReadCount,
         collection_count: collectionCount, //filterState.minimumCollectionCount,
