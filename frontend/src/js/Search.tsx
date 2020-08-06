@@ -233,13 +233,6 @@ const Search: React.FC<Props> = ({ userSignedIn }: Props) => {
       collectionCount = parseFloat(parameters[5].split("=")[1])
   }
 
-  console.log(averageRating);
-  console.log(totalRatings);
-  console.log(readCount);
-  console.log(collectionCount);
-
-  
-
     const [ open, setOpen ] = useState(false);
     let [ userBookCollections, setUserBookCollections ] = useState([]);
     const [ addToCollectionId, setAddToCollectionId ] = useState("");
@@ -365,17 +358,15 @@ const Search: React.FC<Props> = ({ userSignedIn }: Props) => {
   }
 
   function onSearch(callback) {
-    console.log('search for: ' + txt);
-    console.log(api_call);
     $.ajax({
       async: false,
       url: api_call,
       data: {
         search: txt,
         average_rating: minimumRating,
-        total_ratings: filterState.minimumTotalRatings,
-        read_count: filterState.minimumReadCount,
-        collection_count: filterState.minimumCollectionCount,
+        total_ratings: totalRatings,
+        read_count: readCount,
+        collection_count: collectionCount,
       },
       method: "GET",
       success: function (data) {
