@@ -190,11 +190,7 @@ const Search: React.FC<Props> = ({}) => {
   let type = (window.location.href.split("?")[1]).split("=")[0];
   let index = (window.location.href.split("?")[2]).split("=")[1];
   let array = ((window.location.href.split("?")[1]).split("=")[1]).split("%20");
-  let check = ((window.location.href.split("?")[1]).split("=")[1]).split("%27");
-
-  if(check){
-    alert("Apostrophe degrades our performance! Please try another search string");
-  }
+  
 
   //split string to append with string
   var txt = "";

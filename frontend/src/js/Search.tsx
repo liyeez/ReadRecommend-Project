@@ -320,12 +320,6 @@ const Search: React.FC<Props> = ({ userSignedIn }: Props) => {
       }
   }
   
-  let check = ((window.location.href.split("?")[1]).split("=")[1]).split("%27");
-
-  if(check){
-    alert("Apostrophe degrades our performance! Please try another search string");
-  }
-
   let api_call: string;
   let s = window.location.href.split("?");
   if(s){
@@ -336,10 +330,7 @@ const Search: React.FC<Props> = ({ userSignedIn }: Props) => {
         console.log('call filter API');
         api_call = API_URL + "/api/books/filter";
       }
-  }else{
-
   }
-  
 
   function request() {
 
@@ -362,15 +353,16 @@ const Search: React.FC<Props> = ({ userSignedIn }: Props) => {
   function onSearch(callback) {
     console.log('search for: ' + txt);
     console.log(api_call);
+    console.log(averageRating + 'x'+ readCount +"x"+totalRatings + 'x' +collectionCount);
     $.ajax({
       async: false,
       url: api_call,
       data: {
         search: txt,
         average_rating: minimumRating,
-        total_ratings: filterState.minimumTotalRatings,
-        read_count: filterState.minimumReadCount,
-        collection_count: filterState.minimumCollectionCount,
+        total_ratings: totalRatings, //filterState.minimumTotalRatings,
+        read_count: readCount, //filterState.minimumReadCount,
+        collection_count: collectionCount, //filterState.minimumCollectionCount,
       },
       method: "GET",
       success: function (data) {
@@ -386,8 +378,6 @@ const Search: React.FC<Props> = ({ userSignedIn }: Props) => {
       },
     });
   }
-  
-
   
   request();
   requestUserCollections();
