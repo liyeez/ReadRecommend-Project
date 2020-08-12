@@ -648,33 +648,33 @@ def history(request): #recommends based on reading history
 
     return Response({"status": "ok", "message": "recommendations found", "book_list": book_list}, status=status.HTTP_200_OK)
 
-#
-#@api_view(["GET"])
-#@input_validator(["id"])
-#def stats(request):
-#    """
-#    data
-#
-#    Retrieves complete book stats
-#
-#    Input:
-#    id (int)
-#
-#    Returns:
-#
-#    """
-#    try:
-#        book = Book.objects.get(id=request.GET["id"])
-#    except ObjectDoesNotExist:
-#        return Response({"status": "error", "message": "Book not found"}, status=status.HTTP_204_NO_CONTENT)
-#
-#    try:
-#        book_stats = BookStats.objects.get(book=book)
-#    except ObjectDoesNotExist:
-#        return Response({"status": "error", "message": "Book stats not found"}, status=status.HTTP_204_NO_CONTENT)
-#
-#    BookStats.objects.update_all()
-#
-#    return Response({"status": "ok", "message": "Got book stats", "book_average": book_stats.average_rating, "book_total_ratings": book_stats.total_ratings, "book_read_count": book_stats.read_count, "book_collection_count": book_stats.collection_count}, status=status.HTTP_200_OK)
-#
+
+@api_view(["GET"])
+@input_validator(["id"])
+def stats(request):
+   """
+   data
+
+   Retrieves complete book stats
+
+   Input:
+   id (int)
+
+   Returns:
+
+   """
+   try:
+       book = Book.objects.get(id=request.GET["id"])
+   except ObjectDoesNotExist:
+       return Response({"status": "error", "message": "Book not found"}, status=status.HTTP_204_NO_CONTENT)
+
+   try:
+       book_stats = BookStats.objects.get(book=book)
+   except ObjectDoesNotExist:
+       return Response({"status": "error", "message": "Book stats not found"}, status=status.HTTP_204_NO_CONTENT)
+
+   BookStats.objects.update_all()
+
+   return Response({"status": "ok", "message": "Got book stats", "book_average": book_stats.average_rating, "book_total_ratings": book_stats.total_ratings, "book_read_count": book_stats.read_count, "book_collection_count": book_stats.collection_count}, status=status.HTTP_200_OK)
+
 #
